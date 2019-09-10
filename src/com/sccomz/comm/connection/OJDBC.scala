@@ -1,4 +1,4 @@
-package com.sccomz.comm.conection
+package com.sccomz.comm.connection
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,6 +8,7 @@ import org.apache.spark.sql.SparkSession
 import java.util.Properties
 import org.apache.spark.sql.SaveMode
 import org.dmg.pmml.True
+import com.sccomz.comm.util.StringUtil
 
 /*
  * 오라클 JDBC
@@ -19,15 +20,45 @@ import org.dmg.pmml.True
  */
 object OJDBC {
 
-  //val url      = "jdbc:oracle:thin:@//150.204.15.124:1521/TWCRMDB"
   //val user     = "ISITE_XTRACTOR"
   //val password = "ISITE_sprtmxm12!"
 
-  val url      = "jdbc:oracle:thin:@//150.206.15.231:1532/TOSP"
-  val user     = "TXTR"
-  val password = "dhvjfld!23"
+  val url      = "jdbc:oracle:thin:@localhost:9951/IAMLTE"
+  val user     = "cellplan"
+  val password = "cell_2012"
   val driver   = "oracle.jdbc.driver.OracleDriver"
 
+  def main(args: Array[String]): Unit = {
+
+    //--------------------------------------
+    println("OJDBC 시작");
+    //--------------------------------------
+     
+    //selectTable("aa");
+    testPonyUtil();
+    
+  }
+  
+
+  def testPonyUtil() = {
+
+    println("test11111111=="+StringUtil.trimNull("abcdddd"));
+    
+  }
+  
+  
+  def selectTable(objNm:String) = {
+
+    println("objNm=="+objNm);
+    Class.forName(driver)
+    var con:Connection = DriverManager.getConnection(url,user,password)
+    var stat=con.createStatement()
+    //stat.execute(qry)
+    con.close()
+    
+  }
+  
+  
   def deleteTable(spark:SparkSession,qry:String) = {
     //--------------------------------------
         println("(ORACLE) "+qry);
@@ -52,7 +83,7 @@ object OJDBC {
 
   }
 
-  def selectTable(spark:SparkSession,objNm:String) = {
+  def selectTableSparkRead(spark:SparkSession,objNm:String) = {
 
     // spark.read.parquet("parquet/entity/TB_NCATE_LAST_VER").createOrReplaceTempView("TB_NCATE_LAST_VER")
 
