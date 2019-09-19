@@ -1,0 +1,1239 @@
+DROP TABLE CELLPLAN.ADMIN_NOTICE
+
+--DROP TABLE CELLPLAN.ANALYSIS_LIST;
+CREATE TABLE CELLPLAN.ANALYSIS_LIST
+(
+ SCENARIO_ID           NUMERIC NOT NULL
+,ANALYSIS_TYPE         NUMERIC  
+,PATHLOSS              NUMERIC  
+,BESTSERVER            NUMERIC  
+,RSRP                  NUMERIC  
+,RSRQ                  NUMERIC  
+,RSSI                  NUMERIC  
+,SINR                  NUMERIC  
+,HANDOVER              NUMERIC  
+,THROUGHPUT            NUMERIC  
+,DETAIL_FUN_NM         VARCHAR(20)  
+,PILOT_IO              NUMERIC  
+,COVER_RSRP            NUMERIC  
+,COVER_RSSI            NUMERIC  
+,COVER_SINR            NUMERIC  
+,COVER_RSSI_AND_SINR   NUMERIC  
+,COVER_RSRP_VAL        NUMERIC  
+,COVER_RSSI_VAL        NUMERIC  
+,COVER_SINR_VAL        NUMERIC  
+,ERP                   NUMERIC  
+,TRAFFIC               NUMERIC  
+,LOS                   NUMERIC  
+,LOS_BESTSERVER        NUMERIC  
+,UL_MOBILE_ERP         NUMERIC  
+,UL_RSSI               NUMERIC  
+,UL_SINR               NUMERIC  
+,MULTI_BAND_THROUGHPUT NUMERIC  
+,MULTI_BAND_COVERAGE   NUMERIC  
+,CONSTRAINT ANALYSIS_LIST_PK PRIMARY KEY(SCENARIO_ID)
+);
+--DROP TABLE CELLPLAN.ANALYSIS_RESULT;
+CREATE TABLE CELLPLAN.ANALYSIS_RESULT
+(
+ SCENARIO_ID           NUMERIC NOT NULL
+,ANALYSIS_TYPE         VARCHAR(10) NOT NULL
+,SERVER_ID             VARCHAR(10)  
+,RESULT_TIME           NUMERIC  
+,CPU_USE               NUMERIC  
+,MEMORY_USE            NUMERIC  
+,START_TIME            DATE  
+,END_TIME              DATE  
+,CONSTRAINT ANALYSIS_RESULT_PK PRIMARY KEY(SCENARIO_ID,ANALYSIS_TYPE)
+);
+--DROP TABLE CELLPLAN.CELLDB_5G_EXCEL_IMPORT;
+CREATE TABLE CELLPLAN.CELLDB_5G_EXCEL_IMPORT
+(
+ SCENARIO_ID           NUMERIC  
+,GROUP_ID              NUMERIC  
+,SITE_NM               VARCHAR(250)  
+,STRXPOS               VARCHAR(50)  
+,STRYPOS               VARCHAR(50)  
+,TYPE                  VARCHAR(50)  
+,FA_SEQ                NUMERIC  
+,SISUL_CD              VARCHAR(50)  
+,SITE_KEY              VARCHAR(50)  
+,ENB_ID                NUMERIC  
+,PCI                   NUMERIC  
+,SITE_ADDR             VARCHAR(500)  
+,DU_H_NM               VARCHAR(200)  
+,SECTOR_ORD            NUMERIC  
+,CORRECTION            NUMERIC  
+,TOWER_HEIGHT          NUMERIC  
+,BLD_HEIGHT            NUMERIC  
+,ANTENA_NM1            VARCHAR(100)  
+,ORIENTATION1          NUMERIC  
+,ET_TILTING1           NUMERIC  
+,TILTING1              NUMERIC  
+,ANTENA_NM2            VARCHAR(100)  
+,ORIENTATION2          NUMERIC  
+,ET_TILTING2           NUMERIC  
+,TILTING2              NUMERIC  
+,ANTENA_NM3            VARCHAR(100)  
+,ORIENTATION3          NUMERIC  
+,ET_TILTING3           NUMERIC  
+,TILTING3              NUMERIC  
+,TXLAYER               NUMERIC  
+,RXLAYER               NUMERIC  
+,LOSBEAMFORMINGLOSS    NUMERIC  
+,NLOSBEAMFORMINGLOSS   NUMERIC  
+,ANTENNAGAIN           NUMERIC  
+,POWERCOMBININGGAIN    NUMERIC  
+,BEAMMISMATCHMARGIN    NUMERIC  
+,RETXEIRPDBM           NUMERIC  
+,TXEIRPDBM             NUMERIC  
+,TXPWRDBM              NUMERIC  
+,REG_DT                DATE  
+,RU_ID                 VARCHAR(50)  
+,EDIT_FLAG             VARCHAR(1)  
+);
+--DROP TABLE CELLPLAN.COLOR;
+CREATE TABLE CELLPLAN.COLOR
+(
+ SCENARIO_ID           NUMERIC NOT NULL
+,COLOR_SET_ID          NUMERIC NOT NULL
+,ANALYSIS_ITEM_TYPE    NUMERIC NOT NULL
+,DRAWINGSTYLE          NUMERIC  
+,CONSTRAINT COLOR_PK PRIMARY KEY(SCENARIO_ID,COLOR_SET_ID,ANALYSIS_ITEM_TYPE)
+);
+--DROP TABLE CELLPLAN.COLOR_USER;
+CREATE TABLE CELLPLAN.COLOR_USER
+(
+ SCENARIO_ID           NUMERIC NOT NULL
+,USER_ID               VARCHAR(13) NOT NULL
+,COLOR_SET_ID          NUMERIC NOT NULL
+,COLOR_SET_ORD         NUMERIC NOT NULL
+,ANALYSIS_TYPE         VARCHAR(10)  
+,USE_YN                CHAR(1)  
+,COLOR_CNT             NUMERIC  
+,LIMIT1                NUMERIC  
+,COLOR1                NUMERIC  
+,LIMIT2                NUMERIC  
+,COLOR2                NUMERIC  
+,LIMIT3                NUMERIC  
+,COLOR3                NUMERIC  
+,LIMIT4                NUMERIC  
+,COLOR4                NUMERIC  
+,LIMIT5                NUMERIC  
+,COLOR5                NUMERIC  
+,LIMIT6                NUMERIC  
+,COLOR6                NUMERIC  
+,LIMIT7                NUMERIC  
+,COLOR7                NUMERIC  
+,LIMIT8                NUMERIC  
+,COLOR8                NUMERIC  
+,LIMIT9                NUMERIC  
+,COLOR9                NUMERIC  
+,LIMIT10               NUMERIC  
+,COLOR10               NUMERIC  
+,LIMIT11               NUMERIC  
+,COLOR11               NUMERIC  
+,LIMIT12               NUMERIC  
+,COLOR12               NUMERIC  
+,LIMIT13               NUMERIC  
+,COLOR13               NUMERIC  
+,LIMIT14               NUMERIC  
+,COLOR14               NUMERIC  
+,LIMIT15               NUMERIC  
+,COLOR15               NUMERIC  
+,LIMIT16               NUMERIC  
+,COLOR16               NUMERIC  
+,RATE1                 NUMERIC  
+,RATE2                 NUMERIC  
+,RATE3                 NUMERIC  
+,RATE4                 NUMERIC  
+,RATE5                 NUMERIC  
+,RATE6                 NUMERIC  
+,RATE7                 NUMERIC  
+,RATE8                 NUMERIC  
+,RATE9                 NUMERIC  
+,RATE10                NUMERIC  
+,RATE11                NUMERIC  
+,RATE12                NUMERIC  
+,RATE13                NUMERIC  
+,RATE14                NUMERIC  
+,RATE15                NUMERIC  
+,RATE16                NUMERIC  
+,LEGEND_NAME           VARCHAR(100)  
+,CONSTRAINT COLOR_USER_PK PRIMARY KEY(SCENARIO_ID,USER_ID,COLOR_SET_ID,COLOR_SET_ORD)
+);
+--DROP TABLE CELLPLAN.DU;
+CREATE TABLE CELLPLAN.DU
+(
+ SCENARIO_ID           NUMERIC NOT NULL
+,ENB_ID                VARCHAR(10) NOT NULL
+,E_NODEB_NM            VARCHAR(100)  
+,PCI_CNT               NUMERIC  
+,STRMAKER              VARCHAR(30)  
+,REG_DT                DATE  
+,CONSTRAINT DU_PK PRIMARY KEY(SCENARIO_ID,ENB_ID)
+);
+--DROP TABLE CELLPLAN.GEO_GEOMETRYQUERY;
+CREATE TABLE CELLPLAN.GEO_GEOMETRYQUERY
+(
+ SCHEDULE_ID           NUMERIC NOT NULL
+,ANALYSIS_TYPE         VARCHAR(10) NOT NULL
+,SCENARIO_ID           NUMERIC  
+,AREA_ID               NUMERIC  
+,INPUT                 CLOB  
+,RESULT                VARCHAR(4000)  
+,RESULT_TYPE           NUMERIC NOT NULL
+,STATUS                VARCHAR(1)  
+,SOLUTION_AREA_ID      NUMERIC  
+,CONSTRAINT GEO_GEOMETRYQUERY_PK PRIMARY KEY(SCHEDULE_ID,ANALYSIS_TYPE,RESULT_TYPE)
+);
+--DROP TABLE CELLPLAN.LTESECTORPARAMETER;
+CREATE TABLE CELLPLAN.LTESECTORPARAMETER
+(
+ SCENARIO_ID           NUMERIC NOT NULL
+,ENB_ID                VARCHAR(10) NOT NULL
+,PCI                   NUMERIC NOT NULL
+,PCI_PORT              NUMERIC NOT NULL
+,RU_ID                 VARCHAR(48) NOT NULL
+,MAXUSER               NUMERIC  
+,TOTALPWRWATT          NUMERIC  
+,TOTALPWRDBM           NUMERIC  
+,RSPWRWATT             NUMERIC  
+,RSPWRDBM              NUMERIC  
+,PBCHPWRWATT           NUMERIC  
+,PBCHPWRDBM            NUMERIC  
+,PDSCHPWRWATT          NUMERIC  
+,PDSCHPWRDBM           NUMERIC  
+,DLICILOAD             NUMERIC  
+,ANTENNACOUNT          NUMERIC  
+,DLMIMOTYPE            NUMERIC  
+,DLMIMOGAIN            NUMERIC  
+,ULMIMOTYPE            NUMERIC  
+,ULMIMOGAIN            NUMERIC  
+,BEAMFORMING           NUMERIC  
+,SEIZEDTRAFFICERLANG1  NUMERIC  
+,SEIZEDTRAFFICERLANG2  NUMERIC  
+,REG_DT                DATE  
+,CONSTRAINT LTESECTORPARAMETER_PK PRIMARY KEY(SCENARIO_ID,ENB_ID,PCI,PCI_PORT,RU_ID)
+);
+--DROP TABLE CELLPLAN.LTESYSTEM;
+CREATE TABLE CELLPLAN.LTESYSTEM
+(
+ SCENARIO_ID            NUMERIC NOT NULL
+,DUPLEXTYPE             NUMERIC  
+,FREQUENCYBAND          NUMERIC  
+,TOTALBANDWIDTH         NUMERIC  
+,FRAMECONFIGURATION     NUMERIC  
+,SUBCARRIERSPACING      NUMERIC  
+,CYCLICPREFIX           NUMERIC  
+,NUMBEROFSUBCARRIERS    NUMERIC  
+,NUMBEROFRBS            NUMERIC  
+,NUMBEROFOFDMSYMBOLS    NUMERIC  
+,NUMBEROFRSSYMBOLS      NUMERIC  
+,NUMBEROFPDCCHSYMBOLS   NUMERIC  
+,NUMBEROFPUCCHRBS       NUMERIC  
+,DLDIVSELCINRTHRESHOLD  NUMERIC  
+,DLBEAMFORMINGGAIN      NUMERIC  
+,ULDIVSELCINRTHRESHOLD  NUMERIC  
+,ULBEAMFORMINGGAIN      NUMERIC  
+,TURNAROUNDFACTOR       NUMERIC  
+,ORTHOGONALFACTOR       NUMERIC  
+,HOSTARTCINR            NUMERIC  
+,HOENDCINR              NUMERIC  
+,HOMARGIN               NUMERIC  
+,ULPWRCTRLTGTCINR       NUMERIC  
+,ULPWRCTRLSTEP          NUMERIC  
+,DLCOVLIMITRSSI         NUMERIC  
+,DLCOVERAGELIMITCINR    NUMERIC  
+,ULCOVERAGELIMITCINR    NUMERIC  
+,MAXUSERPERSECTOR       NUMERIC  
+,SELECTCOVERAGEANALYSIS NUMERIC  
+,DLINTERCELL            NUMERIC  
+,DLINTRACELL            NUMERIC  
+,ULINTERCELL            NUMERIC  
+,ULINTRACELL            NUMERIC  
+,TECHTYPE               NUMERIC  
+,DLCOVLIMITRSRP         NUMERIC  
+,DLCOVLIMITRSRQ         NUMERIC  
+,DLCOVLIMITRSRP_YN      VARCHAR(1)  
+,SPREADFACTOR           NUMERIC(2,0)  
+,CONSTRAINT LTESYSTEM_PK PRIMARY KEY(SCENARIO_ID)
+);
+--DROP TABLE CELLPLAN.LTETRAFFIC;
+CREATE TABLE CELLPLAN.LTETRAFFIC
+(
+ SCENARIO_ID            NUMERIC NOT NULL
+,DLCODINGRATE1          NUMERIC  
+,DLCODINGRATE2          NUMERIC  
+,DLCODINGRATE3          NUMERIC  
+,DLCODINGRATE4          NUMERIC  
+,DLCODINGRATE5          NUMERIC  
+,DLCODINGRATE6          NUMERIC  
+,DLCODINGRATE7          NUMERIC  
+,DLCODINGRATE8          NUMERIC  
+,DLCODINGRATE9          NUMERIC  
+,DLCODINGRATE10         NUMERIC  
+,DLCODINGRATE11         NUMERIC  
+,DLCODINGRATE12         NUMERIC  
+,DLCODINGRATE13         NUMERIC  
+,DLCODINGRATE14         NUMERIC  
+,DLCODINGRATE15         NUMERIC  
+,DLSPECTRALEFFICIENCY1  NUMERIC  
+,DLSPECTRALEFFICIENCY2  NUMERIC  
+,DLSPECTRALEFFICIENCY3  NUMERIC  
+,DLSPECTRALEFFICIENCY4  NUMERIC  
+,DLSPECTRALEFFICIENCY5  NUMERIC  
+,DLSPECTRALEFFICIENCY6  NUMERIC  
+,DLSPECTRALEFFICIENCY7  NUMERIC  
+,DLSPECTRALEFFICIENCY8  NUMERIC  
+,DLSPECTRALEFFICIENCY9  NUMERIC  
+,DLSPECTRALEFFICIENCY10 NUMERIC  
+,DLSPECTRALEFFICIENCY11 NUMERIC  
+,DLSPECTRALEFFICIENCY12 NUMERIC  
+,DLSPECTRALEFFICIENCY13 NUMERIC  
+,DLSPECTRALEFFICIENCY14 NUMERIC  
+,DLSPECTRALEFFICIENCY15 NUMERIC  
+,DLREQUIREDCINR1        NUMERIC  
+,DLREQUIREDCINR2        NUMERIC  
+,DLREQUIREDCINR3        NUMERIC  
+,DLREQUIREDCINR4        NUMERIC  
+,DLREQUIREDCINR5        NUMERIC  
+,DLREQUIREDCINR6        NUMERIC  
+,DLREQUIREDCINR7        NUMERIC  
+,DLREQUIREDCINR8        NUMERIC  
+,DLREQUIREDCINR9        NUMERIC  
+,DLREQUIREDCINR10       NUMERIC  
+,DLREQUIREDCINR11       NUMERIC  
+,DLREQUIREDCINR12       NUMERIC  
+,DLREQUIREDCINR13       NUMERIC  
+,DLREQUIREDCINR14       NUMERIC  
+,DLREQUIREDCINR15       NUMERIC  
+,DLMCSSUPPORT1          NUMERIC  
+,DLMCSSUPPORT2          NUMERIC  
+,DLMCSSUPPORT3          NUMERIC  
+,DLMCSSUPPORT4          NUMERIC  
+,DLMCSSUPPORT5          NUMERIC  
+,DLMCSSUPPORT6          NUMERIC  
+,DLMCSSUPPORT7          NUMERIC  
+,DLMCSSUPPORT8          NUMERIC  
+,DLMCSSUPPORT9          NUMERIC  
+,DLMCSSUPPORT10         NUMERIC  
+,DLMCSSUPPORT11         NUMERIC  
+,DLMCSSUPPORT12         NUMERIC  
+,DLMCSSUPPORT13         NUMERIC  
+,DLMCSSUPPORT14         NUMERIC  
+,DLMCSSUPPORT15         NUMERIC  
+,ULCODINGRATE1          NUMERIC  
+,ULCODINGRATE2          NUMERIC  
+,ULCODINGRATE3          NUMERIC  
+,ULCODINGRATE4          NUMERIC  
+,ULCODINGRATE5          NUMERIC  
+,ULCODINGRATE6          NUMERIC  
+,ULCODINGRATE7          NUMERIC  
+,ULCODINGRATE8          NUMERIC  
+,ULCODINGRATE9          NUMERIC  
+,ULCODINGRATE10         NUMERIC  
+,ULCODINGRATE11         NUMERIC  
+,ULCODINGRATE12         NUMERIC  
+,ULCODINGRATE13         NUMERIC  
+,ULCODINGRATE14         NUMERIC  
+,ULCODINGRATE15         NUMERIC  
+,ULSPECTRALEFFICIENCY1  NUMERIC  
+,ULSPECTRALEFFICIENCY2  NUMERIC  
+,ULSPECTRALEFFICIENCY3  NUMERIC  
+,ULSPECTRALEFFICIENCY4  NUMERIC  
+,ULSPECTRALEFFICIENCY5  NUMERIC  
+,ULSPECTRALEFFICIENCY6  NUMERIC  
+,ULSPECTRALEFFICIENCY7  NUMERIC  
+,ULSPECTRALEFFICIENCY8  NUMERIC  
+,ULSPECTRALEFFICIENCY9  NUMERIC  
+,ULSPECTRALEFFICIENCY10 NUMERIC  
+,ULSPECTRALEFFICIENCY11 NUMERIC  
+,ULSPECTRALEFFICIENCY12 NUMERIC  
+,ULSPECTRALEFFICIENCY13 NUMERIC  
+,ULSPECTRALEFFICIENCY14 NUMERIC  
+,ULSPECTRALEFFICIENCY15 NUMERIC  
+,ULREQUIREDCINR1        NUMERIC  
+,ULREQUIREDCINR2        NUMERIC  
+,ULREQUIREDCINR3        NUMERIC  
+,ULREQUIREDCINR4        NUMERIC  
+,ULREQUIREDCINR5        NUMERIC  
+,ULREQUIREDCINR6        NUMERIC  
+,ULREQUIREDCINR7        NUMERIC  
+,ULREQUIREDCINR8        NUMERIC  
+,ULREQUIREDCINR9        NUMERIC  
+,ULREQUIREDCINR10       NUMERIC  
+,ULREQUIREDCINR11       NUMERIC  
+,ULREQUIREDCINR12       NUMERIC  
+,ULREQUIREDCINR13       NUMERIC  
+,ULREQUIREDCINR14       NUMERIC  
+,ULREQUIREDCINR15       NUMERIC  
+,ULMCSSUPPORT1          NUMERIC  
+,ULMCSSUPPORT2          NUMERIC  
+,ULMCSSUPPORT3          NUMERIC  
+,ULMCSSUPPORT4          NUMERIC  
+,ULMCSSUPPORT5          NUMERIC  
+,ULMCSSUPPORT6          NUMERIC  
+,ULMCSSUPPORT7          NUMERIC  
+,ULMCSSUPPORT8          NUMERIC  
+,ULMCSSUPPORT9          NUMERIC  
+,ULMCSSUPPORT10         NUMERIC  
+,ULMCSSUPPORT11         NUMERIC  
+,ULMCSSUPPORT12         NUMERIC  
+,ULMCSSUPPORT13         NUMERIC  
+,ULMCSSUPPORT14         NUMERIC  
+,ULMCSSUPPORT15         NUMERIC  
+,CONSTRAINT LTETRAFFIC_PK PRIMARY KEY(SCENARIO_ID)
+);
+--DROP TABLE CELLPLAN.LTE_IO_ANALYSIS;
+CREATE TABLE CELLPLAN.LTE_IO_ANALYSIS
+(
+ SCENARIO_ID            NUMERIC NOT NULL
+,MAX_SERVER             NUMERIC  
+,SERVER_ORD             NUMERIC  
+,SERVER_ID              NUMERIC  
+,BIN_COUNT              NUMERIC  
+,RSSI_RU_DBM            NUMERIC  
+,RSSI_RU_WATT           NUMERIC  
+);
+--DROP TABLE CELLPLAN.MOBILE_PARAMETER;
+CREATE TABLE CELLPLAN.MOBILE_PARAMETER
+(
+ SCENARIO_ID            NUMERIC NOT NULL
+,MOBILE_ID              NUMERIC NOT NULL
+,TYPE                   NUMERIC NOT NULL
+,MOBILENAME             VARCHAR(30) NOT NULL
+,MAKER                  VARCHAR(30)  
+,MINPOWER               NUMERIC  
+,MAXPOWER               NUMERIC  
+,MOBILEGAIN             NUMERIC  
+,NOISEFLOOR             NUMERIC  
+,HEIGHT                 NUMERIC  
+,BODYLOSS               NUMERIC  
+,BUILDINGLOSS           NUMERIC  
+,CARLOSS                NUMERIC  
+,FEEDERLOSS             NUMERIC  
+,NOISEFIGURE            NUMERIC  
+,DIVERSITYGAIN          NUMERIC  
+,ANTENNAGAIN            NUMERIC  
+,RX_LAYER               NUMERIC  
+,CONSTRAINT MOBILE_PARAMETER_PK PRIMARY KEY(SCENARIO_ID,MOBILE_ID,TYPE)
+);
+--DROP TABLE CELLPLAN.NRSECTORPARAMETER;
+CREATE TABLE CELLPLAN.NRSECTORPARAMETER
+(
+ SCENARIO_ID               NUMERIC NOT NULL
+,ENB_ID                    NUMERIC NOT NULL
+,PCI                       NUMERIC NOT NULL
+,PCI_PORT                  NUMERIC NOT NULL
+,RU_ID                     VARCHAR(40) NOT NULL
+,TXPWRWATT                 NUMERIC  
+,TXPWRDBM                  NUMERIC  
+,TXEIRPWATT                NUMERIC  
+,TXEIRPDBM                 NUMERIC  
+,RETXEIRPWATT              NUMERIC  
+,RETXEIRPDBM               NUMERIC  
+,TRXCOUNT                  NUMERIC  
+,DLMODULATION              NUMERIC  
+,DLMIMOTYPE                NUMERIC  
+,DLMIMOGAIN                NUMERIC  
+,ULMODULATION              NUMERIC  
+,ULMIMOTYPE                NUMERIC  
+,ULMIMOGAIN                NUMERIC  
+,LOSBEAMFORMINGLOSS        NUMERIC  
+,NLOSBEAMFORMINGLOSS       NUMERIC  
+,HANDOVERCALLDROPTHRESHOLD NUMERIC  
+,POWERCOMBININGGAIN        NUMERIC  
+,BEAMMISMATCHMARGIN        NUMERIC  
+,ANTENNAGAIN               NUMERIC  
+,FOLIAGELOSS               NUMERIC  
+,TXLAYER                   NUMERIC  
+,RXLAYER                   NUMERIC  
+);
+--DROP TABLE CELLPLAN.NRSYSTEM;
+CREATE TABLE CELLPLAN.NRSYSTEM
+(
+ SCENARIO_ID                   NUMERIC NOT NULL
+,SYSTEM_ID                     NUMERIC  
+,FA_SEQ                        NUMERIC  
+,BANDWIDTH_PER_CC              NUMERIC  
+,NUMBER_OF_CC                  NUMERIC  
+,NUMBER_OF_SC_PER_RB           NUMERIC  
+,TOTALBANDWIDTH                NUMERIC  
+,SUBCARRIERSPACING             NUMERIC  
+,RB_PER_CC                     NUMERIC  
+,RADIOFRAMELENGTH              NUMERIC  
+,SUBFRAMELENGTH                NUMERIC  
+,NO_SLOTPERRADIOFRAME          NUMERIC  
+,SLOTLENGTH                    NUMERIC  
+,NO_OFDMSYMBOLPERSUBFRAME      NUMERIC  
+,FRAMECONFIGURATION            NUMERIC  
+,DLDATARATIO                   NUMERIC  
+,ULDATARATIO                   NUMERIC  
+,DLBLER                        NUMERIC  
+,ULBLER                        NUMERIC  
+,DIVERSITYGAINRATIO            NUMERIC  
+,DLINTRACELL                   NUMERIC  
+,DLINTERCELL                   NUMERIC  
+,ULINTRACELL                   NUMERIC  
+,ULINTERCELL                   NUMERIC  
+,DLCOVERAGELIMITRSRP           NUMERIC  
+,INTERFERENCEMARGIN            NUMERIC  
+,NRGAINOVERLTE                 NUMERIC  
+,PENETRATIONLOSS               NUMERIC  
+,SLOT_CONFIGURATION            NUMERIC  
+,DLCOVERAGELIMITRSRPLOS        NUMERIC  
+,DLOH                          NUMERIC  
+,ULOH                          NUMERIC  
+,DLSINROFFSET                  NUMERIC  
+,TECHTYPE                      NUMERIC  
+,RAYTRACING_REFLECTION         NUMERIC  
+,RAYTRACING_DIFFRACTION        NUMERIC  
+,RAYTRACING_SCATTERING         NUMERIC  
+,RELATED_ANALYSIS_COVLIMITRSRP NUMERIC  
+,ENV_ROADSIDE_TREE_YN          VARCHAR(1)  
+,DLCOVLIMITRSRP_YN             VARCHAR(1)  
+,ANT_CATEGORY                  VARCHAR(20)  
+,ANT_NM                        VARCHAR(150)  
+,CONSTRAINT NRSYSTEM_PK PRIMARY KEY(SCENARIO_ID)
+);
+--DROP TABLE CELLPLAN.NRUETRAFFIC;
+CREATE TABLE CELLPLAN.NRUETRAFFIC
+(
+ SCENARIO_ID                   NUMERIC  
+,SYSTEM_ID                     NUMERIC  
+,FA_SEQ                        NUMERIC  
+,DLUL_TYPE                     NUMERIC  
+,RX_MODULATION                 NUMERIC  
+,RX_LAYER                      NUMERIC  
+,MODULATION1                   NUMERIC  
+,MODULATION2                   NUMERIC  
+,MODULATION3                   NUMERIC  
+,MODULATION4                   NUMERIC  
+,MODULATION5                   NUMERIC  
+,MODULATION6                   NUMERIC  
+,MODULATION7                   NUMERIC  
+,MODULATION8                   NUMERIC  
+,MODULATION9                   NUMERIC  
+,MODULATION10                  NUMERIC  
+,MODULATION11                  NUMERIC  
+,MODULATION12                  NUMERIC  
+,MODULATION13                  NUMERIC  
+,MODULATION14                  NUMERIC  
+,MODULATION15                  NUMERIC  
+,LAYER1                        NUMERIC  
+,LAYER2                        NUMERIC  
+,LAYER3                        NUMERIC  
+,LAYER4                        NUMERIC  
+,LAYER5                        NUMERIC  
+,LAYER6                        NUMERIC  
+,LAYER7                        NUMERIC  
+,LAYER8                        NUMERIC  
+,LAYER9                        NUMERIC  
+,LAYER10                       NUMERIC  
+,LAYER11                       NUMERIC  
+,LAYER12                       NUMERIC  
+,LAYER13                       NUMERIC  
+,LAYER14                       NUMERIC  
+,LAYER15                       NUMERIC  
+,CODERATE1                     NUMERIC  
+,CODERATE2                     NUMERIC  
+,CODERATE3                     NUMERIC  
+,CODERATE4                     NUMERIC  
+,CODERATE5                     NUMERIC  
+,CODERATE6                     NUMERIC  
+,CODERATE7                     NUMERIC  
+,CODERATE8                     NUMERIC  
+,CODERATE9                     NUMERIC  
+,CODERATE10                    NUMERIC  
+,CODERATE11                    NUMERIC  
+,CODERATE12                    NUMERIC  
+,CODERATE13                    NUMERIC  
+,CODERATE14                    NUMERIC  
+,CODERATE15                    NUMERIC  
+,SNR1                          NUMERIC  
+,SNR2                          NUMERIC  
+,SNR3                          NUMERIC  
+,SNR4                          NUMERIC  
+,SNR5                          NUMERIC  
+,SNR6                          NUMERIC  
+,SNR7                          NUMERIC  
+,SNR8                          NUMERIC  
+,SNR9                          NUMERIC  
+,SNR10                         NUMERIC  
+,SNR11                         NUMERIC  
+,SNR12                         NUMERIC  
+,SNR13                         NUMERIC  
+,SNR14                         NUMERIC  
+,SNR15                         NUMERIC  
+);
+
+--DROP TABLE CELLPLAN.NR_CANDIDATE_PARAMETER;
+CREATE TABLE CELLPLAN.NR_CANDIDATE_PARAMETER
+(
+ SCENARIO_ID                   NUMERIC NOT NULL
+,TARGET_LOS_RATE               NUMERIC  
+,LIMIT_RU_COUNT_BY_LOS_RATE    NUMERIC  
+,LIMIT_RU_COUNT_BY_LTE_RU      NUMERIC  
+,REG_DT                        DATE  
+,CONSTRAINT NR_CANDIDATE_PARAMETER_PK PRIMARY KEY(SCENARIO_ID)
+);
+--DROP TABLE CELLPLAN.NR_CANDIDATE_SITE_INFO;
+CREATE TABLE CELLPLAN.NR_CANDIDATE_SITE_INFO
+(
+ SCENARIO_ID                   NUMERIC  
+,SRC_TYPE                      VARCHAR(10)  
+,POLE_ID                       NUMERIC  
+,BD_SEQ                        NUMERIC  
+,CANDIDATE_RANK                NUMERIC  
+,POLE_XPOS                     NUMERIC  
+,POLE_YPOS                     NUMERIC  
+,BD_XPOS_CENTER                NUMERIC  
+,BD_YPOS_CENTER                NUMERIC  
+,DISTANCE                      NUMERIC  
+,BD_HEIGHT                     NUMERIC  
+,BD_FLOOR_MAX                  NUMERIC  
+,BD_TYPE                       VARCHAR(50)  
+,RU_ID                         VARCHAR(50)  
+,ENB_ID                        NUMERIC  
+,PCI                           NUMERIC  
+,RU_SEQ                        NUMERIC  
+,SECTOR                        NUMERIC  
+,PCI_PORT                      NUMERIC  
+,SITE_NAME                     VARCHAR(250)  
+,SISUL_CD                      VARCHAR(50)  
+,LOS_C                         NUMERIC  
+,LOS_RATE                      NUMERIC  
+,LOS_INC_RATE                  NUMERIC  
+,LOS_DUP_RATE                  NUMERIC  
+,REG_DT                        DATE  
+,UPDATE_DT                     DATE  
+);
+--DROP TABLE CELLPLAN.RU;
+CREATE TABLE CELLPLAN.RU
+(
+ SCENARIO_ID                   NUMERIC NOT NULL
+,ENB_ID                        VARCHAR(10) NOT NULL
+,PCI                           NUMERIC NOT NULL
+,PCI_PORT                      NUMERIC NOT NULL
+,RU_ID                         VARCHAR(48) NOT NULL
+,MAKER                         VARCHAR(30)  
+,SITE_TYPE                     CHAR(18)  
+,PAIR_ENODEB                   NUMERIC  
+,REPEATERATTENUATION           NUMERIC  
+,REPEATERPWRRATIO              NUMERIC  
+,RU_NM                         VARCHAR(100)  
+,FA_SEQ                        NUMERIC NOT NULL
+,SECTOR_ORD                    NUMERIC NOT NULL
+,RU_SEQ                        NUMERIC  
+,RRH_SEQ                       NUMERIC  
+,REG_DT                        DATE  
+,SWING_YN                      NUMERIC  
+,ANT_CHK_YN                    NUMERIC  
+,TILT_YN                       NUMERIC  
+,FA_SEQ_ORG                    NUMERIC  
+,CONSTRAINT RU_PK PRIMARY KEY(SCENARIO_ID,ENB_ID,PCI,PCI_PORT,RU_ID,FA_SEQ,SECTOR_ORD)
+);
+--DROP TABLE CELLPLAN.RU_ANTENA;
+CREATE TABLE CELLPLAN.RU_ANTENA
+(
+ SCENARIO_ID                   NUMERIC NOT NULL
+,ENB_ID                        VARCHAR(10) NOT NULL
+,PCI                           NUMERIC NOT NULL
+,PCI_PORT                      NUMERIC NOT NULL
+,RU_NM                         VARCHAR(100) NOT NULL
+,ANTENA_NM                     VARCHAR(100) NOT NULL
+,ORIENTATION                   NUMERIC  
+,TILTING                       NUMERIC  
+,ANTENA_ORD                    NUMERIC NOT NULL
+,RU_ID                         VARCHAR(48) NOT NULL
+,ANTENA_SEQ                    NUMERIC  
+,REG_DT                        DATE  
+,ANTENA_STANDARD_NM            VARCHAR(100)  
+,ET_TILTING                    NUMERIC  
+,USER_TILTING                  NUMERIC  
+,LIMIT_TILTING                 NUMERIC  
+,RET_ID                        VARCHAR(50)  
+,CONSTRAINT RU_ANTENA_PK PRIMARY KEY(SCENARIO_ID,ENB_ID,PCI,PCI_PORT,ANTENA_NM,ANTENA_ORD,RU_ID)
+);
+--DROP TABLE CELLPLAN.SCENARIO;
+CREATE TABLE CELLPLAN.SCENARIO
+(
+ SCENARIO_ID                   NUMERIC NOT NULL
+,SCENARIO_NM                   VARCHAR(200)  
+,USER_ID                       VARCHAR(13)  
+,SYSTEM_ID                     NUMERIC  
+,NETWORK_TYPE                  NUMERIC  
+,SIDO_CD                       VARCHAR(10)  
+,SIGUGUN_CD                    VARCHAR(10)  
+,DONG_CD                       VARCHAR(10)  
+,SIDO                          VARCHAR(30)  
+,SIGUGUN                       VARCHAR(30)  
+,DONG                          VARCHAR(30)  
+,STARTX                        NUMERIC  
+,STARTY                        NUMERIC  
+,ENDX                          NUMERIC  
+,ENDY                          NUMERIC  
+,FA_MODEL_ID                   NUMERIC  
+,FA_SEQ                        NUMERIC  
+,SCENARIO_DESC                 VARCHAR(500)  
+,USE_BUILDING                  NUMERIC  
+,USE_MULTIFA                   NUMERIC  
+,PRECISION                     NUMERIC  
+,PWRCTRLCHECKPOINT             NUMERIC  
+,MAXITERATIONPWRCTRL           NUMERIC  
+,RESOLUTION                    NUMERIC  
+,MODEL_RADIUS                  NUMERIC  
+,REG_DT                        DATE  
+,MODIFY_DT                     DATE  
+,UPPER_SCENARIO_ID             NUMERIC  
+,FLOORBUILDING                 NUMERIC  
+,FLOOR                         NUMERIC  
+,FLOORLOSS                     NUMERIC  
+,SCENARIO_SUB_ID               NUMERIC  
+,SCENARIO_SOLUTION_NUM         NUMERIC  
+,LOSS_TYPE                     NUMERIC  
+,RU_CNT                        NUMERIC  
+,MODIFY_YN                     CHAR(1)  
+,BATCH_YN                      CHAR(1)  
+,TM_STARTX                     NUMERIC  
+,TM_STARTY                     NUMERIC  
+,TM_ENDX                       NUMERIC  
+,TM_ENDY                       NUMERIC  
+,REAL_DATE                     VARCHAR(10)  
+,REAL_DRM_FILE                 VARCHAR(100)  
+,REAL_COMP                     VARCHAR(16)  
+,REAL_CATT                     VARCHAR(10)  
+,REAL_CATY                     VARCHAR(1)  
+,BLD_TYPE                      VARCHAR(20)  
+,RET_PERIOD                    NUMERIC  
+,RET_END_DATETIME              VARCHAR(10)  
+,BUILDINGANALYSIS3D_YN         VARCHAR(1)  
+,BUILDINGANALYSIS3D_RESOLUTION NUMERIC  
+,AREA_ID                       NUMERIC  
+,BUILDINGANALYSIS3D_RELATED_YN VARCHAR(1)  
+,RELATED_ANALYSIS_COVLIMITRSRP NUMERIC  
+,CONSTRAINT SCENARIO_PK PRIMARY KEY(SCENARIO_ID)
+);
+--DROP TABLE CELLPLAN.SCHEDULE;
+CREATE TABLE CELLPLAN.SCHEDULE
+(
+ SCHEDULE_ID                   NUMERIC NOT NULL
+,TYPE_CD                       VARCHAR(10)  
+,SCENARIO_ID                   NUMERIC NOT NULL
+,USER_ID                       VARCHAR(13) NOT NULL
+,PRIORITIZE                    VARCHAR(20)  
+,PROCESS_CD                    VARCHAR(20)  
+,PROCESS_MSG                   VARCHAR(1500)  
+,SCENARIO_PATH                 VARCHAR(256)  
+,REG_DT                        DATE  
+,MODIFY_DT                     DATE  
+,RETRY_CNT                     NUMERIC  
+,SERVER_ID                     VARCHAR(10)  
+,BIN_X_CNT                     NUMERIC  
+,BIN_Y_CNT                     NUMERIC  
+,RU_CNT                        NUMERIC  
+,ANALYSIS_WEIGHT               NUMERIC  
+,PHONE_NO                      VARCHAR(12)  
+,RESULT_TIME                   NUMERIC  
+,TILT_PROCESS_TYPE             NUMERIC  
+,GEOMETRYQUERY_SCHEDULE_ID     NUMERIC  
+,RESULT_BIT                    CHAR(8)  
+,INTERWORKING_INFO             VARCHAR(200)  
+,CONSTRAINT SCHEDULE_PK PRIMARY KEY(SCHEDULE_ID,USER_ID)
+);
+--DROP TABLE CELLPLAN.SECTOR;
+CREATE TABLE CELLPLAN.SECTOR
+(
+ SCENARIO_ID                   NUMERIC NOT NULL
+,ENB_ID                        VARCHAR(20) NOT NULL
+,PCI                           NUMERIC NOT NULL
+,SECTOR_STATUS                 NUMERIC  
+,SECTOR_TYPE                   NUMERIC  
+,SECTOR_ORD                    NUMERIC NOT NULL
+,BTS                           NUMERIC  
+,FA_SEQ                        NUMERIC  
+,CONSTRAINT SECTOR_PK PRIMARY KEY(SCENARIO_ID,ENB_ID,PCI,SECTOR_ORD)
+);
+--DROP TABLE CELLPLAN.SITE;
+CREATE TABLE CELLPLAN.SITE
+(
+ SCENARIO_ID                   NUMERIC  
+,ENB_ID                        VARCHAR(10)  
+,PCI                           NUMERIC  
+,PCI_PORT                      NUMERIC  
+,SITE_NM                       VARCHAR(100)  
+,XPOSITION                     VARCHAR(40)  
+,YPOSITION                     VARCHAR(40)  
+,HEIGHT                        NUMERIC  
+,BLT_HEIGHT                    NUMERIC  
+,TOWER_HEIGHT                  NUMERIC  
+,SITE_ADDR                     VARCHAR(500)  
+,TYPE                          VARCHAR(10)  
+,CORRECTION_VALUE              NUMERIC  
+,FEEDER_LOSS                   NUMERIC  
+,FADE_MARGIN                   NUMERIC  
+,STATUS                        VARCHAR(10)  
+,MSC                           NUMERIC  
+,BSC                           NUMERIC  
+,NETWORKID                     NUMERIC  
+,USABLETRAFFICCH               NUMERIC  
+,SYSTEMID                      NUMERIC  
+,STRYPOS                       VARCHAR(20)  
+,STRXPOS                       VARCHAR(20)  
+,ATTENUATION                   NUMERIC  
+,SITE_GUBUN                    VARCHAR(10)  
+,RU_ID                         VARCHAR(48)  
+,RADIUS                        NUMERIC  
+,NOISEFLOOR                    NUMERIC  
+,FA_SEQ                        VARCHAR(20)  
+,RU_TYPE                       NUMERIC  
+,REG_DT                        DATE  
+,SISUL_CD                      VARCHAR(50)  
+,TM_XPOSITION                  VARCHAR(40)  
+,TM_YPOSITION                  VARCHAR(40)  
+,RU_DIV_CD                     NUMERIC  
+);
+--DROP TABLE CELLPLAN.SITE_DRAW_OPTION;
+CREATE TABLE CELLPLAN.SITE_DRAW_OPTION
+(
+ COLOR_SECTOR                  VARCHAR(30)  
+,COLOR_RU_LINE                 VARCHAR(30)  
+,DRAW_DU_SYMBOL                VARCHAR(10)  
+,DRAW_RU_SYMBOL                VARCHAR(10)  
+,DRAW_DU_NAME                  VARCHAR(50)  
+,DRAW_RU_NAME                  VARCHAR(50)  
+,DRAW_DU_SECTOR                VARCHAR(10)  
+,DRAW_SECTOR_CELLID            VARCHAR(10)  
+,DRAW_SECTOR_FA                VARCHAR(10)  
+,DRAW_DU_LINE                  VARCHAR(10)  
+,LINE_WIDTH                    VARCHAR(10)  
+,SCENARIO_ID                   NUMERIC  
+,USER_ID                       VARCHAR(13)  
+,REG_DT                        DATE  
+,PAIR_RU_SITE                  VARCHAR(30)  
+,PAIR_RU_SECTOR                VARCHAR(30)  
+,COLOR_SITE                    VARCHAR(30)  
+,PCI_NAME                      VARCHAR(20)  
+,MODE3_NAME                    VARCHAR(20)  
+,COLOR_SECTOR_B                VARCHAR(20)  
+,COLOR_BRANCH                  VARCHAR(20)  
+,COLOR_MODE1                   VARCHAR(20)  
+,COLOR_MODE2                   VARCHAR(20)  
+,COLOR_MODE3                   VARCHAR(20)  
+,MIBOS_COLOR_SECTOR            VARCHAR(20)  
+,MIBOS_COLOR_SITE              VARCHAR(20)  
+,MIBOS_COLOR_SECTOR_B          VARCHAR(20)  
+,MIBOS_COLOR_BRANCH            VARCHAR(20)  
+,MIBOS_COLOR_MODE1             VARCHAR(20)  
+,MIBOS_COLOR_MODE2             VARCHAR(20)  
+,MIBOS_COLOR_MODE3             VARCHAR(20)  
+,COLOR_MIBOS_RU_LINE           VARCHAR(20)  
+,FONT_SIZE                     NUMERIC  
+);
+--DROP TABLE CELLPLAN.SWING_PARAMETER;
+CREATE TABLE CELLPLAN.SWING_PARAMETER
+(
+ SCENARIO_ID                   NUMERIC NOT NULL
+,TARGET_PT_X                   NUMERIC  
+,TARGET_PT_Y                   NUMERIC  
+,TARGET_RADIUS                 NUMERIC  
+,TARGET_EXT_RADIUS             NUMERIC  
+,ONLY_TILT_SOLUTION_YN         NUMERIC  
+,BUILDING_WEIGHT_YN            NUMERIC  
+,ANTENNA_ANALYSIS_YN           NUMERIC  
+,MAX_BUILDING_YN               NUMERIC  
+,STATISTICS_AREA_YN            NUMERIC  
+,SWING_NORMAL_YN               NUMERIC  
+,SWING_RSRP_YN                 NUMERIC  
+,SWING_SINR_YN                 NUMERIC  
+,SWING_SERVING_YN              NUMERIC  
+,SWING_ITERATION_TYPE          NUMERIC  
+,SWING_ITERATION               NUMERIC  
+,CANDIDATE_ANTENNA_1           VARCHAR(250)  
+,CANDIDATE_ANTENNA_2           VARCHAR(250)  
+,CANDIDATE_ANTENNA_3           VARCHAR(250)  
+,MAX_ORIENTATION               NUMERIC  
+,ORIENTATION_RADIUS            NUMERIC  
+,MAX_BUILDING_HEIGHT           NUMERIC  
+,MAX_TILT_WIDTH                NUMERIC  
+,RSRP_THRESHOLD                NUMERIC  
+,SINR_THRESHOLD                NUMERIC  
+,SWING_THRESHOLD               NUMERIC  
+,OFFSET_RSRP                   NUMERIC  
+,OFFSET_SINR                   NUMERIC  
+,OFFSET_RSRP_RSRP              NUMERIC  
+,OFFSET_RSRP_SINR              NUMERIC  
+,OFFSET_SINR_RSRP              NUMERIC  
+,OFFSET_SINR_SINR              NUMERIC  
+,TILT_SOLUTION_YN              NUMERIC  
+,TILT_SOLUTION_TYPE            NUMERIC  
+,ORG_TILT_SOLUTION_YN          NUMERIC  
+,TILT_NORMAL_YN                NUMERIC  
+,TILT_SINR_YN                  NUMERIC  
+,TILT_RSSI_YN                  NUMERIC  
+,FINE_TILT_THRESHOLD           NUMERIC  
+,START_TIME                    VARCHAR(20)  
+,END_TIME                      VARCHAR(20)  
+,ORG_BIN_THRESHOLD             NUMERIC  
+,SERVING_OFFSET_RSRP           NUMERIC  
+,SERVING_OFFSET_SINR           NUMERIC  
+,SERVING_OFFSET_BIN            NUMERIC  
+,SERVING_BIN_ANALYSIS          NUMERIC  
+,MULTIBAND_SWING_TYPE          NUMERIC  
+,MULTIBAND_SPOT_USE_YN         VARCHAR(1)  
+,MULTIBAND_SPOT_SIZE           NUMERIC  
+,MULTIBAND_SPOT_RANGE          NUMERIC  
+,MULTIBAND_SPOT_RU_CNT         NUMERIC  
+,MULTIBAND_2ND_METHOD          NUMERIC  
+,MULTIBAND_2ND_SITE_LIMIT      NUMERIC  
+,MULTIBAND_2ND_SITE_AUTO       VARCHAR(1)  
+,SERVING_BIN_THRESHOLD         NUMERIC  
+,APT_ANALYSIS_YN               VARCHAR(1)  
+,CONSTRAINT SWING_PARAMETER_PK PRIMARY KEY(SCENARIO_ID)
+);
+--DROP TABLE CELLPLAN.TILT_BUILDING_DENSITY;
+CREATE TABLE CELLPLAN.TILT_BUILDING_DENSITY
+(
+ SCENARIO_ID                   NUMERIC NOT NULL
+,TILT_BH_6_DIS_10              NUMERIC  
+,TILT_BH_6_DIS_20              NUMERIC  
+,TILT_BH_6_DIS_30              NUMERIC  
+,TILT_BH_6_DIS_40              NUMERIC  
+,TILT_BH_6_DIS_50              NUMERIC  
+,TILT_BH_6_DIS_60              NUMERIC  
+,TILT_BH_6_DIS_60A             NUMERIC  
+,TILT_BH_9_DIS_10              NUMERIC  
+,TILT_BH_9_DIS_20              NUMERIC  
+,TILT_BH_9_DIS_30              NUMERIC  
+,TILT_BH_9_DIS_40              NUMERIC  
+,TILT_BH_9_DIS_50              NUMERIC  
+,TILT_BH_9_DIS_60              NUMERIC  
+,TILT_BH_9_DIS_60A             NUMERIC  
+,TILT_BH_12_DIS_10             NUMERIC  
+,TILT_BH_12_DIS_20             NUMERIC  
+,TILT_BH_12_DIS_30             NUMERIC  
+,TILT_BH_12_DIS_40             NUMERIC  
+,TILT_BH_12_DIS_50             NUMERIC  
+,TILT_BH_12_DIS_60             NUMERIC  
+,TILT_BH_12_DIS_60A            NUMERIC  
+,TILT_BH_15_DIS_10             NUMERIC  
+,TILT_BH_15_DIS_20             NUMERIC  
+,TILT_BH_15_DIS_30             NUMERIC  
+,TILT_BH_15_DIS_40             NUMERIC  
+,TILT_BH_15_DIS_50             NUMERIC  
+,TILT_BH_15_DIS_60             NUMERIC  
+,TILT_BH_15_DIS_60A            NUMERIC  
+,TILT_BH_20_DIS_10             NUMERIC  
+,TILT_BH_20_DIS_20             NUMERIC  
+,TILT_BH_20_DIS_30             NUMERIC  
+,TILT_BH_20_DIS_40             NUMERIC  
+,TILT_BH_20_DIS_50             NUMERIC  
+,TILT_BH_20_DIS_60             NUMERIC  
+,TILT_BH_20_DIS_60A            NUMERIC  
+,TILT_BH_20A_DIS_10            NUMERIC  
+,TILT_BH_20A_DIS_20            NUMERIC  
+,TILT_BH_20A_DIS_30            NUMERIC  
+,TILT_BH_20A_DIS_40            NUMERIC  
+,TILT_BH_20A_DIS_50            NUMERIC  
+,TILT_BH_20A_DIS_60            NUMERIC  
+,TILT_BH_20A_DIS_60A           NUMERIC  
+,REG_DT                        DATE  
+,CONSTRAINT TILT_BUILDING_DENSITY_PK PRIMARY KEY(SCENARIO_ID)
+);
+--DROP TABLE CELLPLAN.TILT_BUILDING_DENSITY_BK;
+CREATE TABLE CELLPLAN.TILT_BUILDING_DENSITY_BK
+(
+ SCENARIO_ID                   NUMERIC NOT NULL
+,BA_TOP_80                     NUMERIC  
+,BA_TOP_70                     NUMERIC  
+,BA_TOP_60                     NUMERIC  
+,BA_TOP_50                     NUMERIC  
+,BA_TOP_40                     NUMERIC  
+,BA_TOP_30                     NUMERIC  
+,BA_TOP_20                     NUMERIC  
+,BA_TOP_0                      NUMERIC  
+,BA_MID_80                     NUMERIC  
+,BA_MID_70                     NUMERIC  
+,BA_MID_60                     NUMERIC  
+,BA_MID_50                     NUMERIC  
+,BA_MID_40                     NUMERIC  
+,BA_MID_30                     NUMERIC  
+,BA_MID_20                     NUMERIC  
+,BA_MID_0                      NUMERIC  
+,BA_BOT_80                     NUMERIC  
+,BA_BOT_70                     NUMERIC  
+,BA_BOT_60                     NUMERIC  
+,BA_BOT_50                     NUMERIC  
+,BA_BOT_40                     NUMERIC  
+,BA_BOT_30                     NUMERIC  
+,BA_BOT_20                     NUMERIC  
+,BA_BOT_0                      NUMERIC  
+,REG_DT                        DATE  
+,CONSTRAINT TILT_BUILDING_DENSITY_BK_PK PRIMARY KEY(SCENARIO_ID)
+);
+--DROP TABLE CELLPLAN.TILT_NR_ANT_LIST;
+CREATE TABLE CELLPLAN.TILT_NR_ANT_LIST
+(
+ SCENARIO_ID                   NUMERIC NOT NULL
+,ANTENA_SEQ                    NUMERIC NOT NULL
+,ANTENA_NM                     VARCHAR(150)  
+,ANTENA_STANDARD_NM            VARCHAR(150)  
+,DEF_TILT                      NUMERIC  
+,REG_DT                        DATE  
+,CONSTRAINT TILT_NR_ANT_LIST_PK PRIMARY KEY(SCENARIO_ID,ANTENA_SEQ)
+);
+--DROP TABLE CELLPLAN.TILT_NR_PARAMETER;
+CREATE TABLE CELLPLAN.TILT_NR_PARAMETER
+(
+ SCENARIO_ID                   NUMERIC NOT NULL
+,ANT_MAKER                     VARCHAR(50)  
+,ANT_TYPE                      VARCHAR(20)  
+,BASE_SCENARIO_TYPE            NUMERIC  
+,ANT_BEAM_OPTIMIZE_YN          VARCHAR(1)  
+,E_TILT_OPTIMIZE_YN            VARCHAR(1)  
+,E_TILT_TYPE                   VARCHAR(2)  
+,USER_DEFINED_E_TILT           VARCHAR(1000)  
+,M_TILT_TYPE                   VARCHAR(2)  
+,USER_DEFINED_M_TILT           VARCHAR(1000)  
+,REG_DT                        DATE  
+,CONSTRAINT TILT_NR_PARAMETER_PK PRIMARY KEY(SCENARIO_ID)
+);
+--DROP TABLE CELLPLAN.TILT_RUNRESULT;
+CREATE TABLE CELLPLAN.TILT_RUNRESULT
+(
+ SCENARIO_ID                   VARCHAR(20)  
+,SCENARIO_NM                   VARCHAR(100)  
+,SITE_NM                       VARCHAR(256)  
+,SITE_ID                       VARCHAR(100)  
+,SITE_TYPE                     NUMERIC  
+,ENB_ID                        VARCHAR(20)  
+,PCI                           NUMERIC  
+,PCI_PORT                      NUMERIC  
+,RU_ID                         VARCHAR(20)  
+,ANTENNA_NM                    VARCHAR(300)  
+,ANT_ID                        NUMERIC  
+,ORIENTATION                   NUMERIC  
+,TILTING                       NUMERIC  
+,POINTX                        NUMERIC  
+,POINTY                        NUMERIC  
+,SITE_POSX                     NUMERIC  
+,SITE_POSY                     NUMERIC  
+,ADJSITE_NM                    VARCHAR(256)  
+,ADJSITE_ID                    VARCHAR(256)  
+,HEIGHT                        NUMERIC  
+,BUILDING_HEIGHT               NUMERIC  
+,TOWER_HEIGHT                  NUMERIC  
+,ADJSITE_HEIGHT                NUMERIC  
+,DISTANCE                      NUMERIC  
+,POINT_DISTANCE                NUMERIC  
+,TILT_TYPE                     VARCHAR(20)  
+,ANTENNA_SEQ                   NUMERIC  
+);
+--DROP TABLE CELLPLAN.TILT_SCENARIO_EVO;
+CREATE TABLE CELLPLAN.TILT_SCENARIO_EVO
+(
+ SCENARIO_ID                   NUMERIC  
+,SCENARIO_NM                   VARCHAR(100)  
+,DIST_STANDARD                 NUMERIC  
+,RADIUS                        NUMERIC  
+,TILT1                         NUMERIC  
+,TILT2                         NUMERIC  
+,TILT3                         NUMERIC  
+,TILT4                         NUMERIC  
+,TILT5                         NUMERIC  
+,TILT6                         NUMERIC  
+,TILT7                         NUMERIC  
+,TILT8                         NUMERIC  
+,TILT9                         NUMERIC  
+,TILT10                        NUMERIC  
+,MCFIX                         NUMERIC  
+,TILT_ANGLE                    NUMERIC  
+,THRESHOLDRSSI1                NUMERIC  
+,THRESHOLDRSSI2                NUMERIC  
+,THRESHOLDRSSI3                NUMERIC  
+,DIFFRACTION_LOSS              NUMERIC  
+,SAMPLING_INTERVAL             NUMERIC  
+,MIN_DISTANCE                  NUMERIC  
+,TILT_PCI                      NUMERIC  
+,TILT_HEIGHT_10                NUMERIC  
+,TILT_HEIGHT_20                NUMERIC  
+,TILT_HEIGHT_30                NUMERIC  
+,TILT_HEIGHT_40                NUMERIC  
+,TILT_IN_ANGLE_A_65            NUMERIC  
+,TILT_IN_ANGLE_A_100           NUMERIC  
+,TILT_IN_ANGLE_A_140           NUMERIC  
+,TILT_IN_ANGLE_A_180           NUMERIC  
+,TILT_IN_ANGLE_B_65            NUMERIC  
+,TILT_IN_ANGLE_B_100           NUMERIC  
+,TILT_IN_ANGLE_B_140           NUMERIC  
+,TILT_POWER                    NUMERIC  
+,TILT_GAIN                     NUMERIC  
+,TILT_DIST_100_UD              NUMERIC  
+,TILT_DIST_150_UD              NUMERIC  
+,TILT_DIST_200_UD              NUMERIC  
+,TILT_DIST_250_UD              NUMERIC  
+,TILT_DIST_300_UD              NUMERIC  
+,TILT_DIST_350_UD              NUMERIC  
+,TILT_DIST_400_UD              NUMERIC  
+,TILT_DIST_450_UD              NUMERIC  
+,TILT_DIST_500_UD              NUMERIC  
+,TILT_DIST_550_UD              NUMERIC  
+,TILT_DIST_600_UD              NUMERIC  
+,TILT_DIST_600_OV              NUMERIC  
+,TILT_ADDED                    NUMERIC  
+,TILT_HEIGHT_10_UD             NUMERIC  
+,TILT_ANTENNA_01               NUMERIC  
+,TILT_ANTENNA_02               NUMERIC  
+,TILT_ANTENNA_03               NUMERIC  
+,TILT_LIMIT_ELEV_A_1           NUMERIC  
+,TILT_ELEV_A_1                 NUMERIC  
+,TILT_LIMIT_ELEV_A_2           NUMERIC  
+,TILT_ELEV_A_2                 NUMERIC  
+,TILT_LIMIT_ELEV_A_3           NUMERIC  
+,TILT_ELEV_A_3                 NUMERIC  
+,TILT_LIMIT_ELEV_A_4           NUMERIC  
+,TILT_ELEV_A_4                 NUMERIC  
+,TILT_LIMIT_ELEV_B_1           NUMERIC  
+,TILT_ELEV_B_1                 NUMERIC  
+,TILT_LIMIT_ELEV_B_2           NUMERIC  
+,TILT_ELEV_B_2                 NUMERIC  
+,TILT_LIMIT_ELEV_B_3           NUMERIC  
+,TILT_ELEV_B_3                 NUMERIC  
+,TILT_LIMIT_ELEV_B_4           NUMERIC  
+,TILT_ELEV_B_4                 NUMERIC  
+,TILT_BEAM_HEIGHT_10_UD        NUMERIC  
+,TILT_BEAM_HEIGHT_10           NUMERIC  
+,TILT_BEAM_HEIGHT_20           NUMERIC  
+,TILT_BEAM_HEIGHT_30           NUMERIC  
+,TILT_BEAM_HEIGHT_40           NUMERIC  
+);
+--DROP TABLE CELLPLAN.TILT_SCENARIO_FINE;
+CREATE TABLE CELLPLAN.TILT_SCENARIO_FINE
+(
+ SCENARIO_ID                   NUMERIC  
+,SCENARIO_NM                   VARCHAR(100)  
+,DIST_STANDARD                 NUMERIC  
+,RADIUS                        NUMERIC  
+,TILT1                         NUMERIC  
+,TILT2                         NUMERIC  
+,TILT3                         NUMERIC  
+,TILT4                         NUMERIC  
+,TILT5                         NUMERIC  
+,TILT6                         NUMERIC  
+,TILT7                         NUMERIC  
+,TILT8                         NUMERIC  
+,TILT9                         NUMERIC  
+,TILT10                        NUMERIC  
+,MCFIX                         NUMERIC  
+,TILT_ANGLE                    NUMERIC  
+,THRESHOLDRSSI1                NUMERIC  
+,THRESHOLDRSSI2                NUMERIC  
+,THRESHOLDRSSI3                NUMERIC  
+,DIFFRACTION_LOSS              NUMERIC  
+,SAMPLING_INTERVAL             NUMERIC  
+,MIN_DISTANCE                  NUMERIC  
+,TILT_PCI                      NUMERIC  
+,TILT_HEIGHT_10_UD             NUMERIC  
+,TILT_HEIGHT_10                NUMERIC  
+,TILT_HEIGHT_20                NUMERIC  
+,TILT_HEIGHT_30                NUMERIC  
+,TILT_HEIGHT_40                NUMERIC  
+,TILT_IN_ANGLE_A_65            NUMERIC  
+,TILT_IN_ANGLE_A_100           NUMERIC  
+,TILT_IN_ANGLE_A_140           NUMERIC  
+,TILT_IN_ANGLE_A_180           NUMERIC  
+,TILT_IN_ANGLE_B_65            NUMERIC  
+,TILT_IN_ANGLE_B_100           NUMERIC  
+,TILT_IN_ANGLE_B_140           NUMERIC  
+,TILT_POWER                    NUMERIC  
+,TILT_GAIN                     NUMERIC  
+,TILT_DIST_100_UD              NUMERIC  
+,TILT_DIST_150_UD              NUMERIC  
+,TILT_DIST_200_UD              NUMERIC  
+,TILT_DIST_250_UD              NUMERIC  
+,TILT_DIST_300_UD              NUMERIC  
+,TILT_DIST_350_UD              NUMERIC  
+,TILT_DIST_400_UD              NUMERIC  
+,TILT_DIST_450_UD              NUMERIC  
+,TILT_DIST_500_UD              NUMERIC  
+,TILT_DIST_550_UD              NUMERIC  
+,TILT_DIST_600_UD              NUMERIC  
+,TILT_DIST_600_OV              NUMERIC  
+,TILT_ANTENNA_01               NUMERIC  
+,TILT_ANTENNA_02               NUMERIC  
+,TILT_ANTENNA_03               NUMERIC  
+,TILT_ADDED                    NUMERIC  
+,TILT_LIMIT_ELEV_A_1           NUMERIC  
+,TILT_ELEV_A_1                 NUMERIC  
+,TILT_LIMIT_ELEV_A_2           NUMERIC  
+,TILT_ELEV_A_2                 NUMERIC  
+,TILT_LIMIT_ELEV_A_3           NUMERIC  
+,TILT_ELEV_A_3                 NUMERIC  
+,TILT_LIMIT_ELEV_A_4           NUMERIC  
+,TILT_ELEV_A_4                 NUMERIC  
+,TILT_LIMIT_ELEV_B_1           NUMERIC  
+,TILT_ELEV_B_1                 NUMERIC  
+,TILT_LIMIT_ELEV_B_2           NUMERIC  
+,TILT_ELEV_B_2                 NUMERIC  
+,TILT_LIMIT_ELEV_B_3           NUMERIC  
+,TILT_ELEV_B_3                 NUMERIC  
+,TILT_LIMIT_ELEV_B_4           NUMERIC  
+,TILT_ELEV_B_4                 NUMERIC  
+,TILT_BEAM_HEIGHT_10_UD        NUMERIC  
+,TILT_BEAM_HEIGHT_10           NUMERIC  
+,TILT_BEAM_HEIGHT_20           NUMERIC  
+,TILT_BEAM_HEIGHT_30           NUMERIC  
+,TILT_BEAM_HEIGHT_40           NUMERIC  
+);
+--DROP TABLE CELLPLAN.TILT_TARGET_INFO;
+CREATE TABLE CELLPLAN.TILT_TARGET_INFO
+(
+ SCENARIO_ID                   VARCHAR(20)  
+,MAIN_ENB_ID                   VARCHAR(20)  
+,MAIN_PCI                      NUMERIC  
+,MAIN_PCI_PORT                 NUMERIC  
+,MAIN_RU_ID                    VARCHAR(20)  
+,MAIN_RU_NM                    VARCHAR(150)  
+,MAIN_ANTENNA_CNT              NUMERIC  
+,MAIN_ANTENNA_ORD              NUMERIC  
+,MAIN_ANTENNA_ID               NUMERIC  
+,MAIN_ANTENNA_GAIN             NUMERIC  
+,MAIN_POWER                    NUMERIC  
+,MAIN_DONOR_SITE_NAME          VARCHAR(150)  
+,MAIN_DONOR_ENB_ID             VARCHAR(20)  
+,MAIN_DONOR_SECTOR_ID          NUMERIC  
+,MAIN_HEIGHT                   NUMERIC  
+,MAIN_INSIDE_ANGLE             NUMERIC  
+,TARGET_ENB_ID                 VARCHAR(20)  
+,TARGET_PCI                    NUMERIC  
+,TARGET_PCI_PORT               NUMERIC  
+,TARGET_RU_ID                  VARCHAR(20)  
+,TARGET_RU_NM                  VARCHAR(150)  
+,TARGET_ANTENNA_CNT            NUMERIC  
+,TARGET_ANTENNA_ORD            NUMERIC  
+,TARGET_ANTENNA_ID             NUMERIC  
+,TARGET_ANTENNA_GAIN           NUMERIC  
+,TARGET_POWER                  NUMERIC  
+,TARGET_DONOR_SITE_NAME        VARCHAR(150)  
+,TARGET_DONOR_ENB_ID           VARCHAR(20)  
+,TARGET_DONOR_SECTOR_ID        NUMERIC  
+,TARGET_INSIDE_ANGLE           NUMERIC  
+,IS_CROSS_ANGLE                NUMERIC  
+,INSIDE_ANGLE                  NUMERIC  
+,DIFF_POWER                    NUMERIC  
+,DIFF_GAIN                     NUMERIC  
+,DISTANCE                      NUMERIC  
+,PCI_ADJ                       NUMERIC  
+,HEIGHT_ADJ                    NUMERIC  
+,INSIDE_ANGLE_ADJ              NUMERIC  
+,POWER_ADJ                     NUMERIC  
+,GAIN_ADJ                      NUMERIC  
+,DIST_ADJ                      NUMERIC  
+,ANTENNA_ADJ                   NUMERIC  
+,ADDED_ADJ                     NUMERIC  
+,ELEVATION_ADJ                 NUMERIC  
+,BEAM_HEIGHT_ADJ               NUMERIC  
+,TILT_ORD                      NUMERIC  
+,TILT_BASE                     NUMERIC  
+);
