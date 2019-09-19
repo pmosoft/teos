@@ -1,52 +1,67 @@
-package net.pmosoft.pony.comm.db;
+package com.sccomz.java.comm.db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.util.Map;
-
-import net.pmosoft.pony.dams.jdbc.JdbcInfo;
-
 
 public class DbCon {
+	
+	public JdbcInfo jdbcInfo = new JdbcInfo();
+	public Connection conn = null;
+	
+	public DbCon(String jdbcNm){
+		if(jdbcNm.contains("oraDev")){
+			this.jdbcInfo = oraDevInfo();
+		}
 
-    public Connection conn = null;
-
-    public Connection getConnection(String dbDriver,String dbConn,String dbUser,String dbPassword) {
+	}
+	
+    public Connection getConnection() {
         try {
-            Class.forName(dbDriver);
-            conn = DriverManager.getConnection(dbConn,dbUser,dbPassword);
+            Class.forName(jdbcInfo.getDriver());
+            conn = DriverManager.getConnection(jdbcInfo.getUrl(),jdbcInfo.getUsrId(),jdbcInfo.getUsrPw());
         } catch (Exception e) {
             e.printStackTrace();
         } finally {            
         }
- 
         return conn;
-    }
+    }  
 
-    public Connection getConnection(Map<String,String> params) {
-        
-        System.out.println("getConnection(params)="+params);
-        try {
-            if(params.get("dbType").equals("SQLITE")){
-                conn = DriverManager.getConnection(params.get("dbConn"));
-            } else {
-                Class.forName(params.get("dbDriver"));
-                conn = DriverManager.getConnection(params.get("dbConn"),params.get("dbUser"),params.get("dbPassword"));
-            }        
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {            
-        }
- 
-        return conn;
-    }
-    
-    public Map<String,String> oraDevInfo(){
+    public JdbcInfo oraDevInfo(){
+    	
+    	JdbcInfo jdbcInfo = new JdbcInfo();
+    	
+    	jdbcInfo.setJdbcNm("oraDev");
+        jdbcInfo.setDriver("oracle");
+    	jdbcInfo.setUrl("jdbc:log4jdbc:oracle:thin:@localhost:9951/IAMLTE");
+    	jdbcInfo.setUsrId("cellplan");
+        jdbcInfo.setUsrPw("cell_2012");
+
+    	return jdbcInfo;    	
     	
     }
     
-    public Map<String,String> oraOpInfo(){
+    public JdbcInfo oraLocalInfo(){
+    	JdbcInfo jdbcInfo = new JdbcInfo();
     	
+    	jdbcInfo.setJdbcNm("oraLocal");
+        jdbcInfo.setDriver("oracle");
+    	jdbcInfo.setUrl("jdbc:log4jdbc:oracle:thin:@localhost:9951/IAMLTE");
+    	jdbcInfo.setUsrId("cellplan");
+        jdbcInfo.setUsrPw("cell_2012");
+
+    	return jdbcInfo;    	
+    }
+    
+    public JdbcInfo postDevInfo(){
+    	JdbcInfo jdbcInfo = new JdbcInfo();
+    	
+    	jdbcInfo.setJdbcNm("postLocal");
+        jdbcInfo.setDriver("postgre");
+    	jdbcInfo.setUrl("jdbc:log4jdbc:postgresql://localhost:5432/cellplan");
+    	jdbcInfo.setUsrId("cellplan");
+        jdbcInfo.setUsrPw("cell_2012");
+
+    	return jdbcInfo;    	
     }
     
 }

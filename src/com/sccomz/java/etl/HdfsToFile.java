@@ -1,6 +1,7 @@
-package com.sccomz.java.sql;
+package com.sccomz.java.etl;
 
-public class RealJob {
+
+public class HdfsToFile {
 
     public static void main(String[] args) {
     	

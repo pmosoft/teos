@@ -1,6 +1,6 @@
-package com.sccomz.java.sql;
+package com.sccomz.java.etl;
 
-public class RealJob {
+public class OraToHdfs {
 
     public static void main(String[] args) {
     	
