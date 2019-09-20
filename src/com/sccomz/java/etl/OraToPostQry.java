@@ -1,6 +1,6 @@
-package com.sccomz.java.schedule.control;
+package com.sccomz.java.etl;
 
-public class RealJobQry {
+public class OraToPostQry {
 
 	/*
 	 * 분석요청(10001)중인 스케쥴 정보를 조회한다.

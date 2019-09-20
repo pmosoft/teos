@@ -11,8 +11,9 @@ public class DbCon {
 	public DbCon(String jdbcNm){
 		if(jdbcNm.contains("oraDev")){
 			this.jdbcInfo = oraDevInfo();
+		} else if(jdbcNm.contains("postDev")){
+			this.jdbcInfo = postDevInfo();
 		}
-
 	}
 	
     public Connection getConnection() {
@@ -31,8 +32,8 @@ public class DbCon {
     	JdbcInfo jdbcInfo = new JdbcInfo();
     	
     	jdbcInfo.setJdbcNm("oraDev");
-        jdbcInfo.setDriver("oracle");
-    	jdbcInfo.setUrl("jdbc:log4jdbc:oracle:thin:@localhost:9951/IAMLTE");
+        jdbcInfo.setDriver("oracle.jdbc.driver.OracleDriver");
+    	jdbcInfo.setUrl("jdbc:oracle:thin:@localhost:9951/IAMLTE");
     	jdbcInfo.setUsrId("cellplan");
         jdbcInfo.setUsrPw("cell_2012");
 
@@ -44,8 +45,8 @@ public class DbCon {
     	JdbcInfo jdbcInfo = new JdbcInfo();
     	
     	jdbcInfo.setJdbcNm("oraLocal");
-        jdbcInfo.setDriver("oracle");
-    	jdbcInfo.setUrl("jdbc:log4jdbc:oracle:thin:@localhost:9951/IAMLTE");
+        jdbcInfo.setDriver("oracle.jdbc.driver.OracleDriver");
+    	jdbcInfo.setUrl("jdbc:oracle:thin:@localhost:9951/IAMLTE");
     	jdbcInfo.setUsrId("cellplan");
         jdbcInfo.setUsrPw("cell_2012");
 
@@ -56,8 +57,8 @@ public class DbCon {
     	JdbcInfo jdbcInfo = new JdbcInfo();
     	
     	jdbcInfo.setJdbcNm("postLocal");
-        jdbcInfo.setDriver("postgre");
-    	jdbcInfo.setUrl("jdbc:log4jdbc:postgresql://localhost:5432/cellplan");
+        jdbcInfo.setDriver("org.postgresql.Driver");
+    	jdbcInfo.setUrl("jdbc:postgresql://localhost:5432/cellplan");
     	jdbcInfo.setUsrId("cellplan");
         jdbcInfo.setUsrPw("cell_2012");
 

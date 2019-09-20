@@ -236,5 +236,24 @@
 	<classpathentry kind="lib" path="D:/teos/lib/xmlenc-0.52.jar"/>
 	<classpathentry kind="lib" path="D:/teos/lib/xz-1.0.jar"/>
 	<classpathentry kind="lib" path="D:/teos/lib/zookeeper-3.4.6.2.6.4.0-91.jar"/>
+	<classpathentry kind="lib" path="D:/teos/lib/gson-2.8.0.jar"/>
+	<classpathentry kind="lib" path="D:/teos/lib/hsqldb-2.3.5.jar"/>
+	<classpathentry kind="lib" path="D:/teos/lib/json-lib-2.4-jdk15.jar"/>
+	<classpathentry kind="lib" path="D:/teos/lib/json-simple-1.1.jar"/>
+	<classpathentry kind="lib" path="D:/teos/lib/log4jdbc-log4j2-jdbc4.1-1.16.jar"/>
+	<classpathentry kind="lib" path="D:/teos/lib/mariadb-java-client-1.5.9.jar"/>
+	<classpathentry kind="lib" path="D:/teos/lib/mybatis-spring-boot-starter-1.1.1.jar"/>
+	<classpathentry kind="lib" path="D:/teos/lib/mysql-connector-java-5.1.25.jar"/>
+	<classpathentry kind="lib" path="D:/teos/lib/ojdbc7-12.1.0.2.jar"/>
+	<classpathentry kind="lib" path="D:/teos/lib/poi-3.7.jar"/>
+	<classpathentry kind="lib" path="D:/teos/lib/poi-ooxml-3.7.jar"/>
+	<classpathentry kind="lib" path="D:/teos/lib/postgresql-42.2.6.jar"/>
+	<classpathentry kind="lib" path="D:/teos/lib/spring-boot-starter-aop-1.5.4.RELEASE.jar"/>
+	<classpathentry kind="lib" path="D:/teos/lib/spring-boot-starter-jdbc-1.5.4.RELEASE.jar"/>
+	<classpathentry kind="lib" path="D:/teos/lib/spring-boot-starter-validation-1.5.4.RELEASE.jar"/>
+	<classpathentry kind="lib" path="D:/teos/lib/spring-boot-starter-web-1.5.7.RELEASE.jar"/>
+	<classpathentry kind="lib" path="D:/teos/lib/spring-boot-test-1.5.7.RELEASE.jar"/>
+	<classpathentry kind="lib" path="D:/teos/lib/springloaded-1.2.7.RELEASE.jar"/>
+	<classpathentry kind="lib" path="D:/teos/lib/sqlite-jdbc-3.21.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
