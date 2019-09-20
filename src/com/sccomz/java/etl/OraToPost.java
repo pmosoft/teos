@@ -30,12 +30,10 @@ public class OraToPost {
     
     public static void main(String[] args) {
     	OraToPost oraToPost = new OraToPost();
-    	oraToPost.execute();
+    	oraToPost.loadPost();
     }
 
-    void execute(){
-        //ResultSetMetaData rsmd = rs.getMetaData();
-    	
+    void extractOra(){
         try {
             stmt1 = conn1.createStatement();
 
@@ -44,6 +42,9 @@ public class OraToPost {
             
             ResultSetMetaData rsmd1 = rs1.getMetaData();
             
+            for (int i = 0; i < rsmd1.getColumnCount(); i++) {
+            	System.out.println(rsmd1.getColumnName(i+1)+"  "+rsmd1.getColumnTypeName(i+1));
+            }            
             
             while (rs1.next()) {
                 String empno = rs1.getString(1);
@@ -52,15 +53,31 @@ public class OraToPost {
                 System.out.println(empno + " : " + ename);
             }
         } catch ( Exception e ) { e.printStackTrace(); } finally { DBClose1(); }
-    	
-    	
     }
 
-    void extractOra(){
-    	
-    	
-        //ResultSetMetaData rsmd = rs.getMetaData();
-    }
+    void loadPost(){
+        try {
+            stmt2 = conn2.createStatement();
 
-    void DBClose1(){ rs1 = null; stmt1 = null; conn1 = null; }    
+            String query = "SELECT * FROM CELLPLAN.SCENARIO LIMIT 10";
+            rs2 = stmt2.executeQuery(query);
+            
+            ResultSetMetaData rsmd2 = rs2.getMetaData();
+            
+            for (int i = 0; i < rsmd2.getColumnCount(); i++) {
+            	System.out.println(rsmd2.getColumnName(i+1)+"  "+rsmd2.getColumnTypeName(i+1));
+            }            
+            
+            while (rs2.next()) {
+                String empno = rs2.getString(1);
+                String ename = rs2.getString(2);
+
+                System.out.println(empno + " : " + ename);
+            }
+        } catch ( Exception e ) { e.printStackTrace(); } finally { DBClose2(); }
+    }
+    
+    void DBClose1(){ rs1 = null; stmt1 = null; conn1 = null; }
+    void DBClose2(){ rs2 = null; stmt2 = null; conn2 = null; }    
+    
 }
