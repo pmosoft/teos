@@ -6,12 +6,12 @@ import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 
 import com.sccomz.java.comm.db.DbCon;
-import com.sccomz.java.comm.db.JdbcInfo;
+import com.sccomz.java.etl.extract.ExtractTab;
+
 
 public class OraToPost {
 
-    JdbcInfo jdbcInfo1 = new JdbcInfo();
-    JdbcInfo jdbcInfo2 = new JdbcInfo();
+    //private static Logger logger = LoggerFactory.getLogger(OraToPost.class);
 
     Connection conn1 = null;
     Statement stmt1 = null;    
@@ -21,19 +21,70 @@ public class OraToPost {
     Statement stmt2 = null;    
     ResultSet rs2 = null;    
     
+    String scheduleId = "";    
     String qry = "";    
+
+    public OraToPost() {
+        conn1 = new DbCon("oraDev").getConnection();
+        conn2 = new DbCon("postDev").getConnection();
+    }
     
-    OraToPost() {
-      conn1 = new DbCon("oraDev").getConnection();
-      conn2 = new DbCon("postDev").getConnection();
+    public OraToPost(String scheduleId) {
+        conn1 = new DbCon("oraDev").getConnection();
+        conn2 = new DbCon("postDev").getConnection();
+        this.scheduleId = scheduleId;
     }
     
     public static void main(String[] args) {
-    	OraToPost oraToPost = new OraToPost();
-    	oraToPost.loadPost();
+    	OraToPost oraToPost = new OraToPost("");
+    	oraToPost.ettTabScenario();
+    	//oraToPost.realEtlTab();
+    	//oraToPost.extractOraTab("");
+    	//oraToPost.loadPost();
     }
 
-    void extractOra(){
+    void realEtlQry(){
+        ettTabScenario();
+        ettTabSchedule();
+    }
+    
+    void realEtlTab(){
+        ettTabScenario();
+        ettTabSchedule();
+        ettTabAnalysisList();
+        ettTabSite();
+        ettTabSector();
+        ettTabDu();
+        ettTabRu();
+        ettTabRuAntena();
+    }
+   
+    void ettTabScenario(){ 
+    	extractOraTab("SCENARIO");
+        String db         = "oracle";
+        String owner      = "CELLPLAN";
+        String tabNm      = "SCENARIO";
+        String selQry     = "SELECT * FROM SCENARIO";
+        boolean isFile    = false;
+        String pathFileNm = "";
+        
+        String retSql = new ExtractTab().selectInsStat(conn1, db, owner, tabNm, selQry, pathFileNm, isFile);
+        System.out.println(retSql);
+    
+    }
+    void ettTabSchedule(){}
+    void ettTabAnalysisList(){}
+    void ettTabSite(){}
+    void ettTabSector(){}
+    void ettTabDu(){}
+    void ettTabRu(){}
+    void ettTabRuAntena(){}
+    
+    void extractOraQry(){
+    	
+    }
+    
+    void extractOraTab(String tabNm){
         try {
             stmt1 = conn1.createStatement();
 
@@ -43,6 +94,7 @@ public class OraToPost {
             ResultSetMetaData rsmd1 = rs1.getMetaData();
             
             for (int i = 0; i < rsmd1.getColumnCount(); i++) {
+            	//logger.debug(rsmd1.getColumnName(i+1)+"  "+rsmd1.getColumnTypeName(i+1));
             	System.out.println(rsmd1.getColumnName(i+1)+"  "+rsmd1.getColumnTypeName(i+1));
             }            
             
@@ -76,6 +128,8 @@ public class OraToPost {
             }
         } catch ( Exception e ) { e.printStackTrace(); } finally { DBClose2(); }
     }
+
+    
     
     void DBClose1(){ rs1 = null; stmt1 = null; conn1 = null; }
     void DBClose2(){ rs2 = null; stmt2 = null; conn2 = null; }    
