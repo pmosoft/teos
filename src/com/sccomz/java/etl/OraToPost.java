@@ -15,6 +15,8 @@ import net.pmosoft.pony.etl.extract.ExtractTab;
 public class OraToPost {
 
     //private static Logger logger = LoggerFactory.getLogger(OraToPost.class);
+    JdbcInfo jdbcInfo1 = new JdbcInfo();
+    JdbcInfo jdbcInfo2 = new JdbcInfo();
 
     Connection conn1 = null;
     Statement stmt1 = null;    
@@ -23,10 +25,6 @@ public class OraToPost {
     Connection conn2 = null;
     Statement stmt2 = null;    
     ResultSet rs2 = null;    
-
-    
-    JdbcInfo jdbcInfo1 = new JdbcInfo();
-    JdbcInfo jdbcInfo2 = new JdbcInfo();
     
     String scheduleId = "";    
     String qry = "";    
@@ -38,7 +36,7 @@ public class OraToPost {
         conn2 = new DbCon().getConnection(jdbcInfo2);
     }
     
-    public OraToPost(String scheduleId) {
+    public OraToPost(String scheduleId) {    	
         jdbcInfo1 = new DbConInfo().oraDevInfo();
         jdbcInfo2 = new DbConInfo().postDevInfo();
         conn1 = new DbCon().getConnection(jdbcInfo1);
@@ -47,7 +45,7 @@ public class OraToPost {
     }
     
     public static void main(String[] args) {
-    	OraToPost oraToPost = new OraToPost("");
+    	OraToPost oraToPost = new OraToPost("8443705");
     	oraToPost.ettTabScenario();
     	//oraToPost.realEtlTab();
     	//oraToPost.extractOraTab("");
@@ -69,19 +67,17 @@ public class OraToPost {
         ettTabRu();
         ettTabRuAntena();
     }
-   
-    void ettTabScenario(){ 
-    	extractOraTab("SCENARIO");
-        String db         = "oracle";
-        String owner      = "CELLPLAN";
-        String tabNm      = "SCENARIO";
-        String selQry     = "SELECT * FROM SCENARIO";
-        boolean isFile    = false;
-        String pathFileNm = "";
-        
-        String retSql = new ExtractTab(jdbcInfo1).selectInsStat(db, owner, tabNm, selQry, pathFileNm, isFile);
-        System.out.println(retSql);
+
+    String getSelQry(String owner, String tabNm){
+    	String retQry = "";
+    	retQry += "SELECT * FROM "+owner+"."+tabNm+" WHERE SCENARIO_ID IN (SELECT SCENARIO_ID FROM SCHEDULE WHERE SCHEDULE_ID='"+scheduleId+"')";
+    	System.out.println(retQry);
+    	return retQry;
+    }
     
+    void ettTabScenario(){ 
+        String owner   = "CELLPLAN"; String tabNm = "SCENARIO"; String selQry = getSelQry(owner,tabNm);
+        new ExtractTab(jdbcInfo1).selectInsStatToString(owner, tabNm, selQry);
     }
     void ettTabSchedule(){}
     void ettTabAnalysisList(){}
