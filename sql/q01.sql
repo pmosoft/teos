@@ -1,3 +1,9 @@
+/
+
+DELETE FROM CELLPLAN.SCENARIO
+
+/
+
 SELECT COUNT(*) FROM SCENARIO
 ;
 
@@ -94,21 +100,21 @@ ORDER BY REG_DT
 /
 SELECT 
        SCENARIO_ID                       --  
-     , SCENARIO_NM                       -- ½Ã³ª¸®¿À ÀÌ¸§
+     , SCENARIO_NM                       -- ï¿½Ã³ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½
      , SIDO                              --  
      , SIGUGUN                           --  
      , DONG                              --  
-     ,TRUNC((TM_ENDX-TM_STARTX) * (TM_ENDY-TM_STARTY)) AS ¸éÀû
+     ,TRUNC((TM_ENDX-TM_STARTX) * (TM_ENDY-TM_STARTY)) AS ï¿½ï¿½ï¿½ï¿½
      , FA_MODEL_ID                       --  
-     , FA_SEQ                            -- ÁÖÆÄ¼ö ÀÏ·Ã¹øÈ£
+     , FA_SEQ                            -- ï¿½ï¿½ï¿½Ä¼ï¿½ ï¿½Ï·Ã¹ï¿½È£
      , RESOLUTION                        -- RESOLUTION
-     , REG_DT                            -- µî·ÏÀÏ
+     , REG_DT                            -- ï¿½ï¿½ï¿½ï¿½ï¿½
      , FLOORLOSS                         --  
-     , SCENARIO_SUB_ID                   -- ºÎ¸ðID
-     , SCENARIO_SOLUTION_NUM             -- ¼Ö·ç¼Ç ºÐ¼® À¯Çü 4°¡Áö
+     , SCENARIO_SUB_ID                   -- ï¿½Î¸ï¿½ID
+     , SCENARIO_SOLUTION_NUM             -- ï¿½Ö·ï¿½ï¿½ ï¿½Ð¼ï¿½ ï¿½ï¿½ï¿½ï¿½ 4ï¿½ï¿½ï¿½ï¿½
      , LOSS_TYPE                         -- LOSS_TYPE
-     , BUILDINGANALYSIS3D_YN             -- 3DºÐ¼®¿©ºÎ
-     , BUILDINGANALYSIS3D_RESOLUTION     -- 3DºÐ¼®Resolution
+     , BUILDINGANALYSIS3D_YN             -- 3Dï¿½Ð¼ï¿½ï¿½ï¿½ï¿½ï¿½
+     , BUILDINGANALYSIS3D_RESOLUTION     -- 3Dï¿½Ð¼ï¿½Resolution
      , AREA_ID
 FROM SCENARIO
 WHERE REG_DT > SYSDATE -30
