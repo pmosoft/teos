@@ -255,5 +255,6 @@
 	<classpathentry kind="lib" path="D:/teos/lib/spring-boot-test-1.5.7.RELEASE.jar"/>
 	<classpathentry kind="lib" path="D:/teos/lib/springloaded-1.2.7.RELEASE.jar"/>
 	<classpathentry kind="lib" path="D:/teos/lib/sqlite-jdbc-3.21.0.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/pony"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

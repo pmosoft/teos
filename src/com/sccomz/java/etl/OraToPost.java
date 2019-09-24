@@ -5,8 +5,11 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 
-import com.sccomz.java.comm.db.DbCon;
-import com.sccomz.java.etl.extract.ExtractTab;
+import com.sccomz.java.comm.db.DbConInfo;
+
+import net.pmosoft.pony.comm.db.DbCon;
+import net.pmosoft.pony.dams.jdbc.JdbcInfo;
+import net.pmosoft.pony.etl.extract.ExtractTab;
 
 
 public class OraToPost {
@@ -20,18 +23,26 @@ public class OraToPost {
     Connection conn2 = null;
     Statement stmt2 = null;    
     ResultSet rs2 = null;    
+
+    
+    JdbcInfo jdbcInfo1 = new JdbcInfo();
+    JdbcInfo jdbcInfo2 = new JdbcInfo();
     
     String scheduleId = "";    
     String qry = "";    
 
     public OraToPost() {
-        conn1 = new DbCon("oraDev").getConnection();
-        conn2 = new DbCon("postDev").getConnection();
+        jdbcInfo1 = new DbConInfo().oraDevInfo();
+        jdbcInfo2 = new DbConInfo().postDevInfo();
+        conn1 = new DbCon().getConnection(jdbcInfo1);
+        conn2 = new DbCon().getConnection(jdbcInfo2);
     }
     
     public OraToPost(String scheduleId) {
-        conn1 = new DbCon("oraDev").getConnection();
-        conn2 = new DbCon("postDev").getConnection();
+        jdbcInfo1 = new DbConInfo().oraDevInfo();
+        jdbcInfo2 = new DbConInfo().postDevInfo();
+        conn1 = new DbCon().getConnection(jdbcInfo1);
+        conn2 = new DbCon().getConnection(jdbcInfo2);
         this.scheduleId = scheduleId;
     }
     
@@ -68,7 +79,7 @@ public class OraToPost {
         boolean isFile    = false;
         String pathFileNm = "";
         
-        String retSql = new ExtractTab().selectInsStat(conn1, db, owner, tabNm, selQry, pathFileNm, isFile);
+        String retSql = new ExtractTab(jdbcInfo1).selectInsStat(db, owner, tabNm, selQry, pathFileNm, isFile);
         System.out.println(retSql);
     
     }

@@ -8,7 +8,7 @@ import org.apache.spark.sql.SparkSession
 import java.util.Properties
 import org.apache.spark.sql.SaveMode
 import org.dmg.pmml.True
-import com.sccomz.java.comm.util.StringUtil
+import net.pmosoft.pony.comm.util.StringUtil
 
 /*
  * 오라클 JDBC
