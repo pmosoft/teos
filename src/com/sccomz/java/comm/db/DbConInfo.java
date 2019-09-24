@@ -9,6 +9,7 @@ public class DbConInfo {
     	JdbcInfo jdbcInfo = new JdbcInfo();
     	
     	jdbcInfo.setJdbcNm("oraDev");
+    	jdbcInfo.setDb("oracle");
         jdbcInfo.setDriver("oracle.jdbc.driver.OracleDriver");
     	jdbcInfo.setUrl("jdbc:oracle:thin:@localhost:9951/IAMLTE");
     	jdbcInfo.setUsrId("cellplan");
@@ -22,6 +23,7 @@ public class DbConInfo {
     	JdbcInfo jdbcInfo = new JdbcInfo();
     	
     	jdbcInfo.setJdbcNm("oraLocal");
+    	jdbcInfo.setDb("oracle");
         jdbcInfo.setDriver("oracle.jdbc.driver.OracleDriver");
     	jdbcInfo.setUrl("jdbc:oracle:thin:@localhost:9951/IAMLTE");
     	jdbcInfo.setUsrId("cellplan");
@@ -34,6 +36,7 @@ public class DbConInfo {
     	JdbcInfo jdbcInfo = new JdbcInfo();
     	
     	jdbcInfo.setJdbcNm("postLocal");
+    	jdbcInfo.setDb("postgre");
         jdbcInfo.setDriver("org.postgresql.Driver");
     	jdbcInfo.setUrl("jdbc:postgresql://localhost:5432/cellplan");
     	jdbcInfo.setUsrId("cellplan");
