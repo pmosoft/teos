@@ -32,11 +32,11 @@ public class OraToPost {
     public static void main(String[] args) {
     	OraToPost oraToPost = new OraToPost("8443705");
     	oraToPost.realEtlTab();
+    	//oraToPost.realEtlQry();
     }
 
     void realEtlQry(){
-    	ettTab("SCHEDULE");    
-    	ettTab("SCENARIO");
+    	ettQry(OraToPostQry.schedule10001(),"SCHEDULE");    
     }
 
     void realEtlTab(){
@@ -50,15 +50,16 @@ public class OraToPost {
     	//ettTab("RU_ANTENA");
     }
 
-    void ettQry(String extQry, String tarTabNm){ 
-        String insQry = new ExtractTab(jdbcInfo1).selectInsStatToString(tarTabNm, extQry);
-        String whereDel = getWhereDel();
-        new LoadTab(jdbcInfo2).executeInsertStringToDb(extQry, whereDel, insQry);
+    void ettQry(String selQry, String tarTabNm){ 
+        String insQry = new ExtractTab(jdbcInfo1).selectQryToInsStatToString(selQry, tarTabNm);
+        System.out.println("insQry=="+insQry);
+        //String whereDel = getWhereDel();
+        //new LoadTab(jdbcInfo2).executeInsertStringToDb(extQry, whereDel, insQry);
     }    
     
     void ettTab(String tabNm){ 
         String selQry = getSelQry(tabNm);
-        String insQry = new ExtractTab(jdbcInfo1).selectInsStatToString(tabNm, selQry);
+        String insQry = new ExtractTab(jdbcInfo1).selectTabToInsStatToString(tabNm, selQry);
         String whereDel = getWhereDel();
         new LoadTab(jdbcInfo2).executeInsertStringToDb(tabNm, whereDel, insQry);
     }
