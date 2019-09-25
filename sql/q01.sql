@@ -1,16 +1,28 @@
+    SELECT JDBC_NM
+         , DB
+         , DRIVER
+         , URL
+         , USR_ID
+         , USR_PW
+         , REG_DTM
+         , REG_USR_ID
+         , UPD_DTM
+         , UPD_USR_ID
+    FROM   TDACM00010
+    WHERE  UPPER(JDBC_NM) = UPPER('EOSLOH')
+    ORDER BY REG_DTM
+
 /
 
-DELETE FROM CELLPLAN.SCENARIO
-
+DELETE FROM CELLPLAN.SCENARIO;
 /
 
-SELECT COUNT(*) FROM SCENARIO
+SELECT COUNT(*) FROM SCENARIO;
 ;
 /
 
 SELECT * FROM SCENARIO
 ;
-
 
 /
 

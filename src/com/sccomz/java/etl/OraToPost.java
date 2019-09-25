@@ -40,13 +40,13 @@ public class OraToPost {
     }
 
     void realEtlTab(){
-    	ettTab("SCHEDULE");    
+    	//ettTab("SCHEDULE");    
     	ettTab("SCENARIO");
-    	ettTab("ANALYSIS_LIST");
-    	ettTab("SITE");        
-    	ettTab("SECTOR");      
-    	ettTab("DU");          
-    	ettTab("RU");          
+    	//ettTab("ANALYSIS_LIST");
+    	//ettTab("SITE");        
+    	//ettTab("SECTOR");      
+    	//ettTab("DU");          
+    	//ettTab("RU");          
     	//ettTab("RU_ANTENA");
     }
 
@@ -59,7 +59,7 @@ public class OraToPost {
     
     void ettTab(String tabNm){ 
         String selQry = getSelQry(tabNm);
-        String insQry = new ExtractTab(jdbcInfo1).selectTabToInsStatToString(tabNm, selQry);
+        String insQry = new ExtractTab(jdbcInfo1).selectTabToInsStatToString(selQry, tabNm);
         String whereDel = getWhereDel();
         new LoadTab(jdbcInfo2).executeInsertStringToDb(tabNm, whereDel, insQry);
     }
