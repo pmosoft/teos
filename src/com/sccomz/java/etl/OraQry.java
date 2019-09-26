@@ -1,11 +1,11 @@
 package com.sccomz.java.etl;
 
-public class OraToPostQry {
+public class OraQry {
 
 
     public static void main(String[] args) {
     	String qry = ""; 
-    	qry = OraToPostQry.schedule10001();
+    	qry = OraQry.schedule10001();
     	//OraToPostQry.getColMeta(qry);
     }	
 	
