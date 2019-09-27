@@ -6,33 +6,34 @@ import org.slf4j.LoggerFactory;
 import com.sccomz.java.comm.db.DbConInfo;
 
 import net.pmosoft.pony.comm.App;
-import net.pmosoft.pony.dams.jdbc.JdbcInfo;
+import net.pmosoft.pony.dams.table.TabInfo;
 import net.pmosoft.pony.etl.extract.ExtractTab;
 import net.pmosoft.pony.etl.load.LoadTab;
 
 public class OraToHdfs {
 
-    private static Logger logger = LoggerFactory.getLogger(OraToHdfs.class);
+    private static Logger logger = LoggerFactory.getLogger(OraToPost.class);
     
-    JdbcInfo jdbcInfo1 = new JdbcInfo();
-    JdbcInfo jdbcInfo2 = new JdbcInfo();
+    TabInfo tabInfo1 = new TabInfo();
+    TabInfo tabInfo2 = new TabInfo();
 
     String scheduleId = "";    
 
     public OraToHdfs() {
-        jdbcInfo1 = new DbConInfo().oraDevInfo();
-        jdbcInfo2 = new DbConInfo().postDevInfo();
+        tabInfo1.setJdbcInfo(new DbConInfo().oraDevInfo());
+        tabInfo2.setJdbcInfo(new DbConInfo().postDevInfo());
     }
     
     public OraToHdfs(String scheduleId) {    	
-        jdbcInfo1 = new DbConInfo().oraDevInfo();
-        jdbcInfo2 = new DbConInfo().postDevInfo();
+        tabInfo1.setJdbcInfo(new DbConInfo().oraDevInfo());
+        tabInfo2.setJdbcInfo(new DbConInfo().postDevInfo());
         this.scheduleId = scheduleId;
     }
     
     public static void main(String[] args) {
-    	OraToHdfs OraToHdfs = new OraToHdfs("8443705");
-    	OraToHdfs.realEtlTab();
+    	OraToHdfs oraToHdfs = new OraToHdfs("8443705");
+    	oraToHdfs.realEtlTab();
+    	//oraToPost.realEtlQry();
     }
 
     void realEtlQry(){
@@ -51,22 +52,27 @@ public class OraToHdfs {
     }
 
     void ettQry(String selQry, String tarTabNm){ 
-        String insQry = new ExtractTab(jdbcInfo1,jdbcInfo2).selectQryToInsStatToString(selQry, tarTabNm);
+        String insQry = new ExtractTab(tabInfo1,tabInfo2).selectQryToInsStatToString(selQry, tarTabNm);
         System.out.println("insQry=="+insQry);
         //String whereDel = getWhereDel();
-        //new LoadTab(jdbcInfo2).executeInsertStringToDb(extQry, whereDel, insQry);
+        //new LoadTab(tabInfo2).executeInsertStringToDb(extQry, whereDel, insQry);
     }    
     
-    void ettTab(String tabNm){ 
-        String selQry = getSelQry(tabNm);
-        String pathFileNm = App.excelPath + tabNm+"_"+scheduleId+".dat";
-        new ExtractTab(jdbcInfo1,jdbcInfo2).selectTabToFile(selQry, pathFileNm, "|", tabNm);
+    void ettTab(String tabNm){
+    	tabInfo1.setOwner(tabInfo1.getJdbcInfo().getUsrId()); tabInfo2.setOwner(tabInfo2.getJdbcInfo().getUsrId());
+    	tabInfo1.setTabNm(tabNm); tabInfo2.setTabNm(tabNm);
+    	tabInfo1.setChkWhere(true);	tabInfo1.setTxtWhere(getWhereScheduleId());
+    	tabInfo1.setPathFileNm(App.excelPath + tabNm+"_"+scheduleId+".dat");
+    	tabInfo1.setDelimeter("|");
+    	
+        new ExtractTab(tabInfo1,tabInfo2).executeTabToSamFile();
         //String whereDel = getWhereDel();
-        //new LoadTab(jdbcInfo2).executeInsertStringToDb(tabNm, whereDel, insQry);
+        //new LoadTab(tabInfo2).executeInsertStringToDb(tabNm, whereDel, insQry);
     }
+
     
-    String getSelQry(String tabNm){
-    	String qry = "SELECT * FROM "+tabNm+" WHERE SCENARIO_ID IN (SELECT SCENARIO_ID FROM SCHEDULE WHERE SCHEDULE_ID='"+scheduleId+"')";
+    String getWhereScheduleId(){
+    	String qry = "WHERE SCENARIO_ID IN (SELECT SCENARIO_ID FROM SCHEDULE WHERE SCHEDULE_ID='"+scheduleId+"')";
     	logger.info(qry);
     	return qry;
     }
