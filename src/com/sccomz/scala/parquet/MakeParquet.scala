@@ -57,7 +57,7 @@ object MakeParquet {
     val localPcEntityPath     = "file:////c:/pony/excel"
     val hdfsSamEntityPath     = "/user/teos/parquet/entity"
     val hdfsParquetEntityPath = "/user/teos/parquet/entity"
-    
+
     var srcEntityPath = if     (arg1=="local")   localEntityPath
                         else if(arg1=="localPc") localPcEntityPath
                         else if(arg1=="hdfs")    hdfsSamEntityPath
@@ -121,7 +121,25 @@ object MakeParquet {
     .write
     .parquet(target)             //parquet
 
+    spark.read
+    .format("csv")               //파일포맷
+    .option("delimiter", "|")    //구분자
+    .schema(SCHEDULE)              //파일스키마
+    .load("file:////home/teos/entity/SCHEDULE_8443705.dat")                //읽을 파일
+    .write
+    .parquet("/user/teos/parquet/entity/SCHEDULE_8443705.dat")             //parquet
+
+
   }
+
+/*
+
+
+
+
+
+
+ * */
 
 //  def dfToParquet(objNm:String,isPartion:Boolean,scheduleId:String) = {
 //    //--------------------------------------
