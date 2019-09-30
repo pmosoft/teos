@@ -1,1 +1,6 @@
 /lib/
+/.cache-main
+/.classpath
+/.gitignore
+/.project
+/bin/

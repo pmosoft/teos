@@ -121,15 +121,6 @@ object MakeParquet {
     .write
     .parquet(target)             //parquet
 
-    spark.read
-    .format("csv")               //파일포맷
-    .option("delimiter", "|")    //구분자
-    .schema(SCHEDULE)              //파일스키마
-    .load("file:////home/teos/entity/SCHEDULE_8443705.dat")                //읽을 파일
-    .write
-    .parquet("/user/teos/parquet/entity/SCHEDULE_8443705.dat")             //parquet
-
-
   }
 
 /*

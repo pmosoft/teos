@@ -7,7 +7,6 @@ import java.sql.Statement;
 import org.apache.spark.sql.SparkSession
 import java.util.Properties
 import org.apache.spark.sql.SaveMode
-import org.dmg.pmml.True
 import net.pmosoft.pony.comm.util.StringUtil
 
 /*
@@ -33,20 +32,20 @@ object OJDBC {
     //--------------------------------------
     println("OJDBC 시작");
     //--------------------------------------
-     
+
     //selectTable("aa");
     testPonyUtil();
-    
+
   }
-  
+
 
   def testPonyUtil() = {
 
     println("test11111111=="+StringUtil.trimNull("abcdddd"));
-    
+
   }
-  
-  
+
+
   def selectTable(objNm:String) = {
 
     println("objNm=="+objNm);
@@ -55,10 +54,10 @@ object OJDBC {
     var stat=con.createStatement()
     //stat.execute(qry)
     con.close()
-    
+
   }
-  
-  
+
+
   def deleteTable(spark:SparkSession,qry:String) = {
     //--------------------------------------
         println("(ORACLE) "+qry);
@@ -118,7 +117,7 @@ object OJDBC {
 
   }
 */
-  
+
 }
 
 /*
