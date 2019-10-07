@@ -13,7 +13,6 @@ import org.apache.spark.sql.types.StructField
 import org.apache.spark.sql.types.StructType
 import scala.reflect.runtime.universe
 
-import com.sccomz.scala.schema._
 
 
 /*

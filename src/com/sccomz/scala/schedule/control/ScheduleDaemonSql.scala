@@ -27,7 +27,7 @@ object ScheduleDaemonSql {
                 , MODIFY_DT
            FROM   SCHEDULE
            WHERE  PROCESS_CD IN ('10001')
-           AND    TYPE_CD IN ('SC001','SC051')
+           --AND    TYPE_CD IN ('SC001','SC051')
           )
     WHERE ROW_NUM <= 2
     ORDER BY ROW_NUM
