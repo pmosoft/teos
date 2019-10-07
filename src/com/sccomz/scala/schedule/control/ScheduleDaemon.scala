@@ -7,8 +7,8 @@ import java.sql.ResultSet
 
 object ScheduleDaemon {
 
-//  val url      = "jdbc:oracle:thin:@192.168.0.6:1521/ORCL";
-  val url      = "jdbc:oracle:thin:@localhost:9951/IAMLTE";
+  val url      = "jdbc:oracle:thin:@192.168.0.6:1521/ORCL";
+  //val url      = "jdbc:oracle:thin:@localhost:9951/IAMLTE";
   val user     = "cellplan";
   val password = "cell_2012";
   val driver   = "oracle.jdbc.driver.OracleDriver";
@@ -31,7 +31,7 @@ object ScheduleDaemon {
     var con:Connection = DriverManager.getConnection(url,user,password);
     var stat:Statement=con.createStatement();
     var rs:ResultSet = null;
-    
+
     var loofCnt = 0; var rowCnt = 0;
 
     try {
@@ -43,15 +43,15 @@ object ScheduleDaemon {
         rs = stat.executeQuery(ScheduleDaemonSql.selectSchedule10001());
         //rowCnt = rs.getMetaData.getColumnCount;
         while(rs.next()){
-          print( rs.getString(1) );  
+          println( "SCHEDULE_ID="+rs.getString(1) );
         }
         //for(i <- 0 to rowCnt) {}
-        
+
         Thread.sleep(1000*3);
       }
 
       println("execute end");
-      
+
     } catch {
       case e : Exception => {
         println("Exception="+e);

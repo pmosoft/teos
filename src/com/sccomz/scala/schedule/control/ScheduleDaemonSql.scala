@@ -4,16 +4,16 @@ object ScheduleDaemonSql {
 
   def selectSchedule10001() = {
     """
-    SELECT SCHEDULE_ID
-         , TYPE_CD
-         , SCENARIO_ID
-         , USER_ID
-         , PRIORITIZE
-         , PROCESS_CD
-         , PROCESS_MSG
-         , SCENARIO_PATH
-         , TO_CHAR(REG_DT, 'YYYYMMDDHH24MISS')
-         , TO_CHAR(MODIFY_DT, 'YYYYMMDDHH24MISS')
+    SELECT SCHEDULE_ID                            AS SCHEDULE_ID
+         , TYPE_CD                                AS TYPE_CD
+         , SCENARIO_ID                            AS SCENARIO_ID
+         , USER_ID                                AS USER_ID
+         , PRIORITIZE                             AS PRIORITIZE
+         , PROCESS_CD                             AS PROCESS_CD
+         , PROCESS_MSG                            AS PROCESS_MSG
+         , SCENARIO_PATH                          AS SCENARIO_PATH
+         , TO_CHAR(REG_DT, 'YYYYMMDDHH24MISS')    AS REG_DT
+         , TO_CHAR(MODIFY_DT, 'YYYYMMDDHH24MISS') AS MODIFY_DT
     FROM  (SELECT ROW_NUMBER() OVER(ORDER BY SCHEDULE_ID ASC, TYPE_CD ASC, PRIORITIZE ASC, RU_CNT ASC) AS ROW_NUM
                 , SCHEDULE_ID
                 , TYPE_CD
