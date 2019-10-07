@@ -1,4 +1,4 @@
-package com.sccomz.scala.schema
+package com.sccomz.scala.sql
 
 import org.apache.spark.sql.types.StructType
 import org.apache.spark.sql.types.StructField
@@ -30,4 +30,3 @@ StructField("RESULT_BIT"                ,StringType),
 StructField("INTERWORKING_INFO"         ,StringType)
 ))
 }
-

@@ -3,17 +3,15 @@ package com.sccomz.scala.parquet
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.FileSystem
 import org.apache.hadoop.fs.Path
-import org.apache.spark.sql.SparkSession
-import org.apache.spark.SparkConf
-import org.apache.spark.SparkContext
-import org.apache.spark.sql.types.StructType
-import scala.reflect.runtime.universe
 import org.apache.hadoop.fs.permission.FsAction
 import org.apache.hadoop.fs.permission.FsPermission
+import org.apache.spark.SparkConf
+import org.apache.spark.SparkContext
 import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.types.StructType
 import org.apache.spark.sql.types.StringType
 import org.apache.spark.sql.types.StructField
+import org.apache.spark.sql.types.StructType
+import scala.reflect.runtime.universe
 
 import com.sccomz.scala.schema._
 
@@ -22,15 +20,15 @@ import com.sccomz.scala.schema._
  * 로컬(Linux) 혹은 HDFS의 샘파일을 HDFS의 parquet으로 저장
  * 사용방법
    MakeParquet local objNm scheduleId : 스케줄별파티션 로컬샘파일     to parquet
-   MakeParquet local objNm all        : 전체           로컬샘파일     to parquet
+   MakeParquet local objNm all        : 전체                로컬샘파일     to parquet
    MakeParquet hdfs  objNm scheduleId : 스케줄별파티션 HDFS로그파일 to parquet
-   MakeParquet hdfs  objNm all        : 전체           HDFS로그파일 to parquet
+   MakeParquet hdfs  objNm all        : 전체                HDFS로그파일 to parquet
  * */
 object MakeParquet {
 
-  val spark  = SparkSession.builder().appName("MakeParquet").getOrCreate()
-
   def main(args: Array[String]): Unit = {
+
+    val spark = SparkSession.builder().appName("MakeParquet").getOrCreate()
 
     //--------------------------------------
         println("입력파라미터 처리");
@@ -43,42 +41,54 @@ object MakeParquet {
       System.exit(1)
     }
 
-    val arg1 = args(0)
-    val arg2 = args(1)
-    val arg3 = args(2)
+    var cd = args(0)
+    var objNm = args(1)
+    var scheduleId = args(2)
 
-    this.samToParquet(arg1,arg2,arg3)
+    //var cd = "local"; var objNm = "SCHEDULE"; var scheduleId = "8443705"
+    //MakeParquet.samToParquet(spark,cd,objNm,scheduleId)
+    this.samToParquet(spark,cd,objNm,scheduleId)
+
+    spark.stop();
 
   }
 
-  def samToParquet(arg1:String,arg2:String,arg3:String) = {
+  def samToParquet(spark: SparkSession,cd:String,objNm:String,scheduleId:String) = {
+
+    //--------------------------------------
+        println("samToParquet 시작");
+    //--------------------------------------
 
     val localEntityPath       = "file:////home/teos/entity"
     val localPcEntityPath     = "file:////c:/pony/excel"
     val hdfsSamEntityPath     = "/user/teos/parquet/entity"
     val hdfsParquetEntityPath = "/user/teos/parquet/entity"
 
-    var srcEntityPath = if     (arg1=="local")   localEntityPath
-                        else if(arg1=="localPc") localPcEntityPath
-                        else if(arg1=="hdfs")    hdfsSamEntityPath
-    var objNm = arg2
-    var scheduleId = arg3
-    var isPartion = if(arg3=="all") false else true
+    var srcEntityPath = if     (cd=="local")   localEntityPath
+                        else if(cd=="localPc") localPcEntityPath
+                        else if(cd=="hdfs")    hdfsSamEntityPath
+    var isPartion = if(scheduleId=="all") false else true
+
+/*
+    var objNm = "SCHEDULE"
+    var scheduleId = "8443705"
+    var srcEntityPath = "file:////home/teos/entity"
+    var isPartion = true
+    val hdfsParquetEntityPath = "/user/teos/parquet/entity"
+* */
 
     //--------------------------------------
         println("입출력 변수 세팅");
     //--------------------------------------
     var objPartNm = if(isPartion) objNm + "_" + scheduleId else ""
-    var source = if(isPartion) srcEntityPath+"/"+objNm+"/"+objPartNm+".dat"
-                 else          srcEntityPath+"/"+objNm+"/"+objNm+".dat"
-    var target = if(isPartion) hdfsParquetEntityPath +"/" + objNm +"/"+ objPartNm
-                 else          hdfsParquetEntityPath +"/" + objNm
+    var source = if(isPartion) srcEntityPath+"/"+objPartNm+".dat"       else srcEntityPath+"/"+objNm+".dat"
+    var target = if(isPartion) hdfsParquetEntityPath +"/" + objNm +"/"+ objPartNm else hdfsParquetEntityPath +"/" + objNm
 
     //--------------------------------------
         println("스키마 세팅");
     //--------------------------------------
     val runtimeMirror = universe.runtimeMirror(getClass.getClassLoader)
-    val module = runtimeMirror.staticModule(s"com.nexweb.teos.dw.stat.spark.schema.${objNm}")
+    val module = runtimeMirror.staticModule(s"com.sccomz.scala.schema.${objNm}")
     val im = runtimeMirror.reflectModule(module)
     val method = im.symbol.info.decl(universe.TermName("schema")).asMethod
     val objMirror = runtimeMirror.reflect(im.instance)
@@ -86,15 +96,6 @@ object MakeParquet {
 
     println("source ="+source);
     println("target ="+target);
-
-    //--------------------------------------
-        println("SparkSession 생성");
-    //--------------------------------------
-    val spark = SparkSession
-    .builder()
-    .appName("MakeParquet")
-    //.config("spark.master","local")
-    .getOrCreate()
 
     //--------------------------------------
         println("HDFS 세션 생성");
@@ -112,22 +113,24 @@ object MakeParquet {
     //--------------------------------------
         println("target 파일 생성");
     //--------------------------------------
-    spark.read
-    .format("csv")               //파일포맷
-    .option("delimiter", "|")    //구분자
-    //.option("nullValue", "")     //null
-    .schema(schema)              //파일스키마
-    .load(source)                //읽을 파일
-    .write
-    .parquet(target)             //parquet
+    spark.read.format("csv").option("delimiter", "|").schema(schema).load(source).write.parquet(target)
 
+    //spark.read
+    //.format("csv")               //파일포맷
+    //.option("delimiter", "|")    //구분자
+    ////.option("nullValue", "")     //null
+    //.schema(schema)              //파일스키마
+    //.load(source)                //읽을 파일
+    //.write
+    //.parquet(target)             //parquet
+
+    //--------------------------------------
+        println("samToParquet 종료");
+    //--------------------------------------
   }
+}
 
 /*
-
-
-
-
 
 
  * */
@@ -237,5 +240,3 @@ object MakeParquet {
 //
 //  }
 
-
-}

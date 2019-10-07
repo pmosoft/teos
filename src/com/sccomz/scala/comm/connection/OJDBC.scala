@@ -49,11 +49,11 @@ object OJDBC {
   def selectTable(objNm:String) = {
 
     println("objNm=="+objNm);
-    Class.forName(driver)
-    var con:Connection = DriverManager.getConnection(url,user,password)
-    var stat=con.createStatement()
-    //stat.execute(qry)
-    con.close()
+    Class.forName(driver);
+    var con:Connection = DriverManager.getConnection(url,user,password);
+    var stat=con.createStatement();
+    //stat.execute(qry);
+    con.close();
 
   }
 

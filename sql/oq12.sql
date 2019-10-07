@@ -11,8 +11,7 @@ SELECT * FROM SCHEDULE
 /
 SELECT * FROM SCHEDULE
 WHERE PROCESS_CD = '10002'
-
-/
+;
 
 SELECT * FROM SCHEDULE
 WHERE SERVER_ID = 'AS007'
@@ -173,56 +172,56 @@ WHERE SCENARIO_ID IN (
 )
 ORDER BY  SCENARIO_NM
 
-/
+
 
 SELECT * FROM SCENARIO
 ORDER BY REG_DT
+;
 
 
-/
 SELECT
        A.SCENARIO_ID                       --
-     , A.SCENARIO_NM                       -- ì‹œë‚˜ë¦¬ì˜¤ ì´ë¦„
+     , A.SCENARIO_NM                       -- ½Ã³ª¸®¿À ÀÌ¸§
      , A.SIDO                              --
      , A.SIGUGUN                           --
      , A.DONG                              --
      , B.PROCESS_CD
      , B.PROCESS_MSG
-     , TRUNC((A.TM_ENDX-A.TM_STARTX) * (A.TM_ENDY-A.TM_STARTY)) AS ë©´ì 
+     , TRUNC((A.TM_ENDX-A.TM_STARTX) * (A.TM_ENDY-A.TM_STARTY)) AS ¸éÀû
      , A.RESOLUTION                        -- RESOLUTION
      , B.BIN_X_CNT
      , B.BIN_Y_CNT
      , B.RU_CNT
      , B.ANALYSIS_WEIGHT
      , B.RESULT_TIME
-     , A.REG_DT                            -- ë“±ë¡ì¼
+     , A.REG_DT                            -- µî·ÏÀÏ
 FROM   SCENARIO A
      , SCHEDULE B
 WHERE  A.SCENARIO_ID = B.SCENARIO_ID
 AND    A.REG_DT > SYSDATE -30
 ORDER BY B.SCHEDULE_ID,A.REG_DT DESC
-
+;
 
 
 /
 SELECT
        SCENARIO_ID                       --
-     , SCENARIO_NM                       -- ì‹œë‚˜ë¦¬ì˜¤ ì´ë¦„
-     , TRUNC((TM_ENDX-TM_STARTX) * (TM_ENDY-TM_STARTY)) AS ë©´ì 
+     , SCENARIO_NM                       -- ½Ã³ª¸®¿À ÀÌ¸§
+     , TRUNC((TM_ENDX-TM_STARTX) * (TM_ENDY-TM_STARTY)) AS ¸éÀû
      , RU_CNT
      , SIDO                              --
      , SIGUGUN                           --
      , DONG                              --
      , FA_MODEL_ID                       --
-     , FA_SEQ                            -- ì£¼íŒŒìˆ˜ ì¼ë ¨ë²ˆí˜¸
+     , FA_SEQ                            -- ÁÖÆÄ¼ö ÀÏ·Ã¹øÈ£
      , RESOLUTION                        -- RESOLUTION
-     , REG_DT                            -- ë“±ë¡ì¼
+     , REG_DT                            -- µî·ÏÀÏ
      , FLOORLOSS                         --
-     , SCENARIO_SUB_ID                   -- ë¶€ëª¨ID
-     , SCENARIO_SOLUTION_NUM             -- ì†”ë£¨ì…˜ ë¶„ì„ ìœ í˜• 4ê°€ì§€
+     , SCENARIO_SUB_ID                   -- ºÎ¸ðID
+     , SCENARIO_SOLUTION_NUM             -- ¼Ö·ç¼Ç ºÐ¼® À¯Çü 4°¡Áö
      , LOSS_TYPE                         -- LOSS_TYPE
-     , BUILDINGANALYSIS3D_YN             -- 3Dë¶„ì„ì—¬ë¶€
-     , BUILDINGANALYSIS3D_RESOLUTION     -- 3Dë¶„ì„Resolution
+     , BUILDINGANALYSIS3D_YN             -- 3DºÐ¼®¿©ºÎ
+     , BUILDINGANALYSIS3D_RESOLUTION     -- 3DºÐ¼®Resolution
      , AREA_ID
 FROM SCENARIO
 WHERE REG_DT > SYSDATE -30
