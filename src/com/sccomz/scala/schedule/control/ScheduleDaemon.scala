@@ -5,6 +5,9 @@ import java.sql.DriverManager
 import java.sql.ResultSet
 import java.sql.Statement
 
+import scala.collection.mutable.Map
+import scala.collection.mutable.HashMap
+import scala.collection._
 import com.sccomz.scala.schedule.control.sql.ScheduleDaemonSql
 
 object ScheduleDaemon {
@@ -35,19 +38,61 @@ object ScheduleDaemon {
     var rs:ResultSet = null;
 
     var loofCnt = 0; var rowCnt = 0;
+    var qry = "";
 
     try {
-
+      val list = mutable.MutableList[Map[String,String]]()
       //while(true) {
       while(loofCnt<3) {
         loofCnt += 1;
-        println("loofCnt="+loofCnt+" " +ScheduleDaemonSql.selectSchedule10001());
-        rs = stat.executeQuery(ScheduleDaemonSql.selectSchedule10001());
-        //rowCnt = rs.getMetaData.getColumnCount;
+        println("loofCnt="+loofCnt);
+
+        //------------------------------------------------------------------
+        // [갱신:SCHEDULE, 삽입:SCHEDULE_EXT] 스케줄대상건의 BIN갯수 갱신
+        //------------------------------------------------------------------
+        // PROCESS_CD 10001(분석요청)이면서 BIN갯수 미세팅건이나 SCHEDULE_EXT 미생생된 경우
+
+        qry = ScheduleDaemonSql.selectBinCount(); println(qry);
+        rs = stat.executeQuery(qry);
         while(rs.next()){
-          println( "SCHEDULE_ID="+rs.getString(1) );
+          var map = HashMap[String,String]();
+          map.put("SCHEDULE_ID" , rs.getString("SCHEDULE_ID"));
+          map.put("BIN_X_CNT"   , rs.getString("BIN_X_CNT"  ));
+          map.put("BIN_Y_CNT"   , rs.getString("BIN_Y_CNT"  ));
+          map.put("AREA"        , rs.getString("AREA"       ));
+          map.put("RU_CNT"      , rs.getString("RU_CNT"     ));
+          list += map;
+          //println( "SCHEDULE_ID="+rs.getString(1) );
         }
+
+        var scheduleId = ""; var binXCnt = ""; var binYCnt = ""; var area = ""; var ruCnt = "";
+        for(m <- list) {
+
+          scheduleId = m.getOrElse("SCHEDULE_ID","");
+          binXCnt    = m.getOrElse("BIN_X_CNT","");
+          binYCnt    = m.getOrElse("BIN_Y_CNT","");
+          area       = m.getOrElse("AREA","");
+          ruCnt      = m.getOrElse("RU_CNT","");
+
+          //[갱신:SCHEDULE]
+          qry = ScheduleDaemonSql.updateScheduleBinCnt(scheduleId, binXCnt, binYCnt, ruCnt); println(qry);
+          stat.execute(qry);
+
+          //[삭제:SCHEDULE_EXT]
+          qry = ScheduleDaemonSql.deleteScheduleExt(scheduleId); println(qry);
+          stat.execute(qry);
+
+          //[삽입:SCHEDULE_EXT]
+        }
+
+        //updateScheduleBinCnt
+
         //for(i <- 0 to rowCnt) {}
+        //println( "list.size="+list.size );
+        //for(m <- list) println(m.get("SCHEDULE_ID").fold("")(_.toString));
+        list.clear();
+        //for((k,v) <- map) printf("key: %s, value: %s\n", k, v)
+        //map.foreach { case (key, value) => println(">>> key=" + key + ", value=" + value) }
 
         Thread.sleep(1000*3);
       }
