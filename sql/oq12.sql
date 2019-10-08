@@ -37,10 +37,11 @@ ORDER BY SERVER_ID
 
 --------------------------------
 
+
 SELECT * FROM SCHEDULE
+;
 
 
-/
 SELECT * FROM SCHEDULE
 WHERE PROCESS_CD = '10002'
 ;
