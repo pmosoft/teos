@@ -1,23 +1,19 @@
-package com.sccomz.scala.etl.extract
+package com.sccomz.scala.etl.extract.oracle
 
+import java.io.File
+import java.io.PrintWriter
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.ResultSet
 import java.sql.Statement
-import java.io._
 
-import scala.collection.mutable.Map
-import scala.collection.mutable.HashMap
-import scala.collection._
-
-import com.sccomz.scala.schedule.control.sql.ScheduleDaemonSql
 import com.sccomz.scala.comm.App
-import com.sccomz.scala.etl.extract.sql.ExtractOraScheduleSql
-import com.sccomz.scala.etl.extract.sql.ExtractOraScenarioSql
+import com.sccomz.scala.etl.extract.oracle.sql.ExtractOraScenarioSql
+import com.sccomz.scala.etl.extract.oracle.sql.ExtractOraScheduleSql
 
 /*
-import com.sccomz.scala.etl.extract.ExtractManager
-ExtractManager.extractOracleToHadoopCsv("8459967")
+import com.sccomz.scala.etl.extract.oracle.ExtractOraManager
+ExtractOraManager.extractOracleToHadoopCsv("8459967")
 
  * */
 object ExtractOraManager {

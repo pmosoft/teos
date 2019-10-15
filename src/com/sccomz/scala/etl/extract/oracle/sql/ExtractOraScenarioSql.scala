@@ -1,4 +1,4 @@
-package com.sccomz.scala.etl.extract.sql
+package com.sccomz.scala.etl.extract.oracle.sql
 
 object ExtractOraScenarioSql {
 
@@ -58,7 +58,8 @@ SELECT
        BUILDINGANALYSIS3D_RESOLUTION     ||'|'||
        AREA_ID                           ||'|'||
        BUILDINGANALYSIS3D_RELATED_YN     ||'|'||
-       RELATED_ANALYSIS_COVLIMITRSRP     ||'|'
+       RELATED_ANALYSIS_COVLIMITRSRP     ||'|'||
+       ${scheduleId}                     ||'|'
 FROM   SCENARIO
 WHERE  SCENARIO_ID IN (SELECT SCENARIO_ID FROM SCHEDULE WHERE SCHEDULE_ID = ${scheduleId})
 """
@@ -67,7 +68,6 @@ WHERE  SCENARIO_ID IN (SELECT SCENARIO_ID FROM SCHEDULE WHERE SCHEDULE_ID = ${sc
 def selectScenarioIns(scheduleId:String) = {
 s"""
 SELECT
-       SCHEDULE_ID                                ||'|'||
        TYPE_CD                                    ||'|'||
        SCENARIO_ID                                ||'|'||
        USER_ID                                    ||'|'||
@@ -88,7 +88,8 @@ SELECT
        TILT_PROCESS_TYPE                          ||'|'||
        GEOMETRYQUERY_SCHEDULE_ID                  ||'|'||
        RESULT_BIT                                 ||'|'||
-       INTERWORKING_INFO                          ||'|'
+       INTERWORKING_INFO                          ||'|'||
+       SCHEDULE_ID                                ||'|'
 FROM   SCHEDULE
 WHERE  SCHEDULE_ID = ${scheduleId}
 """
