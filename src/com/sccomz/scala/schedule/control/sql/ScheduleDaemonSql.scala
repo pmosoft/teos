@@ -326,7 +326,14 @@ AND    BASE_DT = (SELECT MAX(BASE_DT) FROM SCHEDULE_WEIGHT)
 
 
 
-
+	if (dr.ex < sr.sx)
+		return(RT_OUT);
+	if (sr.ex < dr.sx)
+		return(RT_OUT);
+	if (dr.ey < sr.sy)
+		return(RT_OUT);
+	if (sr.ey < dr.sy)
+		return(RT_OUT);
 
 
 

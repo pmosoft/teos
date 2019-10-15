@@ -3,6 +3,23 @@ package com.sccomz.scala.load
 import org.apache.spark.sql.SparkSession
 import scala.sys.process
 
+/*
+		spark.sql("SELECT * FROM parquet.`/user/hive/warehouse/schedule`").take(100).foreach(println);
+		spark.sql("SELECT COUNT(*) FROM parquet.`/user/hive/warehouse/schedule`").take(100).foreach(println);
+
+/*
+ * 
+ * 
+		spark.sql("SELECT * FROM parquet.`/user/teos/parquet/entity/SCHEDULE` WHERE SCHEDULE_ID=''").take(100).foreach(println);
+		spark.sql("SELECT COUNT(*) FROM parquet.`/user/hive/warehouse/schedule`").take(100).foreach(println);
+		
+ * */
+
+
+		
+ * */
+
+
 object LoadTable {
 
   def main(args: Array[String]): Unit = {

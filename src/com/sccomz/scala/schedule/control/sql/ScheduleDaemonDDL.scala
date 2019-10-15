@@ -7,46 +7,43 @@ def createSCHEDULE_WEIGHT(scheduleId:String) = {
 """
 -- 스케줄 잡가중치
 CREATE TABLE SCHEDULE_WEIGHT (
-      BASE_DT            DATE            NOT NULL -- 기준일시
-    , RU_CNT_W5          INT                 NULL -- RU갯수가중치5값
-    , RU_CNT_W4          INT                 NULL -- RU갯수가중치4값
-    , RU_CNT_W3          INT                 NULL -- RU갯수가중치3값
-    , RU_CNT_W2          INT                 NULL -- RU갯수가중치2값
-    , RU_CNT_W1          INT                 NULL -- RU갯수가중치1값
-    , AREA_W5            INT                 NULL -- 면적가중치5값
-    , AREA_W4            INT                 NULL -- 면적가중치4값
-    , AREA_W3            INT                 NULL -- 면적가중치3값
-    , AREA_W2            INT                 NULL -- 면적가중치2값
-    , AREA_W1            INT                 NULL -- 면적가중치1값
-    , JOB_RU_CNT_WEIGHT  NUMBER(5,2)         NULL -- 잡RU갯수가중치(0..1 RU갯수가중치와면접가중치의 합은 1 이어야 한다)
-    , JOB_AREA_WEIGHT    NUMBER(5,2)         NULL -- 잡면적가중치(0..1 RU갯수가중치와면접가중치의 합은 1 이어야 한다)
-    , JOB_H_THRESHOLD    INT                 NULL -- 하이잡임계치(1-5 사이의 값)
-    , JOB_M_THRESHOLD    INT                 NULL -- 미들잡임계치(1-5 사이의 값)
-    , JOB_L_THRESHOLD    INT                 NULL -- 로우잡임계치(1-5 사이의 값)
-    , JOB_H_MAX_CNT      INT                 NULL -- 하이잡 실행 최대 갯수
-    , JOB_M_MAX_CNT      INT                 NULL -- 미들잡 실행 최대 갯수
-    , JOB_L_MAX_CNT      INT                 NULL -- 로우잡 실행 최대 갯수
-    , REG_DT	           DATE                NULL -- 등록일시
-    , REG_USER_ID        VARCHAR2(13)        NULL -- 등록자
-    , MOD_DT             DATE                NULL -- 수정일시
-    , MOD_USER_ID        VARCHAR2(13)        NULL -- 수정자
+      BASE_DT             DATE            NOT NULL -- 기준일시
+    , 2D_W5               INT                 NULL -- 2D임계치5(RU갯수*BIN갯수)
+    , 2D_W4               INT                 NULL -- 2D임계치4(RU갯수*BIN갯수)
+    , 2D_W3               INT                 NULL -- 2D임계치3(RU갯수*BIN갯수)
+    , 2D_W2               INT                 NULL -- 2D임계치2(RU갯수*BIN갯수)
+    , 2D_W1               INT                 NULL -- 2D임계치1(RU갯수*BIN갯수)
+    , 3D_W5               INT                 NULL -- 3D임계치5(RU갯수*BIN갯수+빌딩)
+    , 3D_W4               INT                 NULL -- 3D임계치4(RU갯수*BIN갯수+빌딩)
+    , 3D_W3               INT                 NULL -- 3D임계치3(RU갯수*BIN갯수+빌딩)
+    , 3D_W2               INT                 NULL -- 3D임계치2(RU갯수*BIN갯수+빌딩)
+    , 3D_W1               INT                 NULL -- 3D임계치1(RU갯수*BIN갯수+빌딩)
+    , JOB_H_THRESHOLD     INT                 NULL -- 하이잡임계치(1-5 사이의 값)
+    , JOB_M_THRESHOLD     INT                 NULL -- 미들잡임계치(1-5 사이의 값)
+    , JOB_L_THRESHOLD     INT                 NULL -- 로우잡임계치(1-5 사이의 값)
+    , JOB_H_MAX_CNT       INT                 NULL -- 하이잡 실행 최대 갯수
+    , JOB_M_MAX_CNT       INT                 NULL -- 미들잡 실행 최대 갯수
+    , JOB_L_MAX_CNT       INT                 NULL -- 로우잡 실행 최대 갯수
+    , REG_DT	            DATE                NULL -- 등록일시
+    , REG_USER_ID         VARCHAR2(13)        NULL -- 등록자
+    , MOD_DT              DATE                NULL -- 수정일시
+    , MOD_USER_ID         VARCHAR2(13)        NULL -- 수정자
     , CONSTRAINT SCHEDULE_WEIGHT_PK PRIMARY KEY (BASE_DT)
 );
 
 COMMENT ON TABLE  SCHEDULE_WEIGHT IS '스케줄 잡가중치';
 COMMENT ON COLUMN SCHEDULE_WEIGHT.BASE_DT           IS '기준일시';
-COMMENT ON COLUMN SCHEDULE_WEIGHT.RU_CNT_W5         IS 'RU갯수가중치5값';
-COMMENT ON COLUMN SCHEDULE_WEIGHT.RU_CNT_W4         IS 'RU갯수가중치4값';
-COMMENT ON COLUMN SCHEDULE_WEIGHT.RU_CNT_W3         IS 'RU갯수가중치3값';
-COMMENT ON COLUMN SCHEDULE_WEIGHT.RU_CNT_W2         IS 'RU갯수가중치2값';
-COMMENT ON COLUMN SCHEDULE_WEIGHT.RU_CNT_W1         IS 'RU갯수가중치1값';
-COMMENT ON COLUMN SCHEDULE_WEIGHT.AREA_W5           IS '면적가중치5값';
-COMMENT ON COLUMN SCHEDULE_WEIGHT.AREA_W4           IS '면적가중치4값';
-COMMENT ON COLUMN SCHEDULE_WEIGHT.AREA_W3           IS '면적가중치3값';
-COMMENT ON COLUMN SCHEDULE_WEIGHT.AREA_W2           IS '면적가중치2값';
-COMMENT ON COLUMN SCHEDULE_WEIGHT.AREA_W1           IS '면적가중치1값';
-COMMENT ON COLUMN SCHEDULE_WEIGHT.JOB_RU_CNT_WEIGHT IS '잡RU갯수가중치(0..1 RU갯수가중치+면접가중치=1)';
-COMMENT ON COLUMN SCHEDULE_WEIGHT.JOB_AREA_WEIGHT   IS '잡면적가중치(0..1 RU갯수가중치+면접가중치=1)';
+
+COMMENT ON COLUMN SCHEDULE_WEIGHT.2D_W5             IS '2D임계치5(RU갯수*BIN갯수)';
+COMMENT ON COLUMN SCHEDULE_WEIGHT.2D_W4             IS '2D임계치4(RU갯수*BIN갯수)';
+COMMENT ON COLUMN SCHEDULE_WEIGHT.2D_W3             IS '2D임계치3(RU갯수*BIN갯수)';
+COMMENT ON COLUMN SCHEDULE_WEIGHT.2D_W2             IS '2D임계치2(RU갯수*BIN갯수)';
+COMMENT ON COLUMN SCHEDULE_WEIGHT.2D_W1             IS '2D임계치1(RU갯수*BIN갯수)';
+COMMENT ON COLUMN SCHEDULE_WEIGHT.3D_W5             IS '3D임계치5(RU갯수*BIN갯수+빌딩)';
+COMMENT ON COLUMN SCHEDULE_WEIGHT.3D_W4             IS '3D임계치4(RU갯수*BIN갯수+빌딩)';
+COMMENT ON COLUMN SCHEDULE_WEIGHT.3D_W3             IS '3D임계치3(RU갯수*BIN갯수+빌딩)';
+COMMENT ON COLUMN SCHEDULE_WEIGHT.3D_W2             IS '3D임계치2(RU갯수*BIN갯수+빌딩)';
+COMMENT ON COLUMN SCHEDULE_WEIGHT.3D_W1             IS '3D임계치1(RU갯수*BIN갯수+빌딩)';
 COMMENT ON COLUMN SCHEDULE_WEIGHT.JOB_H_THRESHOLD   IS '하이잡임계치(1-5 사이의 값)';
 COMMENT ON COLUMN SCHEDULE_WEIGHT.JOB_M_THRESHOLD   IS '미들잡임계치(1-5 사이의 값)';
 COMMENT ON COLUMN SCHEDULE_WEIGHT.JOB_L_THRESHOLD   IS '로우잡임계치(1-5 사이의 값)';
@@ -67,14 +64,8 @@ def createSCHEDULE_EXT(scheduleId:String) = {
 CREATE TABLE SCHEDULE_EXT (
       SCHEDULE_ID        NUMBER          NOT NULL -- 스케줄ID
     , JOB_WEIGHT         INT                 NULL -- 잡가중치(3:상, 2:중, 1:하)
-    , JOB_H_THRESHOLD    INT                 NULL -- 하이잡임계치(1-5 사이의 값)
-    , JOB_M_THRESHOLD    INT                 NULL -- 미들잡임계치(1-5 사이의 값)
-    , JOB_L_THRESHOLD    INT                 NULL -- 로우잡임계치(1-5 사이의 값)
-    , RU_CNT_WEIGHT      INT                 NULL -- RU갯수가중치값(1..5)
-    , JOB_RU_CNT_WEIGHT  INT                 NULL -- RU갯수가중치
-    , AREA               INT                 NULL -- 면적
-    , AREA_WEIGHT        INT                 NULL -- 면적가중치값(1..5)
-    , JOB_AREA_WEIGHT    INT                 NULL -- 면적가중치
+    , 2D_WEIGHT          INT                 NULL -- 2D산출값
+    , 3D_WEIGHT          INT                 NULL -- 3D산출값
     , REG_DT	           DATE                NULL -- 등록일자
     , REG_USER_ID        VARCHAR2(13)        NULL -- 등록자
     , MOD_DT             DATE                NULL -- 수정일자
@@ -83,20 +74,14 @@ CREATE TABLE SCHEDULE_EXT (
 );
 
 COMMENT ON TABLE SCHEDULE_EXT IS '스케줄확장';
-COMMENT ON COLUMN SCHEDULE_EXT.SCHEDULE_ID         IS '스케줄ID';
-COMMENT ON COLUMN SCHEDULE_EXT.JOB_WEIGHT          IS '잡가중치(3:상, 2:중, 1:하)';
-COMMENT ON COLUMN SCHEDULE_EXT.JOB_H_THRESHOLD     IS '하이잡임계치(1-5 사이의 값)';
-COMMENT ON COLUMN SCHEDULE_EXT.JOB_M_THRESHOLD     IS '미들잡임계치(1-5 사이의 값)';
-COMMENT ON COLUMN SCHEDULE_EXT.JOB_L_THRESHOLD     IS '로우잡임계치(1-5 사이의 값)';
-COMMENT ON COLUMN SCHEDULE_EXT.RU_CNT_WEIGHT       IS 'RU갯수가중치값(1..5)';
-COMMENT ON COLUMN SCHEDULE_EXT.JOB_RU_CNT_WEIGHT   IS 'RU갯수가중치';
-COMMENT ON COLUMN SCHEDULE_EXT.AREA                IS '면적';
-COMMENT ON COLUMN SCHEDULE_EXT.AREA_WEIGHT         IS '면적가중치값(1..5)';
-COMMENT ON COLUMN SCHEDULE_EXT.JOB_AREA_WEIGHT     IS '면적가중치';
-COMMENT ON COLUMN SCHEDULE_EXT.REG_DT              IS '등록일자';
-COMMENT ON COLUMN SCHEDULE_EXT.REG_USER_ID         IS '등록자';
-COMMENT ON COLUMN SCHEDULE_EXT.MOD_DT              IS '수정일자';
-COMMENT ON COLUMN SCHEDULE_EXT.MOD_USER_ID         IS '수정자';
+COMMENT ON COLUMN SCHEDULE_EXT.SCHEDULE_ID    IS '스케줄ID';
+COMMENT ON COLUMN SCHEDULE_EXT.JOB_WEIGHT     IS '잡가중치(3:상, 2:중, 1:하)';
+COMMENT ON COLUMN SCHEDULE_EXT.2D_WEIGHT      IS '2D산출값';
+COMMENT ON COLUMN SCHEDULE_EXT.3D_WEIGHT      IS '3D산출값';
+COMMENT ON COLUMN SCHEDULE_EXT.REG_DT	        IS '로우잡임계치(1-5 사이의 값)';
+COMMENT ON COLUMN SCHEDULE_EXT.REG_USER_ID    IS 'RU갯수가중치값(1..5)';
+COMMENT ON COLUMN SCHEDULE_EXT.MOD_DT         IS 'RU갯수가중치';
+COMMENT ON COLUMN SCHEDULE_EXT.MOD_USER_ID    IS '면적';
 
 """
 }

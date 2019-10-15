@@ -38,13 +38,9 @@ object OJDBC {
 
   }
 
-
   def testPonyUtil() = {
-
     println("test11111111=="+StringUtil.trimNull("abcdddd"));
-
   }
-
 
   def selectTable(objNm:String) = {
 
@@ -57,7 +53,7 @@ object OJDBC {
 
   }
 
-
+ 
   def deleteTable(spark:SparkSession,qry:String) = {
     //--------------------------------------
         println("(ORACLE) "+qry);
