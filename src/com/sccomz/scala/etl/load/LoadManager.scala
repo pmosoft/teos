@@ -113,9 +113,11 @@ object LoadManager {
 
     import spark.implicits._
     import spark.sql
+        //println(s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (SCHEDULE_ID=${scheduleId})""");
+        //println(s"""ALTER TABLE ${objNm} ADD PARTITION (SCHEDULE_ID=${scheduleId}) LOCATION '/user/teos/parquet/entity/${objNm}/SCHEDULE_ID=${scheduleId}'""");
 
     sql(s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (SCHEDULE_ID=${scheduleId})""")
-    sql(s"""ALTER TABLE ${objNm} ADD PARTITION (SCHEDULE_ID=${scheduleId}) LOCATION '/user/teos/parquet/entity/${objNm}/SCENARIO_ID=${scheduleId}'""")
+    sql(s"""ALTER TABLE ${objNm} ADD PARTITION (SCHEDULE_ID=${scheduleId}) LOCATION '/user/teos/parquet/entity/${objNm}/SCHEDULE_ID=${scheduleId}'""")
 
     //--------------------------------------
         println("samToParquet 종료");
