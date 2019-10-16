@@ -29,10 +29,14 @@ import com.sccomz.scala.etl.load.LoadManager
 LoadManager.samToParquetPartition(spark,"SCHEDULE","8459967");
 LoadManager.samToParquetPartition(spark,"SCENARIO","8459967");
 
+LoadManager.hiveDropPartition("SCHEDULE","8459967");
+LoadManager.hiveAddPartition("SCHEDULE","8459967");
+
+
  * */
 object LoadManager {
 
-  val spark = SparkSession.builder().appName("LoadManager").config("spark.sql.warehouse.dir","/user/teos/parquet/entity").enableHiveSupport().getOrCreate()
+  val spark = SparkSession.builder().appName("LoadManager").config("spark.sql.warehouse.dir","/user/hive/warehouse").enableHiveSupport().getOrCreate()
 
   def main(args: Array[String]): Unit = {
     samToParquetPartition(spark,"SCHEDULE","8459967");
@@ -93,6 +97,9 @@ object LoadManager {
         println("target 파일 삭제");
     //--------------------------------------
     fs.delete(new Path(target),true)
+    //import spark.implicits._
+    //import spark.sql
+    //sql(s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (SCHEDULE_ID=${scheduleId})""")
 
     //--------------------------------------
         println("target 파일 생성");
@@ -108,19 +115,40 @@ object LoadManager {
     //.write
     //.parquet(target)             //parquet
     //--------------------------------------
-        println("Hive partition 생성");
+    //    println("Hive partition 생성");
     //--------------------------------------
 
-    import spark.implicits._
-    import spark.sql
         //println(s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (SCHEDULE_ID=${scheduleId})""");
-        //println(s"""ALTER TABLE ${objNm} ADD PARTITION (SCHEDULE_ID=${scheduleId}) LOCATION '/user/teos/parquet/entity/${objNm}/SCHEDULE_ID=${scheduleId}'""");
+    //println(s"""ALTER TABLE ${objNm} ADD PARTITION (SCHEDULE_ID=${scheduleId}) LOCATION '/user/teos/parquet/entity/${objNm}/SCHEDULE_ID=${scheduleId}'""");
+    //sql(s"""ALTER TABLE SCHEDULE ADD PARTITION (SCHEDULE_ID=8459967) LOCATION '/user/hive/warehouse/SCHEDULE/SCHEDULE_ID=8459967'""");
 
-    sql(s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (SCHEDULE_ID=${scheduleId})""")
-    sql(s"""ALTER TABLE ${objNm} ADD PARTITION (SCHEDULE_ID=${scheduleId}) LOCATION '/user/teos/parquet/entity/${objNm}/SCHEDULE_ID=${scheduleId}'""")
+    //sql(s"""ALTER TABLE ${objNm} ADD PARTITION (SCHEDULE_ID=${scheduleId})""")
 
     //--------------------------------------
         println("samToParquet 종료");
     //--------------------------------------
   }
+
+  def hiveDropPartition(objNm:String,scheduleId:String) = {
+
+    Class.forName(App.dbDriverHive);
+    var con:Connection = DriverManager.getConnection(App.dbUrlHive,App.dbUserHive,App.dbPwHive);
+    var stat:Statement=con.createStatement();
+    var rs:ResultSet = null;
+
+    var qry=s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (SCHEDULE_ID=${scheduleId})""";
+    println(qry);stat.execute(qry);
+  }
+
+  def hiveAddPartition(objNm:String,scheduleId:String) = {
+
+    Class.forName(App.dbDriverHive);
+    var con:Connection = DriverManager.getConnection(App.dbUrlHive,App.dbUserHive,App.dbPwHive);
+    var stat:Statement=con.createStatement();
+    var rs:ResultSet = null;
+    var qry=s"""ALTER TABLE ${objNm} ADD PARTITION (SCHEDULE_ID=${scheduleId}) LOCATION '/user/hive/warehouse/${objNm}/SCHEDULE_ID=${scheduleId}'""";
+    println(qry);stat.execute(qry);
+
+  }
+
 }
