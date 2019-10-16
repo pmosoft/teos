@@ -29,7 +29,8 @@ public class FileUtil {
         delFiles("F:/../",".*java");
     }
 
-    public static void testListToFile(){
+    @SuppressWarnings("static-access")
+	public static void testListToFile(){
         System.out.println("start");
         FileUtil fileUtil = new FileUtil();
 
@@ -231,6 +232,7 @@ public class FileUtil {
                 line = br.readLine();
                 al.add(line);
             }
+            br.close();
         } catch(Exception e){
             logger.info(""+e);
             //logger.info("encoding="+encoding+":"+line);
