@@ -3,7 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.scala-ide.sdt.launching.SCALA_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/pony"/>
 	<classpathentry kind="lib" path="D:/fframe/lib_spark/hadoop/client/activation.jar"/>
 	<classpathentry kind="lib" path="D:/fframe/lib_spark/hadoop/client/activation-1.1.jar"/>
 	<classpathentry kind="lib" path="D:/fframe/lib_spark/hadoop/client/apacheds-i18n.jar"/>
