@@ -21,6 +21,7 @@ ExtractManager.extractPostcleToHadoopCsv("8459967")
  * */
 object ExtractPostManager {
 
+  Class.forName(App.dbDriverPost);
   var con:Connection = DriverManager.getConnection(App.dbUrlPost,App.dbUserPost,App.dbPwPost);
   var stat:Statement=con.createStatement();
   var rs:ResultSet = null;
@@ -32,7 +33,6 @@ object ExtractPostManager {
 
   def extractPostToHadoopCsv(scheduleId:String): Unit = {
 
-    Class.forName(App.dbDriverPost);
     var tabNm = ""; var qry = "";
 
     //--------------------------------------
