@@ -319,5 +319,6 @@
 	<classpathentry kind="lib" path="D:/fframe/lib_spark/spark2/kafka-0.10/spark-sql-kafka-0-10_2.11-2.4.0.cloudera2.jar"/>
 	<classpathentry kind="lib" path="D:/fframe/lib_spark/spark2/kafka-0.10/spark-streaming-kafka-0-10_2.11-2.4.0.cloudera2.jar"/>
 	<classpathentry kind="lib" path="D:/fframe/lib_spark/juniversalchardet-1.0.3.jar"/>
+	<classpathentry kind="lib" path="D:/fframe/lib_spark/ojdbc7-12.1.0.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

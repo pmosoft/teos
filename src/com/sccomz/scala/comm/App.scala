@@ -50,7 +50,7 @@ object App {
    * DB 접속 정보
    **********************************************************/
   val dbDriverOra      = "oracle.jdbc.driver.OracleDriver";
-  val dbUrlOra         = "jdbc:oracle:thin:@192.168.0.6:1521/ORCL";
+  val dbUrlOra         = 
            if(ip=="192.168.0.6")   "jdbc:oracle:thin:@192.168.0.6:1521/ORCL"
       else if(ip=="192.168.73.71") "jdbc:oracle:thin:@192.168.0.6:1521/ORCL"
       else if(ip=="150.23.21.44")  "jdbc:oracle:thin:@localhost:9951/IAMLTE"

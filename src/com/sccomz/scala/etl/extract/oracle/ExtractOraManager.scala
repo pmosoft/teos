@@ -18,6 +18,7 @@ ExtractOraManager.extractOracleToHadoopCsv("8459967")
  * */
 object ExtractOraManager {
 
+  Class.forName(App.dbDriverOra);
   var con:Connection = DriverManager.getConnection(App.dbUrlOra,App.dbUserOra,App.dbPwOra);
   var stat:Statement=con.createStatement();
   var rs:ResultSet = null;
@@ -29,7 +30,6 @@ object ExtractOraManager {
 
   def extractOracleToHadoopCsv(scheduleId:String): Unit = {
 
-    Class.forName(App.dbDriverOra);
     var tabNm = ""; var qry = "";
 
     //--------------------------------------
