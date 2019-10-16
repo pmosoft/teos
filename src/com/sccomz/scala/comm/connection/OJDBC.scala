@@ -7,7 +7,7 @@ import java.sql.Statement;
 import org.apache.spark.sql.SparkSession
 import java.util.Properties
 import org.apache.spark.sql.SaveMode
-import net.pmosoft.pony.comm.util.StringUtil
+import com.sccomz.java.comm.util.StringUtil
 
 /*
  * 오라클 JDBC
