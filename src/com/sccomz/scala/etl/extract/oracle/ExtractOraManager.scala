@@ -1,4 +1,4 @@
-package com.sccomz.scala.etl.extract
+package com.sccomz.scala.etl.extract.oracle
 
 import java.sql.Connection
 import java.sql.DriverManager
