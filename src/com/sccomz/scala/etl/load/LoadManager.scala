@@ -20,20 +20,22 @@ import org.apache.hadoop.fs.permission.FsPermission
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.types.StructType
 
+
 import com.sccomz.scala.schedule.control.sql.ScheduleDaemonSql
 import com.sccomz.scala.comm.App
 
 /*
-import com.sccomz.scala.schedule.etl.load.LoadManager
+import com.sccomz.scala.etl.load.LoadManager
 LoadManager.samToParquetPartition(spark,"SCHEDULE","8459967");
+LoadManager.samToParquetPartition(spark,"SCENARIO","8459967");
 
  * */
 object LoadManager {
 
-  val spark = SparkSession.builder().appName("MakeParquet").getOrCreate()
+  val spark = SparkSession.builder().appName("LoadManager").config("spark.sql.warehouse.dir","/user/teos/parquet/entity").enableHiveSupport().getOrCreate()
 
   def main(args: Array[String]): Unit = {
-    //samToParquetPartition(spark,"SCHEDULE","8459967");
+    samToParquetPartition(spark,"SCHEDULE","8459967");
   }
 
   def samToParquetPartition(spark: SparkSession,objNm:String,scheduleId:String) = {
@@ -46,15 +48,12 @@ object LoadManager {
 
 
   def toParquetPartition(spark: SparkSession,cd:String,objNm:String,scheduleId:String) = {
-
     //--------------------------------------
         println("samToParquet 시작");
     //--------------------------------------
-
     var srcEntityPath = if     (cd=="local")   App.hdfsLinuxEtlPath
                         else if(cd=="hdfs")    App.hdfsEtlPath;
     var isPartion = if(scheduleId=="all") false else true;
-
 /*
     var objNm = "SCHEDULE"
     var scheduleId = "8443705"
@@ -108,10 +107,18 @@ object LoadManager {
     //.load(source)                //읽을 파일
     //.write
     //.parquet(target)             //parquet
+    //--------------------------------------
+        println("Hive partition 생성");
+    //--------------------------------------
+
+    import spark.implicits._
+    import spark.sql
+
+    sql(s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (SCHEDULE_ID=${scheduleId})""")
+    sql(s"""ALTER TABLE ${objNm} ADD PARTITION (SCHEDULE_ID=${scheduleId}) LOCATION '/user/teos/parquet/entity/${objNm}/SCENARIO_ID=${scheduleId}'""")
 
     //--------------------------------------
         println("samToParquet 종료");
     //--------------------------------------
   }
-
 }
