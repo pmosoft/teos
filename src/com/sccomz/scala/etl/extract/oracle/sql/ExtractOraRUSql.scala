@@ -2,7 +2,7 @@ package com.sccomz.scala.etl.extract.oracle.sql
 
 object ExtractOraRUSql {
 
-def selectRUCsv(scenarioId:String) = {
+def selectRUCsv(scheduleId:String) = {
 s"""
 SELECT
        SCENARIO_ID                      ||'|'||
@@ -25,7 +25,7 @@ SELECT
        ANT_CHK_YN                       ||'|'||
        TILT_YN                          ||'|'||
        FA_SEQ_ORG                       ||'|'||
-       ${scenarioId}                    ||'|'
+       ${scheduleId}                    ||'|'
 FROM   RU
 """
 }

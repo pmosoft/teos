@@ -2,7 +2,7 @@ package com.sccomz.scala.etl.extract.oracle.sql
 
 object ExtractOraDUSql {
   
-def selectDUCsv(scenarioId:String) = {
+def selectDUCsv(scheduleId:String) = {
 s"""
 SELECT
        SCENARIO_ID                       ||'|'||
@@ -11,7 +11,7 @@ SELECT
        PCI_CNT                           ||'|'||
        STRMAKER                          ||'|'||
        REG_DT                            ||'|'||
-       ${scenarioId}                     ||'|'
+       ${scheduleId}                     ||'|'
 FROM   DU
 """
 }

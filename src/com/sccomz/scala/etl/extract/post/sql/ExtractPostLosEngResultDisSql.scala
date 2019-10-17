@@ -6,7 +6,6 @@ def selectLosEngResultDisCsv(scheduleId:String) = {
 s"""
 SELECT
        JOB_ID                            ||'|'||
-       SCENARIO_ID                       ||'|'||
        SCHEDULE_ID                       ||'|'||
        BIN_ID                            ||'|'||
        BIN_X                             ||'|'||
@@ -21,7 +20,7 @@ SELECT
        SECTOR_Y                          ||'|'||
        SECTOR_Z                          ||'|'||
        '${scheduleId}'                   ||'|'
-FROM LOS_ENG_RESULT_DIS WHERE LIMIT 10
+FROM LOS_ENG_RESULT_DIS
 """
 }
 

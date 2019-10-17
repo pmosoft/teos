@@ -2,7 +2,7 @@ package com.sccomz.scala.etl.extract.oracle.sql
 
 object ExtractOraSiteSql {
 
-def selectSiteCsv(scenarioId:String) = {
+def selectSiteCsv(scheduleId:String) = {
 s"""
 SELECT
        SCENARIO_ID                      ||'|'||
@@ -40,7 +40,7 @@ SELECT
        TM_XPOSITION                     ||'|'||
        TM_YPOSITION                     ||'|'||
        RU_DIV_CD                        ||'|'||
-       ${scenarioId}                    ||'|'
+       ${scheduleId}                    ||'|'
 FROM   SITE
 """
 }

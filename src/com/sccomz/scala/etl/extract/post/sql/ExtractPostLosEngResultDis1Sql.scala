@@ -2,7 +2,7 @@ package com.sccomz.scala.etl.extract.post.sql
 
 object ExtractPostLosEngResultDis1Sql {
   
-def selectLosEngResultDis1Csv(scenarioId:String) = {
+def selectLosEngResultDis1Csv(scheduleId:String) = {
 s"""
 SELECT
        JOB_ID                            ||'|'||
@@ -12,7 +12,7 @@ SELECT
        BIN_Y                             ||'|'||
        BIN_SIZE                          ||'|'||
        LOS                               ||'|'||
-       '${scenarioId}'                   ||'|'
+       '${scheduleId}'                   ||'|'
 FROM LOS_ENG_RESULT_DIS1
 """
 }
