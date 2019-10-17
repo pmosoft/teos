@@ -10,6 +10,9 @@ import java.sql.Statement
 import com.sccomz.scala.comm.App
 import com.sccomz.scala.etl.extract.oracle.sql.ExtractOraScenarioSql
 import com.sccomz.scala.etl.extract.oracle.sql.ExtractOraScheduleSql
+import com.sccomz.scala.etl.extract.oracle.sql.ExtractOraDUSql
+import com.sccomz.scala.etl.extract.oracle.sql.ExtractOraRUSql
+import com.sccomz.scala.etl.extract.oracle.sql.ExtractOraSiteSql
 
 /*
 import com.sccomz.scala.etl.extract.oracle.ExtractOraManager
@@ -44,6 +47,30 @@ object ExtractOraManager {
         tabNm = "SCENARIO"
     //--------------------------------------
     qry = ExtractOraScenarioSql.selectScenarioCsv(scheduleId); println(qry);
+    rs = stat.executeQuery(qry);
+    pw = new PrintWriter(new File(App.extJavaPath+"/"+tabNm+"_"+scheduleId+".dat" ),"UTF-8");
+    while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
+    
+    //--------------------------------------
+        tabNm = "DU"
+    //--------------------------------------
+    qry = ExtractOraDUSql.selectDUCsv(scheduleId); println(qry);
+    rs = stat.executeQuery(qry);
+    pw = new PrintWriter(new File(App.extJavaPath+"/"+tabNm+"_"+scheduleId+".dat" ),"UTF-8");
+    while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
+    
+    //--------------------------------------
+        tabNm = "RU"
+    //--------------------------------------
+    qry = ExtractOraRUSql.selectRUCsv(scheduleId); println(qry);
+    rs = stat.executeQuery(qry);
+    pw = new PrintWriter(new File(App.extJavaPath+"/"+tabNm+"_"+scheduleId+".dat" ),"UTF-8");
+    while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
+    
+    //--------------------------------------
+        tabNm = "SITE"
+    //--------------------------------------
+    qry = ExtractOraSiteSql.selectSiteCsv(scheduleId); println(qry);
     rs = stat.executeQuery(qry);
     pw = new PrintWriter(new File(App.extJavaPath+"/"+tabNm+"_"+scheduleId+".dat" ),"UTF-8");
     while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
