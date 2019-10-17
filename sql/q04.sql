@@ -21,7 +21,7 @@ SELECT COUNT(*) FROM SCENARIO;
 ;
 /
 
-SELECT * FROM SCENARIO
+SELECT * FROM SCENARIO --
 ;
 
 /
@@ -125,10 +125,10 @@ SELECT
      , FA_MODEL_ID                       --  
      , FA_SEQ                            -- ���ļ� �Ϸù�ȣ
      , RESOLUTION                        -- RESOLUTION
-     , REG_DT                            -- �����?
+     , REG_DT                            -- �����?
      , FLOORLOSS                         --  
      , SCENARIO_SUB_ID                   -- �θ�ID
-     , SCENARIO_SOLUTION_NUM             -- �ַ��? �м� ���� 4����
+     , SCENARIO_SOLUTION_NUM             -- �ַ��? �м� ���� 4����
      , LOSS_TYPE                         -- LOSS_TYPE
      , BUILDINGANALYSIS3D_YN             -- 3D�м�����
      , BUILDINGANALYSIS3D_RESOLUTION     -- 3D�м�Resolution
