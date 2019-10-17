@@ -87,5 +87,16 @@ object App {
   val dbUserHive       = "hive";
   val dbPwHive         = "";
 
+  /**********************************************************
+   * Impala DB 접속 정보
+   **********************************************************/
+  val dbDriverImpala     = "com.cloudera.impala.jdbc41.Driver";
+  val dbUrlImpala        =
+           if(ip=="192.168.0.6")    "jdbc:impala://name.dmtech.biz:21050/default"
+      else if(ip=="192.168.73.71")  "jdbc:impala://name.dmtech.biz:21050/default"
+      else                          "";
+  val dbUserImpala       = "hive";
+  val dbPwImpala         = "";
+
 
 }

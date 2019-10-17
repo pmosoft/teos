@@ -29,8 +29,8 @@ import com.sccomz.scala.etl.load.LoadManager
 LoadManager.samToParquetPartition(spark,"SCHEDULE","8459967");
 LoadManager.samToParquetPartition(spark,"SCENARIO","8459967");
 
-LoadManager.hiveDropPartition("SCHEDULE","8459967");
-LoadManager.hiveAddPartition("SCHEDULE","8459967");
+LoadManager.hiveImpalaDropPartition("SCHEDULE","8459967","impala");
+LoadManager.hiveImpalaAddPartition("SCHEDULE","8459967","impala");
 
 
  * */
@@ -129,10 +129,17 @@ object LoadManager {
     //--------------------------------------
   }
 
-  def hiveDropPartition(objNm:String,scheduleId:String) = {
+  def hiveImpalaDropPartition(objNm:String,scheduleId:String,cdNm:String) = {
 
-    Class.forName(App.dbDriverHive);
-    var con:Connection = DriverManager.getConnection(App.dbUrlHive,App.dbUserHive,App.dbPwHive);
+    var con:Connection = null;
+    if(cdNm=="hive") {
+      Class.forName(App.dbDriverHive);
+      con = DriverManager.getConnection(App.dbUrlHive,App.dbUserHive,App.dbPwHive);
+    } else {
+      Class.forName(App.dbDriverImpala);
+      con = DriverManager.getConnection(App.dbUrlImpala,App.dbUserImpala,App.dbPwImpala);
+    }
+
     var stat:Statement=con.createStatement();
     var rs:ResultSet = null;
 
@@ -140,10 +147,20 @@ object LoadManager {
     println(qry);stat.execute(qry);
   }
 
-  def hiveAddPartition(objNm:String,scheduleId:String) = {
+  def hiveImpalaAddPartition(objNm:String,scheduleId:String,cdNm:String) = {
 
-    Class.forName(App.dbDriverHive);
-    var con:Connection = DriverManager.getConnection(App.dbUrlHive,App.dbUserHive,App.dbPwHive);
+    //var con:Connection = null;
+    //if(cdNm=="hive") {
+    //  Class.forName(App.dbDriverHive);
+    //  con = DriverManager.getConnection(App.dbUrlHive,App.dbUserHive,App.dbPwHive);
+    //} else {
+    //  Class.forName(App.dbDriverImpala);
+    //  con = DriverManager.getConnection(App.dbUrlImpala,App.dbUserImpala,App.dbPwImpala);
+    //}
+
+      Class.forName(App.dbDriverImpala);
+    var  con = DriverManager.getConnection(App.dbUrlImpala,App.dbUserImpala,App.dbPwImpala);
+
     var stat:Statement=con.createStatement();
     var rs:ResultSet = null;
     var qry=s"""ALTER TABLE ${objNm} ADD PARTITION (SCHEDULE_ID=${scheduleId}) LOCATION '/user/hive/warehouse/${objNm}/SCHEDULE_ID=${scheduleId}'""";

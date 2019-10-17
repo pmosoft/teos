@@ -1,4 +1,7 @@
-spark2-shell --deploy-mode client --master local[*] --driver-memory 2g --executor-memory 10g --jars /home/teos/lib/ojdbc7-12.1.0.2.jar,/home/teos/lib/hive-jdbc-1.1.0-cdh5.16.2-standalone.jar, /home/teos/bin/teos.jar
+spark2-shell --master local[*] --jars /home/teos/bin/teos.jar,/home/teos/lib/ojdbc7.jar,/home/teos/lib/hiveJdbc11.jar,/home/teos/lib/ImpalaJDBC41.jar
+
+
+spark2-shell --deploy-mode client --master local[*] --driver-memory 2g --executor-memory 10g --jars /home/teos/lib/ojdbc7.jar,/home/teos/lib/hiveJdbc11.jar, /home/teos/bin/teos.jar
 
 
 
