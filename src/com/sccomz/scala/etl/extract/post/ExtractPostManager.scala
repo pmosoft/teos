@@ -13,6 +13,7 @@ import scala.collection._
 import com.sccomz.scala.schedule.control.sql.ScheduleDaemonSql
 import com.sccomz.scala.comm.App
 import com.sccomz.scala.etl.extract.post.sql.ExtractPostLosEngResultDisSql
+import com.sccomz.scala.etl.extract.post.sql.ExtractPostLosEngResultDis1Sql
 
 /*
 import com.sccomz.scala.etl.extract.ExtractManager
@@ -41,6 +42,14 @@ object ExtractPostManager {
     qry = ExtractPostLosEngResultDisSql.selectLosEngResultDisCsv(scheduleId); println(qry);
     rs = stat.executeQuery(qry);
     var pw = new PrintWriter(new File(App.extJavaPath+"/"+tabNm+"_"+scheduleId+".dat" ),"UTF-8");
+    while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
+    
+    //---------------------------------------
+         tabNm = "LOS_ENG_RESULT_DIS1"
+    //---------------------------------------
+    qry = ExtractPostLosEngResultDis1Sql.selectLosEngResultDis1Csv(scheduleId); println(qry);
+    rs = stat.executeQuery(qry);
+    pw = new PrintWriter(new File(App.extJavaPath+"/"+tabNm+"_"+scheduleId+".dat" ),"UTF-8");
     while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
 
   }
