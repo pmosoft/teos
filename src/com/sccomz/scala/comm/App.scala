@@ -27,7 +27,8 @@ object App {
   val hdfsEtlPath           = "/user/teos/sam/entity";
 
   // linux output path
-  val hdfsParquetEntityPath = "/user/teos/parquet/entity";
+  //val hdfsParquetEntityPath = "/user/teos/parquet/entity";
+  val hdfsParquetEntityPath = "/user/hive/warehouse";
 
   // hdfs output path
   val linuxBinPath          = "/home/teos/data/bin";
@@ -47,10 +48,10 @@ object App {
   //val spark = SparkSession.builder().appName("Batch").getOrCreate() //.config("spark.master","local")
 
   /**********************************************************
-   * DB 접속 정보
+   * 오라클 DB 접속 정보
    **********************************************************/
   val dbDriverOra      = "oracle.jdbc.driver.OracleDriver";
-  val dbUrlOra         = 
+  val dbUrlOra         =
            if(ip=="192.168.0.6")    "jdbc:oracle:thin:@192.168.0.6:1521/ORCL"
       else if(ip=="192.168.73.71")  "jdbc:oracle:thin:@192.168.0.6:1521/ORCL"
       else if(ip=="150.23.21.44")   "jdbc:oracle:thin:@localhost:9951/IAMLTE"
@@ -59,6 +60,9 @@ object App {
   val dbUserOra        = "cellplan";
   val dbPwOra          = "cell_2012";
 
+  /**********************************************************
+   * Postgre DB 접속 정보
+   **********************************************************/
   val dbDriverPost     = "org.postgresql.Driver";
   val dbUrlPost        =
            if(ip=="192.168.0.6")    "jdbc:postgresql://localhost:5432/postgres"
@@ -68,5 +72,20 @@ object App {
       else                          "jdbc:postgresql://185.15.16.156:5432/postgres";
   val dbUserPost       = "postgres";
   val dbPwPost         = "postgres";
-  
+
+  /**********************************************************
+   * Hive DB 접속 정보
+   **********************************************************/
+
+  val dbDriverHive     = "org.apache.hive.jdbc.HiveDriver";
+  val dbUrlHive        =
+           if(ip=="192.168.0.6")    "jdbc:hive2://name.dmtech.biz:10000/default"
+      else if(ip=="192.168.73.71")  "jdbc:hive2://name.dmtech.biz:10000/default"
+      else if(ip=="150.23.21.44")   "jdbc:hive2://150.23.13.151:10000"
+      else if(ip=="150.23.21.207")  "jdbc:hive2://150.23.13.151:10000"
+      else                          "";
+  val dbUserHive       = "hive";
+  val dbPwHive         = "";
+
+
 }
