@@ -6,7 +6,6 @@ def selectLosEngResultDis1Csv(scenarioId:String) = {
 s"""
 SELECT
        JOB_ID                            ||'|'||
-       SCENARIO_ID                       ||'|'||
        SECTOR_ID                         ||'|'||
        BIN_ID                            ||'|'||
        BIN_X                             ||'|'||

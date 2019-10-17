@@ -6,7 +6,6 @@ def selectLosBldResultDisCsv(scenarioId:String) = {
 s"""
 SELECT
        JOB_ID                            ||'|'||
-       SCENARIO_ID                       ||'|'||
        SECTOR_ID                         ||'|'||
        TBD                               ||'|'||
        FLOOR_X                           ||'|'||
