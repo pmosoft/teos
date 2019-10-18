@@ -94,8 +94,8 @@ object App {
   val dbUrlImpala        =
            if(ip=="192.168.0.6")    "jdbc:impala://name.dmtech.biz:21050/default"
       else if(ip=="192.168.73.71")  "jdbc:impala://name.dmtech.biz:21050/default"
-      else if(ip=="150.23.21.44")   "jdbc:impala://185.15.16.151:10000"
-      else if(ip=="150.23.21.207")  "jdbc:impala://185.15.16.151:10000"
+      else if(ip=="150.23.21.44")   "jdbc:hive2://localhost:10000"
+      else if(ip=="150.23.21.207")  "jdbc:hive2://localhost:10000"
       else                          "jdbc:impala://185.15.16.151:10000";
   val dbUserImpala       = "hive";
   val dbPwImpala         = "";
