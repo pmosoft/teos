@@ -26,8 +26,8 @@ import com.sccomz.scala.comm.App
 
 /*
 import com.sccomz.scala.etl.load.LoadManager
-LoadManager.samToParquetPartition(spark,"SCHEDULE","8459967");
 LoadManager.samToParquetPartition(spark,"SCENARIO","8459967");
+LoadManager.samToParquetPartition(spark,"SCHEDULE","8459967");
 
 //LoadManager.impalaDropPartition("SCHEDULE","8459967","impala");
 //LoadManager.impalaAddPartition("SCHEDULE","8459967","impala");
