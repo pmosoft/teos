@@ -12,18 +12,17 @@ import com.sccomz.scala.comm.App
 
 object MakeBinFileSql {
 
-  def main(args: Array[String]): Unit = {
-  }
+def main(args: Array[String]): Unit = {
+}
 
-  def selectRU(scheduleId:String) = {
-  s"""
-  SELECT
-         SCENARIO_ID
-       , ENB_ID
-  FROM   RU
-  WHERE  SCHEDULE_ID = ${scheduleId}
-  """
-  }
+def selectScenarioNrRu(scheduleId:String) = {
+s"""
+SELECT * 
+FROM   SCENARIO_NR_RU 
+--WHERE  SCHEDULE_ID = ${scheduleId}
+LIMIT 1
+"""
+}
 
 
 }

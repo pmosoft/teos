@@ -13,13 +13,14 @@ import com.sccomz.scala.comm.App
 object MakeBinFile {
 
   def main(args: Array[String]): Unit = {
+    makeResultDir("");
   }
 
   def makeResultDir(scheduleId:String) = {
     Class.forName(App.dbDriverHive);
     var con = DriverManager.getConnection(App.dbUrlHive,App.dbUserHive,App.dbPwHive);
     var stat:Statement=con.createStatement();
-    var qry=MakeBinFileSql.selectRU("");
+    var qry=MakeBinFileSql.selectScenarioNrRu("");
     var rs = stat.executeQuery(qry);
     while(rs.next()) {
 
@@ -34,7 +35,7 @@ object MakeBinFile {
     Class.forName(App.dbDriverHive);
     var con = DriverManager.getConnection(App.dbUrlHive,App.dbUserHive,App.dbPwHive);
     var stat:Statement=con.createStatement();
-    var qry=MakeBinFileSql.selectRU("");
+    var qry=MakeBinFileSql.selectScenarioNrRu("");
     var rs = stat.executeQuery(qry);
     while(rs.next()) {
 
