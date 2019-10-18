@@ -20,7 +20,8 @@ SELECT
        SECTOR_Y                          ||'|'||
        SECTOR_Z                          ||'|'||
        '${scheduleId}'                   ||'|'
-FROM LOS_ENG_RESULT_DIS
+FROM   LOS_ENG_RESULT_DIS
+LIMIT  100
 """
 }
 

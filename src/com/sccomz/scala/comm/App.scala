@@ -18,10 +18,7 @@ object App {
   /**********************************************************
    * 전역 변수 세팅
    **********************************************************/
-  // in/output pc path
   val pcEtlPath             = "c:/pony/excel";
-
-  // input pc path
   val linuxEtlPath          = "/disk2/etl";
   val hdfsLinuxEtlPath      = "file:///"+linuxEtlPath;
   val hdfsEtlPath           = "/teos/text";
@@ -31,15 +28,24 @@ object App {
   val hdfsWarehousePath = "/teos/warehouse";
 
   // hdfs output path
-  val linuxResultPath          = "/disk2/result";
+  val linuxResultPath = 
+           if(ip=="192.168.0.6")   pcEtlPath
+      else if(ip=="192.168.73.71") linuxEtlPath
+      else if(ip=="150.23.21.44")  pcEtlPath
+      else if(ip=="150.23.21.207") pcEtlPath
+      else                         "/disk2/result";
 
   val extJavaPath =
            if(ip=="192.168.0.6")   pcEtlPath
       else if(ip=="192.168.73.71") linuxEtlPath
+      else if(ip=="150.23.21.44")  pcEtlPath
+      else if(ip=="150.23.21.207") pcEtlPath
       else                         linuxEtlPath;
   val extSparkPath =
            if(ip=="192.168.0.6")   pcEtlPath
       else if(ip=="192.168.73.71") hdfsLinuxEtlPath
+      else if(ip=="150.23.21.44")  pcEtlPath
+      else if(ip=="150.23.21.207") pcEtlPath
       else                         hdfsLinuxEtlPath;
 
 
@@ -56,7 +62,7 @@ object App {
       else if(ip=="192.168.73.71")  "jdbc:oracle:thin:@192.168.0.6:1521/ORCL"
       else if(ip=="150.23.21.44")   "jdbc:oracle:thin:@localhost:9951/IAMLTE"
       else if(ip=="150.23.21.207")  "jdbc:oracle:thin:@localhost:9951/IAMLTE"
-      else                          "jdbc:oracle:thin:@localhost:9951/IAMLTE";
+      else                          "jdbc:oracle:thin:@150.23.13.165:11521/IAMLTE";
   val dbUserOra        = "cellplan";
   val dbPwOra          = "cell_2012";
 
@@ -66,7 +72,7 @@ object App {
   val dbDriverPost     = "org.postgresql.Driver";
   val dbUrlPost        =
            if(ip=="192.168.0.6")    "jdbc:postgresql://localhost:5432/postgres"
-      else if(ip=="192.168.73.71")  "jdbc:postgresql://185.15.16.156:5432/postgres"
+      else if(ip=="192.168.73.71")  "jdbc:postgresql://localhost:5432/postgres"
       else if(ip=="150.23.21.44")   "jdbc:postgresql://localhost:55432/postgres"
       else if(ip=="150.23.21.207")  "jdbc:postgresql://localhost:55432/postgres"
       else                          "jdbc:postgresql://185.15.16.156:5432/postgres";
