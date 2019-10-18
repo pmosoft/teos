@@ -109,8 +109,8 @@ object LoadManager {
     //println(s"""ALTER TABLE ${objNm} ADD PARTITION (SCHEDULE_ID=${scheduleId}) LOCATION '/teos/warehouse/${objNm}/SCHEDULE_ID=${scheduleId}'""");
     import spark.implicits._
     import spark.sql
-    sql(s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (SCHEDULE_ID=${scheduleId})""")
-    sql(s"""ALTER TABLE SCHEDULE ADD PARTITION (SCHEDULE_ID=8459967) LOCATION '/teos/warehouse/SCHEDULE/SCHEDULE_ID=8459967'""");
+    sql(s"""ALTER TABLE I_${objNm} DROP IF EXISTS PARTITION (SCHEDULE_ID=${scheduleId})""")
+    sql(s"""ALTER TABLE I_SCHEDULE ADD PARTITION (SCHEDULE_ID=8459967) LOCATION '/teos/warehouse/SCHEDULE/SCHEDULE_ID=8459967'""");
 
     //sql(s"""ALTER TABLE ${objNm} ADD PARTITION (SCHEDULE_ID=${scheduleId})""")
 
