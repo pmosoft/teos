@@ -3,6 +3,8 @@ package com.sccomz.scala.schema
 import org.apache.spark.sql.types.StructType
 import org.apache.spark.sql.types.StructField
 import org.apache.spark.sql.types.StringType
+import org.apache.spark.sql.types.FloatType
+import org.apache.spark.sql.types.IntegerType
 
 object SCENARIO {
 final val schema : StructType= StructType( Array(
