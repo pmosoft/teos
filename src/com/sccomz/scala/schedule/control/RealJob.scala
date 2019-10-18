@@ -5,7 +5,7 @@ import com.sccomz.scala.sql.PassLoss
 
 /*
  
-/user/teos/parquet/entity/SCHEDULE/SCHEDULE_8443705
+/teos/warehouse/SCHEDULE/SCHEDULE_8443705
 
  
  */

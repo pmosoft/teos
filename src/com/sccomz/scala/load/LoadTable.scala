@@ -10,7 +10,7 @@ import scala.sys.process
 /*
  * 
  * 
-		spark.sql("SELECT * FROM parquet.`/user/teos/parquet/entity/SCHEDULE` WHERE SCHEDULE_ID=''").take(100).foreach(println);
+		spark.sql("SELECT * FROM parquet.`/teos/warehouse/SCHEDULE` WHERE SCHEDULE_ID=''").take(100).foreach(println);
 		spark.sql("SELECT COUNT(*) FROM parquet.`/user/hive/warehouse/schedule`").take(100).foreach(println);
 		
  * */
@@ -37,7 +37,7 @@ object LoadTable {
               , reuseTf    : Boolean
               ) =  {
 
-      val parquetPath = "parquet.`/user/teos/parquet/entity/"
+      val parquetPath = "parquet.`/teos/warehouse/"
       var qry = ""
 
       if(scheduleId=="ALL") {

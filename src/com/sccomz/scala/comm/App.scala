@@ -22,21 +22,21 @@ object App {
   val pcEtlPath             = "c:/pony/excel";
 
   // input pc path
-  val linuxEtlPath          = "/home/teos/entity";
+  val linuxEtlPath          = "/disk2/etl";
   val hdfsLinuxEtlPath      = "file:///"+linuxEtlPath;
-  val hdfsEtlPath           = "/user/teos/sam/entity";
+  val hdfsEtlPath           = "/teos/text";
 
   // linux output path
-  //val hdfsParquetEntityPath = "/user/teos/parquet/entity";
-  val hdfsParquetEntityPath = "/user/hive/warehouse";
+  //val hdfsParquetEntityPath = "/teos/warehouse";
+  val hdfsWarehousePath = "/teos/warehouse";
 
   // hdfs output path
-  val linuxBinPath          = "/home/teos/data/bin";
+  val linuxResultPath          = "/disk2/result";
 
   val extJavaPath =
            if(ip=="192.168.0.6")   pcEtlPath
       else if(ip=="192.168.73.71") linuxEtlPath
-      else                         pcEtlPath;
+      else                         linuxEtlPath;
   val extSparkPath =
            if(ip=="192.168.0.6")   pcEtlPath
       else if(ip=="192.168.73.71") hdfsLinuxEtlPath
@@ -56,7 +56,7 @@ object App {
       else if(ip=="192.168.73.71")  "jdbc:oracle:thin:@192.168.0.6:1521/ORCL"
       else if(ip=="150.23.21.44")   "jdbc:oracle:thin:@localhost:9951/IAMLTE"
       else if(ip=="150.23.21.207")  "jdbc:oracle:thin:@localhost:9951/IAMLTE"
-      else                          "jdbc:oracle:thin:@192.168.0.6:1521/ORCL";
+      else                          "jdbc:oracle:thin:@localhost:9951/IAMLTE";
   val dbUserOra        = "cellplan";
   val dbPwOra          = "cell_2012";
 
@@ -81,9 +81,9 @@ object App {
   val dbUrlHive        =
            if(ip=="192.168.0.6")    "jdbc:hive2://name.dmtech.biz:10000/default"
       else if(ip=="192.168.73.71")  "jdbc:hive2://name.dmtech.biz:10000/default"
-      else if(ip=="150.23.21.44")   "jdbc:hive2://150.23.13.151:10000"
-      else if(ip=="150.23.21.207")  "jdbc:hive2://150.23.13.151:10000"
-      else                          "";
+      else if(ip=="150.23.21.44")   "jdbc:hive2://185.15.16.151:10000"
+      else if(ip=="150.23.21.207")  "jdbc:hive2://185.15.16.151:10000"
+      else                          "jdbc:hive2://185.15.16.151:10000";
   val dbUserHive       = "hive";
   val dbPwHive         = "";
 
@@ -94,9 +94,9 @@ object App {
   val dbUrlImpala        =
            if(ip=="192.168.0.6")    "jdbc:impala://name.dmtech.biz:21050/default"
       else if(ip=="192.168.73.71")  "jdbc:impala://name.dmtech.biz:21050/default"
-      else                          "";
+      else if(ip=="150.23.21.44")   "jdbc:impala://185.15.16.151:10000"
+      else if(ip=="150.23.21.207")  "jdbc:impala://185.15.16.151:10000"
+      else                          "jdbc:impala://185.15.16.151:10000";
   val dbUserImpala       = "hive";
   val dbPwImpala         = "";
-
-
 }
