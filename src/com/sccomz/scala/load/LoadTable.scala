@@ -8,13 +8,16 @@ import scala.sys.process
 		spark.sql("SELECT COUNT(*) FROM parquet.`/user/hive/warehouse/schedule`").take(100).foreach(println);
 		spark.sql("SELECT * FROM parquet.`/teos/warehouse/SCHEDULE` WHERE SCHEDULE_ID=''").take(100).foreach(println);
 		spark.sql("SELECT COUNT(*) FROM parquet.`/user/hive/warehouse/schedule`").take(100).foreach(println);
-		
+
 spark.sql("SELECT * FROM parquet.`/teos/warehouse/SCHEDULE`").take(100).foreach(println);
+
+spark.sql("SELECT * FROM parquet.`/teos/warehouse/SCENARIO`").take(100).foreach(println);
+
 
 sql("SELECT * FROM I_SCHEDULE").take(100).foreach(println);
 spark.sql("SELECT SUM(SCENARIO_ID) FROM I_SCHEDULE").take(100).foreach(println);
 
-		
+
  * */
 
 

@@ -23,6 +23,7 @@ import org.apache.spark.sql.types.StructType
 
 import com.sccomz.scala.schedule.control.sql.ScheduleDaemonSql
 import com.sccomz.scala.comm.App
+import com.sccomz.scala.schema.SCENARIO
 
 /*
 import com.sccomz.scala.etl.load.LoadManager
@@ -54,16 +55,14 @@ object LoadManager {
     //--------------------------------------
         println("samToParquet 시작");
     //--------------------------------------
-    var srcEntityPath = if     (cd=="local")   App.hdfsLinuxEtlPath
-                        else if(cd=="hdfs")    App.hdfsEtlPath;
+    var srcEntityPath = if (cd=="local") App.hdfsLinuxEtlPath else if(cd=="hdfs") App.hdfsEtlPath;
     var isPartion = if(scheduleId=="all") false else true;
 /*
-    var objNm = "SCHEDULE"
-    var scheduleId = "8443705"
-    var srcEntityPath = "file:////home/teos/entity"
-    var isPartion = true
-    val hdfsParquetEntityPath = "/teos/warehouse"
-* */
+    var objNm = "SCENARIO"
+    var scheduleId = "8459967"
+    var cd = "local"
+    var schema = SCENARIO.schema;
+* * */
 
     //--------------------------------------
         println("입출력 변수 세팅");
@@ -87,9 +86,8 @@ object LoadManager {
     //--------------------------------------
         println("HDFS 세션 생성");
     //--------------------------------------
+    //schema = SCENARIO.schema;
     val conf = new Configuration()
-    //conf.addResource(new Path("file:////etc/hadoop/conf/core-site.xml"))
-    //conf.addResource(new Path("file:////etc/hadoop/conf/hdfs-site.xml"))
     val fs = FileSystem.get(conf)
 
     //--------------------------------------
