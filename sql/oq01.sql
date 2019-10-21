@@ -248,13 +248,13 @@ WHERE SCENARIO_ID IN (
 )
 ORDER BY  SCENARIO_NM
 
-/
+
 
 SELECT * FROM SCENARIO
 ORDER BY REG_DT
+;
 
 
-/
 SELECT
        A.SCENARIO_ID                       --
      , A.SCENARIO_NM                       -- 시나리오 이름
@@ -276,7 +276,7 @@ FROM   SCENARIO A
 WHERE  A.SCENARIO_ID = B.SCENARIO_ID
 AND    A.REG_DT > SYSDATE -30
 ORDER BY B.SCHEDULE_ID,A.REG_DT DESC
-
+;
 
 
 /
