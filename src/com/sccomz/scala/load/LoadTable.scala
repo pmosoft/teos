@@ -14,6 +14,24 @@ spark.sql("SELECT * FROM parquet.`/teos/warehouse/SCENARIO`").take(100).foreach(
 spark.sql("SELECT * FROM I_SCHEDULE").take(100).foreach(println);
 spark.sql("SELECT SUM(SCENARIO_ID) FROM I_SCHEDULE").take(100).foreach(println);
 
+
+sql("SELECT * FROM I_SCHEDULE").take(100).foreach(println);
+sql("SELECT * FROM I_SCENARIO").take(100).foreach(println);
+
+sql(s"""
+SELECT * 
+FROM   M_SCHEDULE A
+     , I_SCHEDULE B
+WHERE  A.SCHEDULE_ID = B.SCHEDULE_ID     
+""").take(100).foreach(println);
+
+
+import com.sccomz.scala.load.LoadTable
+LoadTable.lodTable(spark,"SCHEDULE","8459967","*","",true)
+
+lodTable(spark,"SCHEDULE","8459967","*","",true)
+
+
  * */
 
 
@@ -37,10 +55,14 @@ object LoadTable {
       val parquetPath = "parquet.`/teos/warehouse/"
       var qry = ""
 
+      var iObjNm = "I_"+objNm
+      var mObjNm = "M_"+objNm
+      
+      
       if(scheduleId=="ALL") {
           qry = "SELECT "+colInfo+" FROM "+parquetPath+objNm+"` "+whereCond
       } else {
-          qry = "SELECT "+colInfo+" FROM "+parquetPath+objNm+"/"+objNm+ "_" + scheduleId+"` "+whereCond
+          qry = "SELECT "+colInfo+" FROM "+parquetPath+objNm+"` WHERE SCHEDULE_ID='"+ scheduleId+"' "+whereCond
       }
 
       println("-------------------------------------------------------");
@@ -48,16 +70,16 @@ object LoadTable {
       println("-------------------------------------------------------");
 
       if(reuseTf) {
-          if(spark.catalog.tableExists(objNm)) {
-              println("reuse is true && table["+objNm+"] is already exist")
+          if(spark.catalog.tableExists(mObjNm)) {
+              println("reuse is true && table["+mObjNm+"] is already exist")
           } else {
-              println("reuse is true && table["+objNm+"] is not exist && create table")
-              val tDF = spark.sql(qry);tDF.cache.createOrReplaceTempView(objNm);tDF.count()
+              println("reuse is true && table["+mObjNm+"] is not exist && create table")
+              val tDF = spark.sql(qry);tDF.cache.createOrReplaceTempView(mObjNm);tDF.count()
           }
       } else {
-          println("reuse is false && && recreate table ["+objNm+"]")
-          spark.sql("DROP TABLE IF EXISTS "+objNm)
-         val tDF = spark.sql(qry);tDF.cache.createOrReplaceTempView(objNm);tDF.count()
+          println("reuse is false && && recreate table ["+mObjNm+"]")
+          spark.sql("DROP TABLE IF EXISTS "+mObjNm)
+         val tDF = spark.sql(qry);tDF.cache.createOrReplaceTempView(mObjNm);tDF.count()
       }
   }
 
