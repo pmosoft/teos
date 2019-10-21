@@ -25,6 +25,10 @@ FROM   M_SCHEDULE A
 WHERE  A.SCHEDULE_ID = B.SCHEDULE_ID     
 """).take(100).foreach(println);
 
+sql(s"""
+SELECT X_POINT, Y_POINT, LOS FROM RESULT_NR_2D_LOS ORDER BY X_POINT, Y_POINT
+""").take(100).foreach(println);
+
 
 import com.sccomz.scala.load.LoadTable
 LoadTable.lodTable(spark,"SCHEDULE","8459967","*","",true)

@@ -1,51 +1,73 @@
-DROP TABLE SCHEDULE;
+DROP TABLE I_SCENARIO;
 
-CREATE EXTERNAL TABLE SCHEDULE (
-  TYPE_CD                   STRING
-, SCENARIO_ID               STRING
-, USER_ID                   STRING
-, PRIORITIZE                STRING
-, PROCESS_CD                STRING
-, PROCESS_MSG               STRING
-, SCENARIO_PATH             STRING
-, REG_DT                    STRING
-, MODIFY_DT                 STRING
-, RETRY_CNT                 STRING
-, SERVER_ID                 STRING
-, BIN_X_CNT                 STRING
-, BIN_Y_CNT                 STRING
-, RU_CNT                    STRING
-, ANALYSIS_WEIGHT           STRING
-, PHONE_NO                  STRING
-, RESULT_TIME               STRING
-, TILT_PROCESS_TYPE         STRING
-, GEOMETRYQUERY_SCHEDULE_ID STRING
-, RESULT_BIT                STRING
-, INTERWORKING_INFO         STRING
+CREATE EXTERNAL TABLE I_SCENARIO (
+  SCENARIO_ID                      INT
+, SCENARIO_NM                      STRING     
+, USER_ID                          STRING     
+, SYSTEM_ID                        INT        
+, NETWORK_TYPE                     INT     
+, SIDO_CD                          STRING     
+, SIGUGUN_CD                       STRING     
+, DONG_CD                          STRING     
+, SIDO                             STRING     
+, SIGUGUN                          STRING     
+, DONG                             STRING     
+, STARTX                           FLOAT        
+, STARTY                           FLOAT      
+, ENDX                             FLOAT      
+, ENDY                             FLOAT      
+, FA_MODEL_ID                      INT        
+, FA_SEQ                           INT       
+, SCENARIO_DESC                    STRING        
+, USE_BUILDING                     INT        
+, USE_MULTIFA                      INT        
+, PRECISION                        INT        
+, PWRCTRLCHECKPOINT                INT        
+, MAXITERATIONPWRCTRL              INT        
+, RESOLUTION                       INT        
+, MODEL_RADIUS                     INT     
+, REG_DT                           STRING     
+, MODIFY_DT                        STRING     
+, UPPER_SCENARIO_ID                INT        
+, FLOORBUILDING                    INT        
+, FLOOR                            INT        
+, FLOORLOSS                        INT        
+, SCENARIO_SUB_ID                  INT        
+, SCENARIO_SOLUTION_NUM            INT        
+, LOSS_TYPE                        INT        
+, RU_CNT                           INT     
+, MODIFY_YN                        STRING     
+, BATCH_YN                         STRING     
+, TM_STARTX                        INT        
+, TM_STARTY                        INT        
+, TM_ENDX                          INT        
+, TM_ENDY                          INT     
+, REAL_DATE                        STRING     
+, REAL_DRM_FILE                    STRING     
+, REAL_COMP                        STRING     
+, REAL_CATT                        STRING     
+, REAL_CATY                        STRING     
+, BLD_TYPE                         STRING     
+, RET_PERIOD                       INT        
+, RET_END_DATETIME                 STRING     
+, BUILDINGANALYSIS3D_YN            STRING     
+, BUILDINGANALYSIS3D_RESOLUTION    INT        
+, AREA_ID                          INT        
+, BUILDINGANALYSIS3D_RELATED_YN    STRING     
+, RELATED_ANALYSIS_COVLIMITRSRP    INT
 )
 PARTITIONED BY (SCHEDULE_ID INT)
-COMMENT 'SCHEDULE'
---ROW FORMAT DELIMITED
---FIELDS TERMINATED BY '|'
---LINES TERMINATED BY '\n'
+--COMMENT 'SCENARIO'
 STORED AS PARQUET
---STORED AS TEXTFILE;
---LOCATION '/user/teos/parquet/entity/SCHEDULE';
-LOCATION '/user/hive/warehouse/SCHEDULE';
+LOCATION '/teos/warehouse/SCENARIO';
 
---ALTER TABLE SCHEDULE ADD PARTITION (SCHEDULE_ID=8459967);
---ALTER TABLE SCHEDULE ADD PARTITION (SCHEDULE_ID=8459967) LOCATION '/user/teos/parquet/entity/SCHEDULE/SCHEDULE_ID=8459967'; 
-ALTER TABLE SCHEDULE ADD PARTITION (SCHEDULE_ID=8459967) LOCATION '/user/hive/warehouse/SCHEDULE/SCHEDULE_ID=8459967'; 
-ALTER TABLE SCHEDULE DROP PARTITION (SCHEDULE_ID=8459967)
+ALTER TABLE I_SCENARIO ADD PARTITION (SCHEDULE_ID=8459967) LOCATION '/teos/warehouse/SCENARIO/SCHEDULE_ID=8459967';
+ALTER TABLE I_SCENARIO DROP PARTITION (SCHEDULE_ID=8459967);
 
-SHOW PARTITIONS SCHEDULE;
-
-msck repair table SCHEDULE;
-
-
-LOAD DATA INPATH '/user/teos/sam/entity/SCHEDULE_8443705.dat' INTO TABLE SCHEDULE;
-LOAD DATA INPATH '/user/teos/parquet/entity/SCHEDULE' INTO TABLE SCHEDULE;
-
-
-SELECT * FROM I_SCHEDULE;
 SELECT * FROM I_SCENARIO;
+
+REFRESH TABLE I_SCHEDULE;
+
+sql("SELECT * FROM I_SCENARIO").take(100).foreach(println);
+spark.sql("SELECT SUM(SCENARIO_ID) FROM I_SCENARIO").take(100).foreach(println);
+

@@ -6,6 +6,7 @@ import org.apache.hadoop.fs.Path
 import org.apache.hadoop.fs.permission.FsAction
 import org.apache.hadoop.fs.permission.FsPermission
 import org.apache.spark.sql.{ DataFrame, Row, SparkSession }
+import com.sccomz.scala.load.LoadTable
 
 /*
  * 설    명 :
@@ -18,43 +19,45 @@ import org.apache.spark.sql.{ DataFrame, Row, SparkSession }
  * 2019-02-09 | 피승현 | 최초작성
 
 import com.sccomz.scala.job.spark.Los
-Los.execute();
+Los.execute("8459967");
 
  */
 
 object Los {
 
 var spark: SparkSession = null
-var objNm = "Los"
+var objNm = "LOS"
+var scheduleId = ""
+//var scheduleId = "8459967"
 
-//var objNm = "TB_CATE_PATH_STAT";var statisDate = "20190311"; var statisType = "D"
-
-def execute() = {
+def execute(scheduleId:String) = {
   //------------------------------------------------------
-  println(objNm + ".executeDaily() 일배치 시작");
+  println(objNm + " 시작");
   //------------------------------------------------------
+  this.scheduleId = scheduleId;
+  
   spark = SparkSession.builder().appName("Los").getOrCreate();
-  var scheduleId = ""
   loadTables(); excuteSql(); saveToParqeut();
 }
 
 def loadTables() = {
-  //LoadTable.lodAllColTable(spark,"TB_NCATE_URL_MAP_FRONT"     ,statisDate,statisType,"",true)
-  //LoadTable.lodAllColTable(spark,"TB_ACCESS_SESSION2"       ,statisDate,statisType,"",true)
+  LoadTable.lodTable(spark,"SCHEDULE",scheduleId,"*","",true)
+  LoadTable.lodTable(spark,"SCENARIO",scheduleId,"*","",true)
 }
 
 def excuteSql() = {
 var qry = ""
-qry =
-s"""
+qry = s"""
 SELECT *
-FROM   M_SCENARIO"""
+FROM   M_SCENARIO
+"""
 //spark.sql(qry).take(100).foreach(println);
 
 //--------------------------------------
 println(qry);
 //--------------------------------------
-val sqlDf = spark.sql(qry)
+spark.sql(qry).take(100).foreach(println);
+//val sqlDf = spark.sql(qry)
 //sqlDf.cache.createOrReplaceTempView(objNm); sqlDf.count()
 
 }
