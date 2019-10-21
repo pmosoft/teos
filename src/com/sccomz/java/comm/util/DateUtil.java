@@ -14,6 +14,11 @@ import java.util.TimeZone;
 
 public class DateUtil {
 
+
+	public static void main(String[] arg) {
+		System.out.println("★★★★★★★★★★★★★★★[key] " + getDate("yyyyMMdd"));
+	}
+
     /*
      * yyyyMMddHHmmss
      * */
@@ -28,7 +33,6 @@ public class DateUtil {
 
 		return ndate;
 	}
-
 
 	public static Date getCurrentDate() {
 		try {
@@ -497,9 +501,6 @@ public class DateUtil {
 		return week[W];
 	}
 
-	public static void main(String[] arg) {
-		System.out.println("★★★★★★★★★★★★★★★[key] " + getDateString(getCurrentDate()));
-	}
 
 	/**
 	 * from ~ to 기간동안의 특정요일을 반환한다.

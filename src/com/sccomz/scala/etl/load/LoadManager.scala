@@ -118,7 +118,7 @@ object LoadManager {
   }
 
   def impalaDropPartition(objNm:String,scheduleId:String,cdNm:String) = {
-    Class.forName(App.dbDriverImpala);
+    Class.forName(App.dbDriverImpala); 
     var con = DriverManager.getConnection(App.dbUrlImpala,App.dbUserImpala,App.dbPwImpala);
     var stat:Statement=con.createStatement();
     var qry=s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (SCHEDULE_ID=${scheduleId})""";

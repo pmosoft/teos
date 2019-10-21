@@ -6,7 +6,7 @@ def selectScheduleCsv(scheduleId:String) = {
 s"""
 SELECT
        TYPE_CD                                    ||'|'||
-       SCENARIO_ID                                ||'|'||
+       NVL(SCENARIO_ID,0)                         ||'|'||
        USER_ID                                    ||'|'||
        PRIORITIZE                                 ||'|'||
        PROCESS_CD                                 ||'|'||
@@ -14,16 +14,16 @@ SELECT
        SCENARIO_PATH                              ||'|'||
        TO_CHAR(REG_DT,'YYYY-MM-DD HH24:MI:SS')    ||'|'||
        TO_CHAR(MODIFY_DT,'YYYY-MM-DD HH24:MI:SS') ||'|'||
-       RETRY_CNT                                  ||'|'||
+       NVL(RETRY_CNT,0)                           ||'|'||
        SERVER_ID                                  ||'|'||
-       BIN_X_CNT                                  ||'|'||
-       BIN_Y_CNT                                  ||'|'||
-       RU_CNT                                     ||'|'||
-       ANALYSIS_WEIGHT                            ||'|'||
+       NVL(BIN_X_CNT,0)                           ||'|'||
+       NVL(BIN_Y_CNT,0)                           ||'|'||
+       NVL(RU_CNT,0)                              ||'|'||
+       NVL(ANALYSIS_WEIGHT,0)                     ||'|'||
        PHONE_NO                                   ||'|'||
-       RESULT_TIME                                ||'|'||
-       TILT_PROCESS_TYPE                          ||'|'||
-       GEOMETRYQUERY_SCHEDULE_ID                  ||'|'||
+       NVL(RESULT_TIME,0)                         ||'|'||
+       NVL(TILT_PROCESS_TYPE,0)                   ||'|'||
+       NVL(GEOMETRYQUERY_SCHEDULE_ID,0)           ||'|'||
        RESULT_BIT                                 ||'|'||
        INTERWORKING_INFO                          ||'|'||
        SCHEDULE_ID                                ||'|'
