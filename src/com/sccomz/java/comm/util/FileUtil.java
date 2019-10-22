@@ -17,8 +17,11 @@ import org.mozilla.universalchardet.UniversalDetector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sccomz.scala.serialize.SerializeTest.BinValue;
+
 
 public class FileUtil {
+	
     private static Logger logger = LoggerFactory.getLogger(FileUtil.class);
 
     public static void main(String[] args) {
@@ -28,7 +31,13 @@ public class FileUtil {
     public static void testDelFiles(){
         delFiles("F:/../",".*java");
     }
-
+    
+	public static byte[] intMax() {
+		byte[] INT_MAX = new byte[4];
+		INT_MAX[0] = (byte) 0xff;  INT_MAX[1] = (byte) 0xff; INT_MAX[2] = (byte) 0xff; INT_MAX[3] = (byte) 0x7f;
+        return INT_MAX;
+	}
+		
     @SuppressWarnings("static-access")
 	public static void testListToFile(){
         System.out.println("start");

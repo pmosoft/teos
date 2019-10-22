@@ -18,15 +18,13 @@ public class SerializeTest {
 	}	
 	
     public static void main(String[] args) {
-	
-    	
         SerializeTest s = new SerializeTest();
+        s.writeBinTest06();
         //s.readBin();
         //s.writeBinTest01();
         //s.readBinTest01();
         //s.writeBinTest03();
         //s.writeBinTest04();
-        s.writeBinTest06();
     }
 
     void writeBinTest06(){
@@ -44,7 +42,7 @@ public class SerializeTest {
         bin[10][1].value = intToByteArray(1);
         
     	// 파일 WRITE
-        File file = new File("c:/pony/excel/file06.bin") ;
+        File file = new File("C:/Pony/Excel/test.bin") ;
         FileOutputStream fos = null ;
         try {
             fos = new FileOutputStream(file);
