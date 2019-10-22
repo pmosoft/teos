@@ -4,12 +4,11 @@ import java.io._
 import java.io.File
 import java.sql.DriverManager
 import java.sql.Statement
-import java.util.ArrayList
 
+import com.sccomz.java.comm.util.BinValue
 import com.sccomz.java.comm.util.DateUtil
 import com.sccomz.java.comm.util.FileUtil
 import com.sccomz.scala.comm.App
-import com.sccomz.java.comm.util.BinValue
 
 object MakeBinFile1{
 
@@ -54,7 +53,7 @@ object MakeBinFile1{
       
       for(i <- 0 until x_bin_cnt by 1) {
         for(j <- 0 until y_bin_cnt by 1) {
-          binVal(i)(j) = new BinValue(FileUtil.intMax());
+          binVal(i) = new BinValue(FileUtil.intMax());
         }
       }
     }

@@ -22,9 +22,9 @@ SELECT * FROM SCENARIO_NR_RU
 }
 
 def test1(scheduleId:String) = {
-		s"""
-		SELECT scenario_id, ru_id, x_bin_cnt, y_bin_cnt FROM scenario_nr_ru
-		"""
+s"""
+SELECT scenario_id, ru_id, x_bin_cnt, y_bin_cnt FROM scenario_nr_ru
+"""
 }
 
 def selectResultNr2dLos(scheduleId:String) = {
