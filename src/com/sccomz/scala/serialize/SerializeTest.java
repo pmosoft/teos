@@ -40,8 +40,8 @@ public class SerializeTest {
 		}
         
         // VALUE 세팅
-        bin[0][0].value = intToByteArray(0);
-        bin[0][1].value = intToByteArray(1);
+        bin[5][0].value = intToByteArray(0);
+        bin[10][1].value = intToByteArray(1);
         
     	// 파일 WRITE
         File file = new File("c:/pony/excel/file06.bin") ;
