@@ -23,5 +23,11 @@ LIMIT 1000
 """
 }
 
+def selectResultNr2dLos(scheduleId:String) = {
+s"""
+SELECT X_POINT, Y_POINT, LOS FROM RESULT_NR_2D_LOS ORDER BY X_POINT, Y_POINT
+"""
+}
+
 
 }

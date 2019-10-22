@@ -318,6 +318,32 @@ public class FileUtil {
         } catch(Exception e) { e.printStackTrace(); throw e; }
 
     }
+    
+    public byte[] intToByteArray(int value) {
+        byte[] byteArray = new byte[4];
+        byteArray[3] = (byte)(value >> 24);
+        byteArray[2] = (byte)(value >> 16);
+        byteArray[1] = (byte)(value >> 8);
+        byteArray[0] = (byte)(value);
+        return byteArray;
+    }
+
+    public int byteArrayToInt(byte bytes[]) {
+        return ((((int)bytes[3] & 0xff) << 24) |
+                (((int)bytes[2] & 0xff) << 16) |
+                (((int)bytes[1] & 0xff) << 8) |
+                (((int)bytes[0] & 0xff)));
+    }
+
+    public byte[] floatToByteArray(float value) {
+        int floatValue =  Float.floatToIntBits(value);
+        return intToByteArray(floatValue);
+    }
+
+    public float byteArrayToFloat(byte bytes[]) {
+        int value =  byteArrayToInt(bytes);
+        return Float.intBitsToFloat(value);
+    }
 
 
 }
