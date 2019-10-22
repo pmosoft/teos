@@ -5,7 +5,7 @@ import java.sql.DriverManager
 import java.sql.ResultSet
 import java.sql.Statement
 import java.io._
-import java.io.File;
+import java.io.File
 
 import com.sccomz.scala.comm.App
 import shapeless.LowPriority.For
@@ -15,11 +15,11 @@ import java.text.SimpleDateFormat
 import java.util.ArrayList
 
 
-object MakeBinFile1 extends FileUtil{
-  
+object MakeBinFile1{
 
-  def main(args: Array[String]): Unit = {
-    makeResultDir("");
+  def main(args: Array[String]): Unit = {    
+//    makeResultDir("");
+    makeResultFile("");
   }
 
   def makeResultDir(scheduleId:String) = {
@@ -39,11 +39,6 @@ object MakeBinFile1 extends FileUtil{
       // 폴더 생성
       var dir = new File("C:/Pony/Excel/result", DateUtil.getDate("yyyyMMdd") + "/SYS/" + rs.getString(1) + "/ENB_" + rs.getString(2) + "/PCI_" + rs.getString(3) + "_PORT_" + rs.getString(4) + "_" + rs.getString(5));
       if(!dir.exists()) dir.mkdirs();
-      // 파일 생성
-//      var dir2 = new File(dir, rs.getString(3));
-//      var fw = new FileWriter(dir2);
-//      var bw = new BufferedWriter(fw);
-//      if(!dir2.exists()) bw.flush();
       println(dir);
     };
   }
@@ -59,17 +54,21 @@ object MakeBinFile1 extends FileUtil{
     var bin = new ArrayList[Integer];
     var count = 0;
     var i = 0;
+    var fu = new FileUtil;
     while(rs.next()) {
     	var resultValue = rs.getInt("LOS");
-      bin.add(resultValue);
-      count = count + 1;
-      if(count == 4) {
-        for(i <- 0 until bin.size()) {
-          
-        }
-      }
-    };
-
+    	bin.add(resultValue);
+    	count = count + 1;
+    	if(count == 4) {
+    		for(i <- 0 until bin.size() by 1) {
+    			fos.write(fu.intToByteArray(bin.get(i)));
+    		}
+    		count = 0;
+    		bin.clear();
+    	}
+    }
+    println()
+    fos.close();
   }
 
 }
