@@ -6,10 +6,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import com.sccomz.scala.comm.App;
+
 public class HiveDBManager {
-	public static Connection connectHive() throws SQLException {
-		String url = "jdbc:hive2://name.dmtech.biz:10000/default";
-		return DriverManager.getConnection(url, "hive", "");
+	public static Connection connectHive() throws SQLException, ClassNotFoundException {
+		Class.forName(App.dbDriverHive());
+//		String url = "jdbc:hive2://150.23.13.151:10000/default";
+		return DriverManager.getConnection(App.dbUrlHive(), App.dbUserHive(), App.dbPwHive());
 	}
 	
 	public static void close(Connection con, Statement stmt, ResultSet rs) {
