@@ -27,7 +27,6 @@ public class HiveSerializeTest {
 		Statement stmt = null;
 //		ResultSet rs = null;
 		ResultSet rs2 = null;
-		ResultSet rs3 = null;
 
 		// 파일 WRITE
 		File file = new File("C:/Pony/Excel/result/test.bin");
@@ -79,22 +78,16 @@ public class HiveSerializeTest {
         	//----------------------------------------------------------------------------------------------------------------
         	// 파일 WRITE
         	//----------------------------------------------------------------------------------------------------------------
-
-			String query3 = "SELECT DISTINCT X_POINT, Y_POINT, LOS FROM RESULT_NR_2D_LOS WHERE scenario_id = 5108566 ORDER BY X_POINT, Y_POINT";
-			rs3 = stmt.executeQuery(query3);
-
 			fos = new FileOutputStream(file);
 
-			while (rs3.next()) {
 				for (int i = x_point; i < x_bin_cnt; i++) {
 					for (int j = y_point; j < y_bin_cnt; j++) {
 						fos.write(bin[i][j].value);
 					}
 				}
-			}
+
 			System.out.println("bin 등록 완료");
 			rs2.close();
-			rs3.close();
 	}
         catch (Exception e) { e.printStackTrace() ;}
         if (fos != null) { try { fos.close() ; } catch (Exception e) { e.printStackTrace(); }}
