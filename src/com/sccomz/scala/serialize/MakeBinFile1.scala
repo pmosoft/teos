@@ -12,11 +12,11 @@ import com.sccomz.scala.comm.App
 
 object MakeBinFile1{
 
-  def main(args: Array[String]): Unit = {    
+  def main(args: Array[String]): Unit = {
 //    makeResultDir("");
     makeResultFile("");
   }
-
+  // 폴더 생성 메소드
   def makeResultDir(scheduleId:String) = {
     Class.forName(App.dbDriverHive);
     var con = DriverManager.getConnection(App.dbUrlHive,App.dbUserHive,App.dbPwHive);
@@ -38,76 +38,50 @@ object MakeBinFile1{
     };
   }
   
+  // Bin 파일 생성 메소드
   def makeResultFile(scheduleId:String) = {
     Class.forName(App.dbDriverHive);
-    var con = DriverManager.getConnection(App.dbUrlHive,App.dbUserHive,App.dbPwHive);
-    var stat:Statement=con.createStatement();
-    var qry2=MakeBinFileSql2.test1("");
-    var rs2 = stat.executeQuery(qry2);
+    var con = DriverManager.getConnection(App.dbUrlHive, App.dbUserHive, App.dbPwHive);
+    var stat: Statement = con.createStatement();
+    var fu = new FileUtil;
+    //---------------------------------------------------------------------------------------------------------
+    // 초기화
+    //---------------------------------------------------------------------------------------------------------
+    var x_bin_cnt = 503; var y_bin_cnt = 576;
+    val bin = Array.ofDim[BinValue](x_bin_cnt, y_bin_cnt);
     
-    while(rs2.next()) {
-      var x_bin_cnt = rs2.getInt("x_bin_cnt");
-      var y_bin_cnt = rs2.getInt("y_bin_cnt");
-      
-      val binVal = new Array[Array[BinValue]](x_bin_cnt)(y_bin_cnt);
-      
-      for(i <- 0 until x_bin_cnt by 1) {
-        for(j <- 0 until y_bin_cnt by 1) {
-          binVal(i) = new BinValue(FileUtil.intMax());
-        }
+    var i = 0; var j = 0;
+    for (i <- 0 until x_bin_cnt by 1) {
+      for (j <- 0 until y_bin_cnt by 1) {
+        bin(i)(j) = new BinValue(FileUtil.intMax());
       }
     }
-    
-    var qry3 = MakeBinFileSql2.selectResultNr2dLos("");
-    var rs3 = stat.executeQuery(qry3);
-
-//    var bin = new ArrayList[Integer];
-    var count = 0;
-    var i = 0; var j = 0;
-    var fu = new FileUtil;
-    
-    while(rs3.next()) {
-      var x = rs3.getInt(1);
-      var y = rs3.getInt(2);
-      var value = rs3.getInt(3);
+    //---------------------------------------------------------------------------------------------------------
+    // Value 세팅
+    //---------------------------------------------------------------------------------------------------------
+    var qry = MakeBinFileSql2.test1("");
+    var rs2 = stat.executeQuery(qry);
+    var x_point = 0; var y_point = 0; var los = 0;
+    while(rs2.next()) {
+      x_point = rs2.getInt("x_point");
+      y_point = rs2.getInt("y_point");
+      los = rs2.getInt("los");
+      bin(x_point)(y_point).value = FileUtil.intToByteArray(los);
     }
+    //---------------------------------------------------------------------------------------------------------
+    // 파일 Write
+    //---------------------------------------------------------------------------------------------------------
+    var file = new File("C:/Pony/Excel/result", "los.bin");
+    var fos = new FileOutputStream(file);
+    
+    for (i <- x_point until x_bin_cnt by 1) {
+      for (j <- y_point until y_bin_cnt by 1) {
+        fos.write(bin(i)(j).value);
+      }
+    }
+    println("bin 등록 완료");
+    rs2.close();
+    if(fos != null) fos.close();
    }
-
-//  def makeResultFile(scheduleId:String) = {
-//    Class.forName(App.dbDriverHive);
-//    var con = DriverManager.getConnection(App.dbUrlHive,App.dbUserHive,App.dbPwHive);
-//    var stat:Statement=con.createStatement();
-//    var qry=MakeBinFileSql2.test1("");
-//    var rs2 = stat.executeQuery(qry);
-//    var file = new File("C:/Pony/Excel/result", "los.bin");
-//    var fos = new FileOutputStream(file);
-//    var bin = new ArrayList[Integer];
-//    var count = 0;
-//    var i = 0; var j = 0;
-//    var fu = new FileUtil;
-//    while(rs2.next()) {
-//      var x_bin_cnt = rs2.getInt("x_bin_cnt");
-//      var y_bin_cnt = rs2.getInt("y_bin_cnt");
-//      val binVal = new Array[BinValue](x_bin_cnt)(y_bin_cnt);
-//      for(i <- 0 until x_bin_cnt by 1) {
-//        for(j <- 0 until y_bin_cnt by 1) {
-//          binVal[i][j] = new BinValue(FileUtil.intMax());
-//        }
-//      }
-//      
-//      
-//    	var resultValue = rs2.getInt("LOS");
-//    	bin.add(resultValue);
-//    	count = count + 1;
-//    	if(count == 4) {
-//    		for(i <- 0 until bin.size() by 1) {
-//    			fos.write(fu.intToByteArray(bin.get(i)));
-//    		}
-//    		count = 0;
-//    		bin.clear();
-//    	}
-//    }
-//    fos.close();
-//  }
 
 }

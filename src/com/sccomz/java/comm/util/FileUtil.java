@@ -328,7 +328,7 @@ public class FileUtil {
 
     }
     
-    public byte[] intToByteArray(int value) {
+    public static byte[] intToByteArray(int value) {
         byte[] byteArray = new byte[4];
         byteArray[3] = (byte)(value >> 24);
         byteArray[2] = (byte)(value >> 16);
@@ -344,7 +344,7 @@ public class FileUtil {
                 (((int)bytes[0] & 0xff)));
     }
 
-    public byte[] floatToByteArray(float value) {
+    public static byte[] floatToByteArray(float value) {
         int floatValue =  Float.floatToIntBits(value);
         return intToByteArray(floatValue);
     }

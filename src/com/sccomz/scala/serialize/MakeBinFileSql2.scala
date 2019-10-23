@@ -23,7 +23,7 @@ SELECT * FROM SCENARIO_NR_RU
 
 def test1(scheduleId:String) = {
 s"""
-SELECT scenario_id, ru_id, x_bin_cnt, y_bin_cnt FROM scenario_nr_ru
+SELECT DISTINCT X_POINT, Y_POINT, LOS FROM RESULT_NR_2D_LOS WHERE scenario_id = 5108566 ORDER BY X_POINT, Y_POINT
 """
 }
 
