@@ -46,7 +46,8 @@ public class HiveSerializeTest {
         	//----------------------------------------------------------------------------------------------------------------
         	con = HiveDBManager.connectHive();
         	stmt = con.createStatement();
-        	String query = "SELECT x_bin_cnt, y_bin_cnt FROM scenario_nr_ru WHERE scenario_id = 5103366 AND ru_id = 1012242308";
+        	String query = "SELECT x_bin_cnt, y_bin_cnt FROM scenario_nr_ru WHERE scenario_id = 5104573 AND ru_id = 1012242308";
+        	System.out.println(query);
         	rs = stmt.executeQuery(query);
         	
         	int x_bin_cnt = 0, y_bin_cnt = 0;
@@ -61,11 +62,12 @@ public class HiveSerializeTest {
         			bin[i][j] = new BinValue(INT_MAX);
         		}
         	}
-
+        	System.out.println(x_bin_cnt+":"+y_bin_cnt);
         	//----------------------------------------------------------------------------------------------------------------
         	// VALUE 세팅
         	//----------------------------------------------------------------------------------------------------------------
-        	String query2 = "SELECT X_POINT, Y_POINT, LOS FROM RESULT_NR_2D_LOS ORDER BY X_POINT, Y_POINT";
+        	String query2 = "SELECT X_POINT, Y_POINT, LOS FROM RESULT_NR_2D_LOS WHERE scenario_id = 5104573  ORDER BY X_POINT, Y_POINT";
+        	System.out.println(query2);
         	rs2 = stmt.executeQuery(query2);
         	
         	int x_point = 0, y_point = 0, los = 0;
@@ -74,25 +76,23 @@ public class HiveSerializeTest {
 				x_point = rs2.getInt("x_point");
 				y_point = rs2.getInt("y_point");
 				los = rs2.getInt("los");
+	        	System.out.println(x_point+":"+y_point+":"+los);
 				bin[x_point][y_point].value = intToByteArray(los);
 			}
         	
         	//----------------------------------------------------------------------------------------------------------------
         	// 파일 WRITE
         	//----------------------------------------------------------------------------------------------------------------
-			String query3 = "SELECT * FROM scenario_nr_ru";
-			rs3 = stmt.executeQuery(query3);
+			//String query3 = "SELECT * FROM scenario_nr_ru";
+			//rs3 = stmt.executeQuery(query3);
 			fos = new FileOutputStream(file);
-			while (rs3.next()) {
-				for (int i = x_point; i < x_bin_cnt; i++) {
-					for (int j = y_point; j < y_bin_cnt; j++) {
-						fos.write(bin[x_point][y_point].value);
-					}
-				}
+		    for (int i = x_point; i < x_bin_cnt; i++) {
+				for (int j = y_point; j < y_bin_cnt; j++) {
+					fos.write(bin[x_point][y_point].value);
+				}	
 			}
 			System.out.println("bin 등록 완료");
 			rs2.close();
-			rs3.close();
         } catch (Exception e) { e.printStackTrace() ;}
 
         if (fos != null) { try { fos.close() ; } catch (Exception e) { e.printStackTrace(); }}

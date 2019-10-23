@@ -46,4 +46,38 @@ sql("SELECT SUM(SCENARIO_ID) FROM I_SCHEDULE").take(100).foreach(println);
 sql("SELECT scenario_id,COUNT(*) FROM SCENARIO_NR_RU GROUP BY scenario_id").take(100).foreach(println);
 sql("SELECT scenario_id,COUNT(*) FROM SCENARIO_NR_RU GROUP BY scenario_id").take(100).foreach(println);
 
+spark.sql("SELECT * FROM result_nr_2d_los where schedule_id=8460062").take(100).foreach(println);
+
+
+INSERT INTO TABLE I_SCHEDULE PARTITION (SCHEDULE_ID=8459968)
+SELECT  
+  TYPE_CD                  
+, SCENARIO_ID              
+, USER_ID                  
+, PRIORITIZE               
+, PROCESS_CD               
+, PROCESS_MSG              
+, SCENARIO_PATH            
+, REG_DT                   
+, MODIFY_DT                
+, RETRY_CNT                
+, SERVER_ID                
+, BIN_X_CNT                
+, BIN_Y_CNT                
+, RU_CNT                   
+, ANALYSIS_WEIGHT          
+, PHONE_NO                 
+, RESULT_TIME              
+, TILT_PROCESS_TYPE        
+, GEOMETRYQUERY_SCHEDULE_ID
+, RESULT_BIT               
+, INTERWORKING_INFO        
+FROM I_SCHEDULE WHERE SCHEDULE_ID=8459967
+;
+
+sql("LOAD DATA LOCAL INPATH '/disk2/etl/SCHEDULE_8459967.dat' INTO TABLE I_SCHEDULE PARTITION (SCHEDULE_ID=8459969)");
+
+
+
+
 

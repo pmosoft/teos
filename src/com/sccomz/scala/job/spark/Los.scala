@@ -51,6 +51,53 @@ qry = s"""
 SELECT *
 FROM   M_SCENARIO
 """
+spark.sql(s"""
+INSERT INTO TABLE I_SCHEDULE PARTITION (SCHEDULE_ID=8459968)
+SELECT  
+  TYPE_CD                  
+, SCENARIO_ID              
+, USER_ID                  
+, PRIORITIZE               
+, PROCESS_CD               
+, PROCESS_MSG              
+, SCENARIO_PATH            
+, REG_DT                   
+, MODIFY_DT                
+, RETRY_CNT                
+, SERVER_ID                
+, BIN_X_CNT                
+, BIN_Y_CNT                
+, RU_CNT                   
+, ANALYSIS_WEIGHT          
+, PHONE_NO                 
+, RESULT_TIME              
+, TILT_PROCESS_TYPE        
+, GEOMETRYQUERY_SCHEDULE_ID
+, RESULT_BIT               
+, INTERWORKING_INFO        
+FROM I_SCHEDULE WHERE SCHEDULE_ID=8459967
+""").take(100).foreach(println);
+
+spark.sql(s"""
+SELECT *       
+FROM I_SCHEDULE I
+--WHERE SCHEDULE_ID=8459968
+""").take(100).foreach(println);
+
+spark.sql(s""" SELECT SUM(SCHEDULE_ID) FROM SCHEDULE """).take(100).foreach(println);
+
+spark.sql(s""" SELECT distinct SCENARIO_ID FROM result_nr_2d_los """).take(100).foreach(println);
+
+spark.sql(s""" SELECT distinct SCENARIO_ID FROM scenario_nr_ru """).take(100).foreach(println);
+
+spark.sql(s""" SELECT X_POINT, Y_POINT, LOS FROM RESULT_NR_2D_LOS WHERE scenario_id = 5104573  ORDER BY X_POINT, Y_POINT """).take(100).foreach(println);
+
+spark.sql(s"""
+SELECT * FROM scenario_nr_ru where scenario_id = 5104573
+""").take(100).foreach(println);
+
+
+
 //spark.sql(qry).take(100).foreach(println);
 
 //--------------------------------------
