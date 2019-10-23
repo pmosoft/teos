@@ -25,7 +25,7 @@ public class HiveSerializeTest {
 		
 		Connection con = null;
 		Statement stmt = null;
-		ResultSet rs = null;
+//		ResultSet rs = null;
 		ResultSet rs2 = null;
 		ResultSet rs3 = null;
 
@@ -46,14 +46,14 @@ public class HiveSerializeTest {
         	//----------------------------------------------------------------------------------------------------------------
         	con = HiveDBManager.connectHive();
         	stmt = con.createStatement();
-        	String query = "SELECT x_bin_cnt, y_bin_cnt FROM scenario_nr_ru WHERE scenario_id = 5103366 AND ru_id = 1012242308";
-        	rs = stmt.executeQuery(query);
+//        	String query = "SELECT x_bin_cnt, y_bin_cnt FROM scenario_nr_ru WHERE scenario_id = 5104573 AND ru_id = 1012242308";
+//        	rs = stmt.executeQuery(query);
         	
-        	int x_bin_cnt = 0, y_bin_cnt = 0;
-			while (rs.next()) {
-				x_bin_cnt = rs.getInt("x_bin_cnt");
-				y_bin_cnt = rs.getInt("y_bin_cnt");
-			}
+        	int x_bin_cnt = 503, y_bin_cnt = 576;
+//			while (rs.next()) {
+//				x_bin_cnt = rs.getInt("x_bin_cnt");
+//				y_bin_cnt = rs.getInt("y_bin_cnt");
+//			}
         	BinValue[][] bin = new BinValue[x_bin_cnt][y_bin_cnt];
        	
         	for (int i = 0; i < x_bin_cnt; i++) {
@@ -65,7 +65,7 @@ public class HiveSerializeTest {
         	//----------------------------------------------------------------------------------------------------------------
         	// VALUE 세팅
         	//----------------------------------------------------------------------------------------------------------------
-        	String query2 = "SELECT X_POINT, Y_POINT, LOS FROM RESULT_NR_2D_LOS ORDER BY X_POINT, Y_POINT";
+        	String query2 = "SELECT DISTINCT X_POINT, Y_POINT, LOS FROM RESULT_NR_2D_LOS WHERE scenario_id = 5108566 ORDER BY X_POINT, Y_POINT";
         	rs2 = stmt.executeQuery(query2);
         	
         	int x_point = 0, y_point = 0, los = 0;
@@ -80,13 +80,13 @@ public class HiveSerializeTest {
         	//----------------------------------------------------------------------------------------------------------------
         	// 파일 WRITE
         	//----------------------------------------------------------------------------------------------------------------
-			String query3 = "SELECT * FROM scenario_nr_ru";
+			String query3 = "SELECT DISTINCT X_POINT, Y_POINT, LOS FROM RESULT_NR_2D_LOS WHERE scenario_id = 5108566 ORDER BY X_POINT, Y_POINT";
 			rs3 = stmt.executeQuery(query3);
 			fos = new FileOutputStream(file);
 			while (rs3.next()) {
 				for (int i = x_point; i < x_bin_cnt; i++) {
 					for (int j = y_point; j < y_bin_cnt; j++) {
-						fos.write(bin[x_point][y_point].value);
+						fos.write(bin[i][j].value);
 					}
 				}
 			}
