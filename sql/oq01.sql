@@ -66,7 +66,14 @@ WHERE SCENARIO_ID IN (
 ORDER BY  SCENARIO_NM
 ;
 
-
+select a.tm_startx, a.tm_starty, a.tm_endx, a.tm_endy,
+       ceil((trunc(nvl(a.tm_endx, 0)) - trunc(nvl(a.tm_startx, 0))) / nvl(a.resolution, 10)),
+       ceil((trunc(nvl(a.tm_endy, 0)) - trunc(nvl(a.tm_starty, 0))) / nvl(a.resolution, 10)),
+       b.bin_x_cnt, b.bin_y_cnt
+  from scenario a, schedule b
+ where b.schedule_id = 8460062
+   and a.scenario_id = b.scenario_id
+;
 -------------------------------------------------
 -- SCENARIO
 -------------------------------------------------

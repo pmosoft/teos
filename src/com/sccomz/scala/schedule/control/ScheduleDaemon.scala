@@ -18,17 +18,10 @@ object ScheduleDaemon {
   var stat:Statement=con.createStatement();
   var rs:ResultSet = null;
   var tabNm = "";
-  
-  var ru_unit    = 20;    // RU 수량 단위
-  var ru_weight  = 5;     // RU 수량 가중치
-  var bin_unit   = 50000; // BIN 단위
-  var bin_weight = 1;     // BIN 수량
-
-
+ 
   def main(args: Array[String]): Unit = {
     execute();
   }
-
 
   def execute(): Unit = {
 
