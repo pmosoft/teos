@@ -9,16 +9,16 @@ import scala.collection.mutable.Map
 import scala.collection.mutable.HashMap
 import scala.collection._
 import com.sccomz.scala.schedule.control.sql.ScheduleDaemonSql
+import com.sccomz.scala.comm.App
 
 object ScheduleDaemon {
 
-  val url      = "jdbc:oracle:thin:@192.168.0.6:1521/ORCL";
-  //val url      = "jdbc:oracle:thin:@localhost:9951/IAMLTE";
-  val user     = "cellplan";
-  val password = "cell_2012";
-  val driver   = "oracle.jdbc.driver.OracleDriver";
-
-
+  Class.forName(App.dbDriverOra);
+  var con:Connection = DriverManager.getConnection(App.dbUrlOra,App.dbUserOra,App.dbPwOra);
+  var stat:Statement=con.createStatement();
+  var rs:ResultSet = null;
+  var tabNm = "";
+  
   var ru_unit    = 20;    // RU 수량 단위
   var ru_weight  = 5;     // RU 수량 가중치
   var bin_unit   = 50000; // BIN 단위
@@ -31,11 +31,6 @@ object ScheduleDaemon {
 
 
   def execute(): Unit = {
-
-    Class.forName(driver);
-    var con:Connection = DriverManager.getConnection(url,user,password);
-    var stat:Statement=con.createStatement();
-    var rs:ResultSet = null;
 
     var loofCnt = 0; var rowCnt = 0;
     var qry = "";

@@ -1,6 +1,75 @@
--------------------------------
+-------------------------------------------------
+-- SCHEDULE
+-------------------------------------------------
+
+SELECT A.SCHEDULE_ID
+     , A.REG_DT
+     , A.TYPE_CD
+     , A.SCENARIO_ID
+     , A.PROCESS_CD
+     , A.PROCESS_MSG
+     , B.SCENARIO_NM
+     , B.SIDO
+     , B.SIGUGUN
+     , B.DONG
+     , ROUND((B.TM_ENDX-B.TM_STARTX) * (B.TM_ENDY-B.TM_STARTY),0) AS AREA
+     , A.RU_CNT
+     , ROUND(A.RESULT_TIME,0) AS RESULT_TIME
+     , A.PRIORITIZE
+     , A.MODIFY_DT
+     , B.FLOORLOSS                         --
+     , B.SCENARIO_SUB_ID                   -- 부모ID
+     , B.SCENARIO_SOLUTION_NUM             -- 솔루션 분석 유형 4가지
+     , B.LOSS_TYPE                         -- LOSS_TYPE
+     , B.BUILDINGANALYSIS3D_YN             -- 3D분석여부
+     , B.BUILDINGANALYSIS3D_RESOLUTION     -- 3D분석Resolution
+     , B.AREA_ID
+FROM   SCHEDULE A
+     , SCENARIO B
+WHERE  A.SCENARIO_ID = B.SCENARIO_ID
+AND    A.PROCESS_CD = '20000'
+AND    A.TYPE_CD = 'SC001'
+--AND    C.DONG = '대치2동'
+--AND    TYPE_CD IN ('SC001','SC051')
+--AND    A.RU_CNT > 0
+--AND    A.RESULT_TIME > 0
+AND    A.REG_DT BETWEEN '2019-09-01' AND '2019-09-30'  
+ORDER BY REG_DT DESC
+;
+
+SELECT * FROM SCHEDULE
+;
+
+SELECT SCHEDULE_ID, COUNT(*)
+FROM (
+    SELECT SCHEDULE_ID, SCENARIO_ID
+    FROM SCHEDULE
+    GROUP BY SCHEDULE_ID, SCENARIO_ID
+    )
+GROUP BY SCHEDULE_ID
+HAVING COUNT(*) > 1
+;
+
+SELECT RESULT_TIME
+FROM SCHEDULE
+WHERE RESULT_TIME > 9580.4
+GROUP BY RESULT_TIME
+ORDER BY RESULT_TIME DESC
+;
+
+SELECT * FROM SCENARIO
+WHERE SCENARIO_ID IN (
+    SELECT SCENARIO_ID
+    FROM SCHEDULE
+    WHERE RESULT_TIME > 9580.4
+)
+ORDER BY  SCENARIO_NM
+;
+
+
+-------------------------------------------------
 -- SCENARIO
--------------------------------
+-------------------------------------------------
 SELECT * FROM SCENARIO
 ;
 
@@ -70,249 +139,3 @@ WHERE 1=1
 AND SCENARIO_ID LIKE '%'
 ;
 
--------------------------------
--- SCHEDULE
--------------------------------
-
-SELECT SERVER_ID, COUNT(*)
-FROM SCHEDULE
-GROUP BY SERVER_ID
-ORDER BY SERVER_ID
-;
-
-SELECT * FROM SCHEDULE
-;
-
-/
-SELECT * FROM SCHEDULE
-WHERE PROCESS_CD = '10002'
-
-/
-
-SELECT * FROM SCHEDULE
-WHERE SERVER_ID = 'AS007'
-/
-
-SELECT ANALYSIS_WEIGHT, COUNT(*)
-FROM SCHEDULE
-GROUP BY ANALYSIS_WEIGHT
-ORDER BY ANALYSIS_WEIGHT
-;
-/
-SELECT *
-FROM SCENARIO
-
-
-/
-
-SELECT COUNT(*) FROM SCENARIO
-
-/
-
-SELECT * FROM SCENARIO
-;
-
-/
-
-SELECT NETWORK_TYPE, COUNT(*)
-FROM SCENARIO
-GROUP BY NETWORK_TYPE
-;
-
-/
-
-
-
-SELECT ANALYSIS_WEIGHT, COUNT(*)
-FROM SCHEDULE
-GROUP BY ANALYSIS_WEIGHT
-
-
-/
-
-SELECT SCHEDULE_ID, COUNT(*)
-FROM (
-    SELECT SCHEDULE_ID, SCENARIO_ID
-    FROM SCHEDULE
-    GROUP BY SCHEDULE_ID, SCENARIO_ID
-    )
-GROUP BY SCHEDULE_ID
-HAVING COUNT(*) > 1
-
-/
-
-SELECT * FROM SCHEDULE
-WHERE SCENARIO_ID IN (
-SELECT SCENARIO_ID, COUNT(*)
-FROM (
-    SELECT SCHEDULE_ID, SCENARIO_ID
-    FROM SCHEDULE
-    GROUP BY SCHEDULE_ID, SCENARIO_ID
-    )
-GROUP BY SCENARIO_ID
-HAVING COUNT(*) > 1
-)
-
-/
-
-SELECT *
-FROM (
-SELECT SCENARIO_NM, COUNT(*) CNT
-FROM SCENARIO
-GROUP BY  SCENARIO_NM
-ORDER BY  SCENARIO_NM
-) A
-ORDER BY CNT DESC
-;
-
-
-
-/
-
-SELECT RESULT_TIME
-FROM SCHEDULE
-WHERE RESULT_TIME > 9580.4
-GROUP BY RESULT_TIME
-ORDER BY RESULT_TIME DESC
-
-
-
-/
-
-SELECT * FROM SCENARIO
-WHERE SCENARIO_ID IN (
-    SELECT SCENARIO_ID
-    FROM SCHEDULE
-    WHERE RESULT_TIME > 9580.4
-)
-ORDER BY  SCENARIO_NM
-;
-
-SELECT * FROM SCENARIO
-WHERE SCENARIO_ID IN (
-    SELECT SCENARIO_ID
-    FROM SCHEDULE
-    WHERE RESULT_TIME > 9580.4
-)
-ORDER BY  SCENARIO_NM
-
-/
-
-SELECT * FROM SCENARIO
-ORDER BY REG_DT
-
-
-SELECT COUNT(*) FROM SCENARIO
-;
-
-/
-
-SELECT *
-FROM (
-SELECT SCENARIO_NM, COUNT(*) CNT
-FROM SCENARIO
-GROUP BY  SCENARIO_NM
-ORDER BY  SCENARIO_NM
-) A
-ORDER BY CNT DESC
-;
-
-
-
-/
-
-SELECT RESULT_TIME
-FROM SCHEDULE
-WHERE RESULT_TIME > 9580.4
-GROUP BY RESULT_TIME
-ORDER BY RESULT_TIME DESC
-
-
-
-/
-
-SELECT * FROM SCENARIO
-WHERE SCENARIO_ID IN (
-    SELECT SCENARIO_ID
-    FROM SCHEDULE
-    WHERE RESULT_TIME > 9580.4
-)
-ORDER BY  SCENARIO_NM
-;
-
-SELECT * FROM SCENARIO
-WHERE SCENARIO_ID IN (
-    SELECT SCENARIO_ID
-    FROM SCHEDULE
-    WHERE RESULT_TIME > 9580.4
-)
-ORDER BY  SCENARIO_NM
-
-
-
-SELECT * FROM SCENARIO
-ORDER BY REG_DT
-;
-
-
-SELECT
-       A.SCENARIO_ID                       --
-     , A.SCENARIO_NM                       -- 시나리오 이름
-     , A.SIDO                              --
-     , A.SIGUGUN                           --
-     , A.DONG                              --
-     , B.PROCESS_CD
-     , B.PROCESS_MSG
-     , TRUNC((A.TM_ENDX-A.TM_STARTX) * (A.TM_ENDY-A.TM_STARTY)) AS 면적
-     , A.RESOLUTION                        -- RESOLUTION
-     , B.BIN_X_CNT
-     , B.BIN_Y_CNT
-     , B.RU_CNT
-     , B.ANALYSIS_WEIGHT
-     , B.RESULT_TIME
-     , A.REG_DT                            -- 등록일
-FROM   SCENARIO A
-     , SCHEDULE B
-WHERE  A.SCENARIO_ID = B.SCENARIO_ID
-AND    A.REG_DT > SYSDATE - 3
-ORDER BY B.SCHEDULE_ID,A.REG_DT DESC
-;
-
-
-/
-SELECT
-       SCENARIO_ID                       --
-     , SCENARIO_NM                       -- 시나리오 이름
-     , TRUNC((TM_ENDX-TM_STARTX) * (TM_ENDY-TM_STARTY)) AS 면적
-     , RU_CNT
-     , SIDO                              --
-     , SIGUGUN                           --
-     , DONG                              --
-     , FA_MODEL_ID                       --
-     , FA_SEQ                            -- 주파수 일련번호
-     , RESOLUTION                        -- RESOLUTION
-     , REG_DT                            -- 등록일
-     , FLOORLOSS                         --
-     , SCENARIO_SUB_ID                   -- 부모ID
-     , SCENARIO_SOLUTION_NUM             -- 솔루션 분석 유형 4가지
-     , LOSS_TYPE                         -- LOSS_TYPE
-     , BUILDINGANALYSIS3D_YN             -- 3D분석여부
-     , BUILDINGANALYSIS3D_RESOLUTION     -- 3D분석Resolution
-     , AREA_ID
-FROM SCENARIO
-WHERE REG_DT > SYSDATE -30
-ORDER BY REG_DT DESC
-
-
-/
-
-CREATE TABLE PSH001 (
-TAB_NM VARCHAR(100)
-,CNT NUMBER
-)
-
-/
-
-
-SELECT * FROM PSH001
-WHERE CNT > 0
