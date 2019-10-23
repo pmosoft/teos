@@ -40,7 +40,6 @@ public class HiveSerializeTest {
 		INT_MAX[3] = (byte) 0x7f;
         
         try {
-        	
         	//----------------------------------------------------------------------------------------------------------------
         	// 초기화
         	//----------------------------------------------------------------------------------------------------------------
@@ -56,16 +55,16 @@ public class HiveSerializeTest {
 //			}
         	BinValue[][] bin = new BinValue[x_bin_cnt][y_bin_cnt];
        	
-        	for (int i = 0; i < x_bin_cnt; i++) {
-        		for (int j = 0; j < y_bin_cnt; j++) {
-        			bin[i][j] = new BinValue(INT_MAX);
-        		}
-        	}
-
+			for (int i = 0; i < x_bin_cnt; i++) {
+				for (int j = 0; j < y_bin_cnt; j++) {
+					bin[i][j] = new BinValue(INT_MAX);
+				}
+			}
         	//----------------------------------------------------------------------------------------------------------------
         	// VALUE 세팅
         	//----------------------------------------------------------------------------------------------------------------
         	String query2 = "SELECT DISTINCT X_POINT, Y_POINT, LOS FROM RESULT_NR_2D_LOS WHERE scenario_id = 5108566 ORDER BY X_POINT, Y_POINT";
+
         	rs2 = stmt.executeQuery(query2);
         	
         	int x_point = 0, y_point = 0, los = 0;
@@ -80,9 +79,12 @@ public class HiveSerializeTest {
         	//----------------------------------------------------------------------------------------------------------------
         	// 파일 WRITE
         	//----------------------------------------------------------------------------------------------------------------
+
 			String query3 = "SELECT DISTINCT X_POINT, Y_POINT, LOS FROM RESULT_NR_2D_LOS WHERE scenario_id = 5108566 ORDER BY X_POINT, Y_POINT";
 			rs3 = stmt.executeQuery(query3);
+
 			fos = new FileOutputStream(file);
+
 			while (rs3.next()) {
 				for (int i = x_point; i < x_bin_cnt; i++) {
 					for (int j = y_point; j < y_bin_cnt; j++) {
@@ -93,12 +95,10 @@ public class HiveSerializeTest {
 			System.out.println("bin 등록 완료");
 			rs2.close();
 			rs3.close();
-        } catch (Exception e) { e.printStackTrace() ;}
-
-        if (fos != null) { try { fos.close() ; } catch (Exception e) { e.printStackTrace(); }}
-        
 	}
-	
+        catch (Exception e) { e.printStackTrace() ;}
+        if (fos != null) { try { fos.close() ; } catch (Exception e) { e.printStackTrace(); }}
+}
 	public byte[] intToByteArray(int value) {
 		byte[] byteArray = new byte[4];
 		byteArray[3] = (byte) (value >> 24);
@@ -107,22 +107,21 @@ public class HiveSerializeTest {
 		byteArray[0] = (byte) (value);
 		return byteArray;
 	}
-
-    public int byteArrayToInt(byte bytes[]) {
-        return ((((int)bytes[3] & 0xff) << 24) |
-                (((int)bytes[2] & 0xff) << 16) |
-                (((int)bytes[1] & 0xff) << 8) |
-                (((int)bytes[0] & 0xff)));
-    }
-
+	
+	public int byteArrayToInt(byte bytes[]) {
+		return ((((int)bytes[3] & 0xff) << 24) |
+				(((int)bytes[2] & 0xff) << 16) |
+				(((int)bytes[1] & 0xff) << 8) |
+				(((int)bytes[0] & 0xff)));
+	}
+	
 	public byte[] floatToByteArray(float value) {
 		int floatValue = Float.floatToIntBits(value);
 		return intToByteArray(floatValue);
 	}
-
+	
 	public float byteArrayToFloat(byte bytes[]) {
 		int value = byteArrayToInt(bytes);
 		return Float.intBitsToFloat(value);
 	}
-
 }
