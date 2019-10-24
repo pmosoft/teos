@@ -81,7 +81,7 @@ FROM I_SCHEDULE WHERE SCHEDULE_ID=8459967
 spark.sql(s"""
 SELECT *       
 FROM I_SCHEDULE I
---WHERE SCHEDULE_ID=8459968
+--WHERE SCHEDULE_ID=8460062
 """).take(100).foreach(println);
 
 spark.sql(s""" SELECT SUM(SCHEDULE_ID) FROM SCHEDULE """).take(100).foreach(println);

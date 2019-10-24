@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.sql.Connection;
 import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.sql.ResultSet;
 
 public class HiveSerializeTest {
@@ -23,13 +25,15 @@ public class HiveSerializeTest {
 	
 	void hiveTest() {
 		
+		Logger logger = Logger.getLogger(HiveSerializeTest.class.getName());
+		
 		Connection con = null;
 		Statement stmt = null;
 //		ResultSet rs = null;
 		ResultSet rs2 = null;
 
 		// 파일 WRITE
-		File file = new File("C:/Pony/Excel/result/test.bin");
+		File file = new File("C:/Pony/Excel/result/test2.bin");
 		FileOutputStream fos = null;
 		
 		byte[] INT_MAX = new byte[4];
@@ -39,6 +43,7 @@ public class HiveSerializeTest {
 		INT_MAX[3] = (byte) 0x7f;
         
         try {
+        	logger.log(Level.INFO, "========================== 초기화 ===========================");
         	//----------------------------------------------------------------------------------------------------------------
         	// 초기화
         	//----------------------------------------------------------------------------------------------------------------
@@ -47,7 +52,7 @@ public class HiveSerializeTest {
 //        	String query = "SELECT x_bin_cnt, y_bin_cnt FROM scenario_nr_ru WHERE scenario_id = 5104573 AND ru_id = 1012242308";
 //        	rs = stmt.executeQuery(query);
         	
-        	int x_bin_cnt = 503, y_bin_cnt = 576;
+        	int x_bin_cnt = 307, y_bin_cnt = 301;
 //			while (rs.next()) {
 //				x_bin_cnt = rs.getInt("x_bin_cnt");
 //				y_bin_cnt = rs.getInt("y_bin_cnt");
@@ -59,10 +64,11 @@ public class HiveSerializeTest {
 					bin[i][j] = new BinValue(INT_MAX);
 				}
 			}
+			logger.log(Level.INFO, "======================== Value 세팅 =========================");
         	//----------------------------------------------------------------------------------------------------------------
         	// VALUE 세팅
         	//----------------------------------------------------------------------------------------------------------------
-        	String query2 = "SELECT DISTINCT X_POINT, Y_POINT, LOS FROM RESULT_NR_2D_LOS WHERE scenario_id = 5108566 ORDER BY X_POINT, Y_POINT";
+        	String query2 = "SELECT DISTINCT X_POINT, Y_POINT, LOS FROM I_RESULT_NR_2D_LOS WHERE scenario_id = 5104573 ORDER BY X_POINT, Y_POINT";
 
         	rs2 = stmt.executeQuery(query2);
         	
@@ -75,18 +81,19 @@ public class HiveSerializeTest {
 				bin[x_point][y_point].value = intToByteArray(los);
 			}
         	
+			logger.log(Level.INFO, "======================== 파일 Write =========================");
         	//----------------------------------------------------------------------------------------------------------------
         	// 파일 WRITE
         	//----------------------------------------------------------------------------------------------------------------
 			fos = new FileOutputStream(file);
 
-				for (int i = x_point; i < x_bin_cnt; i++) {
-					for (int j = y_point; j < y_bin_cnt; j++) {
+				for (int i = 0; i < x_bin_cnt; i++) {
+					for (int j = 0; j < y_bin_cnt; j++) {
 						fos.write(bin[i][j].value);
 					}
 				}
-
-			System.out.println("bin 등록 완료");
+			
+			logger.log(Level.INFO, "======================== bin 생성 완료 ========================");
 			rs2.close();
 	}
         catch (Exception e) { e.printStackTrace() ;}
