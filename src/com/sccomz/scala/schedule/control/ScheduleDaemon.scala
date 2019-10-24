@@ -23,37 +23,21 @@ object ScheduleDaemon {
   var qry = "";
 
   def main(args: Array[String]): Unit = {
-    //import scala.sys.process._
-    //val cmd = "notepad" // Your command
-    //val output = cmd.!! // Captures the output
-    //execute();
-    //val runtime = Runtime.getRuntime;
-    //runtime.exec("notepad");
-    //Process("notepad")!
-    test01();
 
   }
 
-  def test01(): Unit = {
-    var list = mutable.MutableList[String]();
-    list += "aa";
-    list += "bb";
-
-  }
 
   def execute(): Unit = {
-
     var loofCnt = 0;
-
     try {
-      var jobList = mutable.MutableList[Map[String,String]]();
-      //while(true) {
       while(loofCnt<3) {
         loofCnt += 1;
 
         updateBinRuInfo();
         excuteJob();
+
         println("loofCnt="+loofCnt);
+
         Thread.sleep(1000*3);
       }
 
@@ -80,6 +64,9 @@ object ScheduleDaemon {
 
   }
 
+  /*
+   * 사전작업 : 스케줄 테이블에 Bin갯수, Ru갯수, 빌딩크기 산출후 잡가중치를 저장한다
+   */
   def updateBinRuInfo(): Unit = {
 
 
@@ -124,7 +111,6 @@ object ScheduleDaemon {
     }
 
     //updateScheduleBinCnt
-
     //for(i <- 0 to rowCnt) {}
     //println( "list.size="+list.size );
     //for(m <- list) println(m.get("SCHEDULE_ID").fold("")(_.toString));
