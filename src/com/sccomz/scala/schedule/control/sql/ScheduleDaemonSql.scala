@@ -2,15 +2,40 @@ package com.sccomz.scala.schedule.control.sql
 
 object ScheduleDaemonSql {
 
-def insertScheduleExt() = {
-"""
 
-
-"""
-}
-
-def selectSchedule10003(scheduleId:String) = {
+  
+def selectSchedule10001() = {
 s"""
+WITH TEMP01 AS (
+-------------------
+-- 스케줄 수행대상건 조회
+-------------------
+SELECT A.SCHEDULE_ID
+FROM   SCHEDULE A
+WHERE  1=1
+AND    A.PROCESS_CD = '20001'
+AND    A.TYPE_CD IN ('SC001','SC051')
+), TEMP02 AS (
+-------------------
+-- 스케줄 수행중인건 조회
+-------------------
+SELECT A.SCHEDULE_ID
+FROM   SCHEDULE A
+WHERE  1=1
+AND    A.PROCESS_CD IN ('20002','20003')
+AND    A.TYPE_CD IN ('SC001','SC051')
+)
+--SELECT *
+SELECT
+       A.SCHEDULE_ID
+     , A.BIN_X_CNT
+     , A.BIN_Y_CNT
+     , A.AREA
+     , NVL(B.RU_CNT,0) AS RU_CNT
+FROM   TEMP06 A
+     , TEMP07 B
+WHERE  A.SCENARIO_ID = B.SCENARIO_ID(+)
+
 SELECT ROW_NUMBER() OVER(ORDER BY SCHEDULE_ID ASC, TYPE_CD ASC, PRIORITIZE ASC, RU_CNT ASC) AS ROW_NUM
      , SCHEDULE_ID
      , TYPE_CD
@@ -268,69 +293,10 @@ DELETE SCHEDULE_EXT WHERE SCHEDULE_ID = ${scheduleId}
 """
 }
 
+def insertScheduleExt() = {
+"""
 
-
-def selectSchedule10001() = {
-s"""
-    -- SELECT SCHEDULE_ID                            AS SCHEDULE_ID
-    --      , TYPE_CD                                AS TYPE_CD
-    --      , SCENARIO_ID                            AS SCENARIO_ID
-    --      , USER_ID                                AS USER_ID
-    --      , PRIORITIZE                             AS PRIORITIZE
-    --      , PROCESS_CD                             AS PROCESS_CD
-    --      , PROCESS_MSG                            AS PROCESS_MSG
-    --      , SCENARIO_PATH                          AS SCENARIO_PATH
-    --      , TO_CHAR(REG_DT, 'YYYYMMDDHH24MISS')    AS REG_DT
-    --      , TO_CHAR(MODIFY_DT, 'YYYYMMDDHH24MISS') AS MODIFY_DT
-    -- FROM  (SELECT ROW_NUMBER() OVER(ORDER BY SCHEDULE_ID ASC, TYPE_CD ASC, PRIORITIZE ASC, RU_CNT ASC) AS ROW_NUM
-    --             , SCHEDULE_ID
-    --             , TYPE_CD
-    --             , SCENARIO_ID
-    --             , USER_ID
-    --             , PRIORITIZE
-    --             , PROCESS_CD
-    --             , PROCESS_MSG
-    --             , SCENARIO_PATH
-    --             , REG_DT
-    --             , MODIFY_DT
-    --        FROM   SCHEDULE
-    --        WHERE  PROCESS_CD IN ('10001')
-    --        --AND    TYPE_CD IN ('SC001','SC051')
-    --       )
-    -- WHERE ROW_NUM <= 2
-    -- ORDER BY ROW_NUM
-
-SELECT *
-FROM
-   (SELECT A.SCHEDULE_ID
-         , A.TYPE_CD
-         , A.SCENARIO_ID
-         , A.PROCESS_CD
-         , A.PROCESS_MSG
-         , B.SCENARIO_NM
-         , B.SIDO                              --
-         , B.SIGUGUN                           --
-         , B.DONG                              --
-         , ROUND((B.TM_ENDX-B.TM_STARTX) * (B.TM_ENDY-B.TM_STARTY),0) AS AREA
-         , A.RU_CNT
-         , ROUND(A.RESULT_TIME,0) AS RESULT_TIME
-         , A.PRIORITIZE
-         , A.REG_DT
-         , A.MODIFY_DT
-    FROM   SCHEDULE A
-         , SCENARIO B
-    WHERE  A.SCENARIO_ID = B.SCENARIO_ID
-    AND    A.PROCESS_CD = '20000'
-    --AND    C.DONG = '대치2동'
-    --AND    TYPE_CD IN ('SC001','SC051')
-    --AND    A.RU_CNT > 0
-    --AND    A.RESULT_TIME > 0
-    --AND    A.REG_DT > SYSDATE -30
-   )
---ORDER BY SCHEDULE_ID ,RU_CNT DESC, RESULT_TIME DESC, AREA DESC
---ORDER BY RU_CNT DESC, RESULT_TIME DESC, AREA DESC
-ORDER BY RESULT_TIME DESC, AREA DESC
-		"""
+"""
 }
 
 
