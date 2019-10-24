@@ -52,6 +52,9 @@ object ScheduleDaemon {
     }
   } 
 
+  /*
+   * 메인작업 : 잡을 생성한다
+   */
   def excuteJob(): Unit = {
     qry = ScheduleDaemonSql.selectBinRuCount(); println(qry);
     rs = stat.executeQuery(qry);

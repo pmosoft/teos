@@ -72,3 +72,12 @@ REFRESH TABLE I_SCHEDULE;
 sql("SELECT * FROM I_SCENARIO").take(100).foreach(println);
 spark.sql("SELECT SUM(SCENARIO_ID) FROM I_SCENARIO").take(100).foreach(println);
 
+sql("SELECT scenario_id,COUNT(*) FROM result_nr_2d_los_ru group by scenario_id").take(100).foreach(println);
+
+sql("SELECT DISTINCT X_POINT, Y_POINT, LOS FROM I_RESULT_NR_2D_LOS WHERE scenario_id = 5104573 ORDER BY X_POINT, Y_POINT").take(100).foreach(println);
+
+
+SELECT DISTINCT X_POINT, Y_POINT, LOS FROM I_RESULT_NR_2D_LOS WHERE scenario_id = 5104573 ORDER BY X_POINT, Y_POINT;
+
+
+;

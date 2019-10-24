@@ -166,6 +166,7 @@ SELECT
        A.SCHEDULE_ID
      , A.BIN_X_CNT
      , A.BIN_Y_CNT
+     , A.BIN_CNT
      , A.AREA
      , NVL(B.RU_CNT,0) AS RU_CNT
 FROM   TEMP06 A

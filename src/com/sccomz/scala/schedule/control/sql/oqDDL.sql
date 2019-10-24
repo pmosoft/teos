@@ -6,14 +6,9 @@ DROP TABLE SCHEDULE_WEIGHT;
 
 CREATE TABLE SCHEDULE_WEIGHT (
       BASE_DT             DATE            NOT NULL -- 기준일시
-    , WEIGHT5             INT                 NULL -- 임계치5(RU갯수*BIN갯수,RU갯수 * (BIN갯수 + 빌딩(면적*층수)/3D 분석 Resolution ^2))
-    , WEIGHT4             INT                 NULL -- 임계치4(RU갯수*BIN갯수,RU갯수 * (BIN갯수 + 빌딩(면적*층수)/3D 분석 Resolution ^2))
-    , WEIGHT3             INT                 NULL -- 임계치3(RU갯수*BIN갯수,RU갯수 * (BIN갯수 + 빌딩(면적*층수)/3D 분석 Resolution ^2))
-    , WEIGHT2             INT                 NULL -- 임계치2(RU갯수*BIN갯수,RU갯수 * (BIN갯수 + 빌딩(면적*층수)/3D 분석 Resolution ^2))
-    , WEIGHT1             INT                 NULL -- 임계치1(RU갯수*BIN갯수,RU갯수 * (BIN갯수 + 빌딩(면적*층수)/3D 분석 Resolution ^2))
-    , JOB_H_THRESHOLD     INT                 NULL -- 하이잡임계치(1-5 사이의 값)
-    , JOB_M_THRESHOLD     INT                 NULL -- 미들잡임계치(1-5 사이의 값)
-    , JOB_L_THRESHOLD     INT                 NULL -- 로우잡임계치(1-5 사이의 값)
+    , JOB_H_THRESHOLD     INT                 NULL -- 하이잡임계치(RU갯수*BIN갯수,RU갯수 * (BIN갯수 + 빌딩(면적*층수)/3D 분석 Resolution ^2))
+    , JOB_M_THRESHOLD     INT                 NULL -- 미들잡임계치(RU갯수*BIN갯수,RU갯수 * (BIN갯수 + 빌딩(면적*층수)/3D 분석 Resolution ^2))
+    , JOB_L_THRESHOLD     INT                 NULL -- 로우잡임계치(RU갯수*BIN갯수,RU갯수 * (BIN갯수 + 빌딩(면적*층수)/3D 분석 Resolution ^2))
     , JOB_H_MAX_CNT       INT                 NULL -- 하이잡 실행 최대 갯수
     , JOB_M_MAX_CNT       INT                 NULL -- 미들잡 실행 최대 갯수
     , JOB_L_MAX_CNT       INT                 NULL -- 로우잡 실행 최대 갯수
@@ -26,14 +21,9 @@ CREATE TABLE SCHEDULE_WEIGHT (
 
 COMMENT ON TABLE  SCHEDULE_WEIGHT IS '스케줄 잡가중치';
 COMMENT ON COLUMN SCHEDULE_WEIGHT.BASE_DT           IS '기준일시';
-COMMENT ON COLUMN SCHEDULE_WEIGHT.WEIGHT5           IS '임계치5(RU갯수*BIN갯수,RU갯수 * (BIN갯수 + 빌딩(면적*층수)/3D 분석 Resolution ^2))';
-COMMENT ON COLUMN SCHEDULE_WEIGHT.WEIGHT4           IS '임계치4(RU갯수*BIN갯수,RU갯수 * (BIN갯수 + 빌딩(면적*층수)/3D 분석 Resolution ^2))';
-COMMENT ON COLUMN SCHEDULE_WEIGHT.WEIGHT3           IS '임계치3(RU갯수*BIN갯수,RU갯수 * (BIN갯수 + 빌딩(면적*층수)/3D 분석 Resolution ^2))';
-COMMENT ON COLUMN SCHEDULE_WEIGHT.WEIGHT2           IS '임계치2(RU갯수*BIN갯수,RU갯수 * (BIN갯수 + 빌딩(면적*층수)/3D 분석 Resolution ^2))';
-COMMENT ON COLUMN SCHEDULE_WEIGHT.WEIGHT1           IS '임계치1(RU갯수*BIN갯수,RU갯수 * (BIN갯수 + 빌딩(면적*층수)/3D 분석 Resolution ^2))';
-COMMENT ON COLUMN SCHEDULE_WEIGHT.JOB_H_THRESHOLD   IS '하이잡임계치(1-5 사이의 값)';
-COMMENT ON COLUMN SCHEDULE_WEIGHT.JOB_M_THRESHOLD   IS '미들잡임계치(1-5 사이의 값)';
-COMMENT ON COLUMN SCHEDULE_WEIGHT.JOB_L_THRESHOLD   IS '로우잡임계치(1-5 사이의 값)';
+COMMENT ON COLUMN SCHEDULE_WEIGHT.JOB_H_THRESHOLD   IS '임계치1(RU갯수*BIN갯수,RU갯수 * (BIN갯수 + 빌딩(면적*층수)/3D 분석 Resolution ^2))';
+COMMENT ON COLUMN SCHEDULE_WEIGHT.JOB_M_THRESHOLD   IS '임계치2(RU갯수*BIN갯수,RU갯수 * (BIN갯수 + 빌딩(면적*층수)/3D 분석 Resolution ^2))';
+COMMENT ON COLUMN SCHEDULE_WEIGHT.JOB_L_THRESHOLD   IS '임계치3(RU갯수*BIN갯수,RU갯수 * (BIN갯수 + 빌딩(면적*층수)/3D 분석 Resolution ^2))';
 COMMENT ON COLUMN SCHEDULE_WEIGHT.JOB_H_MAX_CNT     IS '하이잡 실행 최대 갯수';
 COMMENT ON COLUMN SCHEDULE_WEIGHT.JOB_M_MAX_CNT     IS '미들잡 실행 최대 갯수';
 COMMENT ON COLUMN SCHEDULE_WEIGHT.JOB_L_MAX_CNT     IS '로우잡 실행 최대 갯수';
@@ -49,8 +39,8 @@ DROP TABLE SCHEDULE_EXT;
 
 CREATE TABLE SCHEDULE_EXT (
       SCHEDULE_ID        NUMBER          NOT NULL -- 스케줄ID
-    , JOB_WEIGHT         INT                 NULL -- 잡가중치(3:상, 2:중, 1:하)
-    , WEIGHT             INT                 NULL -- 임계치
+    , JOB_WEIGHT         INT                 NULL -- 잡무게값(3:상, 2:중, 1:하)
+    , JOB_THRESHOLD      INT                 NULL -- 임계치
     , REG_DT	         DATE                NULL -- 등록일자
     , REG_USER_ID        VARCHAR2(13)        NULL -- 등록자
     , MOD_DT             DATE                NULL -- 수정일자
@@ -60,8 +50,8 @@ CREATE TABLE SCHEDULE_EXT (
 
 COMMENT ON TABLE SCHEDULE_EXT IS '스케줄확장';
 COMMENT ON COLUMN SCHEDULE_EXT.SCHEDULE_ID    IS '스케줄ID';
-COMMENT ON COLUMN SCHEDULE_EXT.JOB_WEIGHT     IS '잡가중치(3:상, 2:중, 1:하)';
-COMMENT ON COLUMN SCHEDULE_EXT.WEIGHT         IS '임계치'; 
+COMMENT ON COLUMN SCHEDULE_EXT.JOB_WEIGHT     IS '잡무게값(3:상, 2:중, 1:하)';
+COMMENT ON COLUMN SCHEDULE_EXT.JOB_THRESHOLD  IS '임계치'; 
 COMMENT ON COLUMN SCHEDULE_EXT.REG_DT	      IS '등록일시 ';        
 COMMENT ON COLUMN SCHEDULE_EXT.REG_USER_ID    IS '등록자';          
 COMMENT ON COLUMN SCHEDULE_EXT.MOD_DT         IS '수정일시';         
