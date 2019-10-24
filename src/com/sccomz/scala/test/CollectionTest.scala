@@ -1,31 +1,26 @@
 package com.sccomz.scala.test
 
-import org.apache.hadoop.conf.Configuration
-import org.apache.hadoop.fs.FileSystem
-import org.apache.hadoop.fs.Path
-import org.apache.hadoop.fs.permission.FsAction
-import org.apache.hadoop.fs.permission.FsPermission
-import org.apache.spark.SparkConf
-import org.apache.spark.SparkContext
-import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.types.StringType
-import org.apache.spark.sql.types.StructField
-import org.apache.spark.sql.types.StructType
-import scala.reflect.runtime.universe
-
-
-
-object TestSparkSql01 {
+object CellectionTest {
 
   def main(args: Array[String]): Unit = {
-    val spark = SparkSession.builder().appName("MakeParquet").getOrCreate()
-    //this.samToParquet(spark)
-    spark.stop();
+    test01();
   }
 
-  def test01(spark: SparkSession) = {
+  def test01() = {
 
+    val a = Array("hello", "world")
 
+    print(a);
+
+    var ab = Array.fill[Byte](5)(0);
+    print(ab);
+
+    val row = 5
+    val column = 3
+    val temp = Array.ofDim[String](row, column)
+    val temp2 = Array("a", "b")
+    val temp3 = Array.ofDim[Integer](row, column)
+    val temp4 = Array.ofDim[Byte](row, column)
 
   }
 }
