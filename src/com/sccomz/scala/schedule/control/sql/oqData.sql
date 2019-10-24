@@ -59,3 +59,13 @@ WHERE  PROCESS_CD = '20000'
 ;
 
 
+-------------------------------------------------
+-- 스케줄타입코드
+-------------------------------------------------
+DELETE FROM SCHEDULE_TYPE_CD;
+
+INSERT INTO SCHEDULE_TYPE_CD VALUES ('SC001','시나리오기본분석','(전파분석)시나리오기본분석','Y', SYSDATE,'ADMIN',SYSDATE,'ADMIN');
+INSERT INTO SCHEDULE_TYPE_CD VALUES ('SC051','Building Floor Analysis(BFA)','Building Floor Analysis(BFA)','Y', SYSDATE,'ADMIN',SYSDATE,'ADMIN');
+ 
+SELECT * FROM SCHEDULE_TYPE_CD;
+

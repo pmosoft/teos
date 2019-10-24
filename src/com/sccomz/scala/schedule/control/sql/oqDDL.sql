@@ -2,7 +2,7 @@
 -- 스케줄 잡가중치
 -------------------------------------------------
 
-CREATE TABLE SCHEDULE_WEIGHT;
+DROP TABLE SCHEDULE_WEIGHT;
 
 CREATE TABLE SCHEDULE_WEIGHT (
       BASE_DT             DATE            NOT NULL -- 기준일시
@@ -67,7 +67,11 @@ COMMENT ON COLUMN SCHEDULE_EXT.REG_USER_ID    IS '등록자';
 COMMENT ON COLUMN SCHEDULE_EXT.MOD_DT         IS '수정일시';         
 COMMENT ON COLUMN SCHEDULE_EXT.MOD_USER_ID    IS '수정자';          
 
+-------------------------------------------------
 -- 스케줄스탭
+-------------------------------------------------
+DROP TABLE SCHEDULE_STEP;
+
 CREATE TABLE SCHEDULE_STEP (
       SCHEDULE_ID        NUMBER          NOT NULL -- 스케줄ID
     , TYPE_CD            VARCHAR2(10)    NOT NULL -- 타입코드
@@ -97,13 +101,17 @@ COMMENT ON COLUMN SCHEDULE_STEP.REG_USER_ID          IS '등록자';
 COMMENT ON COLUMN SCHEDULE_STEP.MOD_DT               IS '수정일자';
 COMMENT ON COLUMN SCHEDULE_STEP.MOD_USER_ID          IS '수정자';
 
+-------------------------------------------------
 -- 스케줄스탭코드
+-------------------------------------------------
+DROP TABLE SCHEDULE_STEP_CD;
+
 CREATE TABLE SCHEDULE_STEP_CD (
       TYPE_CD            VARCHAR2(10)    NOT NULL -- 타입코드
     , TYPE_STEP_CD       VARCHAR2(2)     NOT NULL -- 타입스탭코드
     , TYPE_STEP_CD_NM    VARCHAR2(1000)      NULL -- 타입스탭코드명
     , USE_YN             VARCHAR2(1)         NULL -- 사용유무
-    , REG_DT	           DATE                NULL -- 등록일자
+    , REG_DT	         DATE                NULL -- 등록일자
     , REG_USER_ID        VARCHAR2(13)        NULL -- 등록자
     , MOD_DT             DATE                NULL -- 수정일자
     , MOD_USER_ID        VARCHAR2(13)        NULL -- 수정자
@@ -116,7 +124,37 @@ COMMENT ON COLUMN SCHEDULE_STEP_CD.TYPE_CD               IS '타입코드';
 COMMENT ON COLUMN SCHEDULE_STEP_CD.TYPE_STEP_CD          IS '타입스탭코드';
 COMMENT ON COLUMN SCHEDULE_STEP_CD.TYPE_STEP_CD_NM       IS '타입스탭코드명';
 COMMENT ON COLUMN SCHEDULE_STEP_CD.USE_YN                IS '사용유무';
-COMMENT ON COLUMN SCHEDULE_STEP_CD.REG_DT	               IS '등록일자';
+COMMENT ON COLUMN SCHEDULE_STEP_CD.REG_DT	             IS '등록일자';
 COMMENT ON COLUMN SCHEDULE_STEP_CD.REG_USER_ID           IS '등록자';
 COMMENT ON COLUMN SCHEDULE_STEP_CD.MOD_DT                IS '수정일자';
 COMMENT ON COLUMN SCHEDULE_STEP_CD.MOD_USER_ID           IS '수정자';
+
+
+-------------------------------------------------
+-- 스케줄타입코드
+-------------------------------------------------
+DROP TABLE SCHEDULE_TYPE_CD;
+
+CREATE TABLE SCHEDULE_TYPE_CD (
+      TYPE_CD            VARCHAR2(10)    NOT NULL -- 타입코드
+    , TYPE_NM            VARCHAR2(1000)      NULL -- 타입코드명
+    , TYPE_DESC          VARCHAR2(1000)      NULL -- 타입코드설명
+    , USE_YN             VARCHAR2(1)         NULL -- 사용유무
+    , REG_DT	         DATE                NULL -- 등록일자
+    , REG_USER_ID        VARCHAR2(13)        NULL -- 등록자
+    , MOD_DT             DATE                NULL -- 수정일자
+    , MOD_USER_ID        VARCHAR2(13)        NULL -- 수정자
+    , CONSTRAINT SCHEDULE_STEP_CD_PK PRIMARY KEY (TYPE_CD)
+);
+ 
+
+COMMENT ON TABLE SCHEDULE_TYPE_CD IS '스케줄타입코드';
+COMMENT ON COLUMN SCHEDULE_TYPE_CD.TYPE_CD               IS '타입코드';
+COMMENT ON COLUMN SCHEDULE_TYPE_CD.TYPE_NM               IS '타입코드명';
+COMMENT ON COLUMN SCHEDULE_TYPE_CD.TYPE_DESC             IS '타입코드설명';
+COMMENT ON COLUMN SCHEDULE_TYPE_CD.USE_YN                IS '사용유무';
+COMMENT ON COLUMN SCHEDULE_TYPE_CD.REG_DT	             IS '등록일자';
+COMMENT ON COLUMN SCHEDULE_TYPE_CD.REG_USER_ID           IS '등록자';
+COMMENT ON COLUMN SCHEDULE_TYPE_CD.MOD_DT                IS '수정일자';
+COMMENT ON COLUMN SCHEDULE_TYPE_CD.MOD_USER_ID           IS '수정자';
+
