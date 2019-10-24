@@ -53,10 +53,10 @@ AND    TYPE_CD = 'SC001'
 AND    REG_DT >= SYSDATE-1  
 ;
 
-SELECT * 
+SELECT *  
 FROM   SCHEDULE
 WHERE  PROCESS_CD = '20000'  
-;
+; 
 
 
 -------------------------------------------------

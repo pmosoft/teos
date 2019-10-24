@@ -22,7 +22,7 @@ CREATE TABLE SCHEDULE_WEIGHT (
     , MOD_DT              DATE                NULL -- 수정일시
     , MOD_USER_ID         VARCHAR2(13)        NULL -- 수정자
     , CONSTRAINT SCHEDULE_WEIGHT_PK PRIMARY KEY (BASE_DT)
-);
+); 
 
 COMMENT ON TABLE  SCHEDULE_WEIGHT IS '스케줄 잡가중치';
 COMMENT ON COLUMN SCHEDULE_WEIGHT.BASE_DT           IS '기준일시';

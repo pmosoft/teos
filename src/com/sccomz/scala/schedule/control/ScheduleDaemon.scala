@@ -50,7 +50,7 @@ object ScheduleDaemon {
     } finally {
       con.close();
     }
-  }
+  } 
 
   def excuteJob(): Unit = {
     qry = ScheduleDaemonSql.selectBinRuCount(); println(qry);
