@@ -17,9 +17,6 @@ import org.mozilla.universalchardet.UniversalDetector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sccomz.scala.serialize.SerializeTest.BinValue;
-
-
 public class FileUtil {
 	
     private static Logger logger = LoggerFactory.getLogger(FileUtil.class);
