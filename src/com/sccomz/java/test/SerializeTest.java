@@ -25,7 +25,7 @@ public class SerializeTest {
         System.out.println(byteArrayToHexString(bb));
         
         bb = s.floatToByteArray(135.91f);
-        System.out.println(bb[0]);
+        System.out.println(bb[0]); 
         System.out.println(bb[1]);
         System.out.println(bb[2]);
         System.out.println(bb[3]);
