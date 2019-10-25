@@ -8,14 +8,9 @@ DELETE FROM SCHEDULE_WEIGHT
 INSERT INTO SCHEDULE_WEIGHT
 SELECT
        SYSDATE AS BASE_DT              -- 기준일시
-     ,  101000 AS WEIGHT5              -- 임계치5
-     ,  101000 AS WEIGHT4              -- 임계치4
-     ,  101000 AS WEIGHT3              -- 임계치3
-     ,  101000 AS WEIGHT2              -- 임계치2
-     ,  101000 AS WEIGHT1              -- 임계치1
-     ,      4  AS JOB_H_THRESHOLD      -- 하이잡임계치(1-5 사이의 값)
-     ,      3  AS JOB_M_THRESHOLD      -- 미들잡임계치(1-5 사이의 값)
-     ,      2  AS JOB_L_THRESHOLD      -- 로우잡임계치(1-5 사이의 값)
+     , 1000000 AS JOB_H_THRESHOLD      -- 하이잡임계치(1-5 사이의 값)
+     ,  100000 AS JOB_M_THRESHOLD      -- 미들잡임계치(1-5 사이의 값)
+     ,  10000  AS JOB_L_THRESHOLD      -- 로우잡임계치(1-5 사이의 값)
      ,      2  AS JOB_H_MAX_CNT        -- 하이잡 실행 최대 갯수
      ,      3  AS JOB_M_MAX_CNT        -- 미들잡 실행 최대 갯수
      ,      5  AS JOB_L_MAX_CNT        -- 로우잡 실행 최대 갯수
@@ -64,8 +59,10 @@ WHERE  PROCESS_CD = '20000'
 -------------------------------------------------
 DELETE FROM SCHEDULE_TYPE_CD;
 
-INSERT INTO SCHEDULE_TYPE_CD VALUES ('SC001','시나리오기본분석','(전파분석)시나리오기본분석','Y', SYSDATE,'ADMIN',SYSDATE,'ADMIN');
-INSERT INTO SCHEDULE_TYPE_CD VALUES ('SC051','Building Floor Analysis(BFA)','Building Floor Analysis(BFA)','Y', SYSDATE,'ADMIN',SYSDATE,'ADMIN');
+INSERT INTO SCHEDULE_TYPE_CD VALUES ('SC001','시나리오기본분석','(전파분석)시나리오기본분석','N','Y', SYSDATE,'ADMIN',SYSDATE,'ADMIN');
+INSERT INTO SCHEDULE_TYPE_CD VALUES ('SC051','Building Floor Analysis(BFA)','Building Floor Analysis(BFA)','Y','Y', SYSDATE,'ADMIN',SYSDATE,'ADMIN');
  
 SELECT * FROM SCHEDULE_TYPE_CD;
 
+
+COMMIT;
