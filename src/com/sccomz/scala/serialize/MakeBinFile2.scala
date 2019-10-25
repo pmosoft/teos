@@ -54,8 +54,8 @@ object MakeBinFile2{
     var x_bin_cnt = 307; var y_bin_cnt = 301;
     val bin = Array.ofDim[BinValue](x_bin_cnt, y_bin_cnt);
     
-    for (x <- 0 until x_bin_cnt by 1) {
-      for (y <- 0 until y_bin_cnt by 1) {
+    for (y <- 0 until y_bin_cnt by 1) {
+      for (x <- 0 until x_bin_cnt by 1) {
         bin(x)(y) = new BinValue(FileUtil.intMax());
       }
     }
@@ -81,8 +81,8 @@ object MakeBinFile2{
     var file = new File("C:/Pony/Excel/result", "losTest.bin");
     var fos = new FileOutputStream(file);
     //fos.write(bin);    
-    for (x <- 0 until x_bin_cnt by 1) {
-      for (y <- 0 until y_bin_cnt by 1) {
+    for (y <- 0 until y_bin_cnt by 1) {
+      for (x <- 0 until x_bin_cnt by 1) {
         fos.write(bin(x)(y).value);
       }
     }
