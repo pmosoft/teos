@@ -78,7 +78,7 @@ object MakeBinFile2{
     //---------------------------------------------------------------------------------------------------------
     // 파일 Write
     //---------------------------------------------------------------------------------------------------------
-    var file = new File("C:/Pony/Excel/result", "losTest.bin");
+    var file = new File("C:/Pony/Excel/result", "losTest2.bin");
     var fos = new FileOutputStream(file);
     //fos.write(bin);    
     for (y <- 0 until y_bin_cnt by 1) {
