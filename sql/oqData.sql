@@ -5,15 +5,17 @@
 DELETE FROM SCHEDULE_WEIGHT
 ;
 
+--84	4763304	782265600
+
 INSERT INTO SCHEDULE_WEIGHT
 SELECT
        SYSDATE AS BASE_DT              -- 기준일시
-     , 1000000 AS JOB_H_THRESHOLD      -- 하이잡임계치(1-5 사이의 값)
-     ,  100000 AS JOB_M_THRESHOLD      -- 미들잡임계치(1-5 사이의 값)
-     ,  10000  AS JOB_L_THRESHOLD      -- 로우잡임계치(1-5 사이의 값)
-     ,      2  AS JOB_H_MAX_CNT        -- 하이잡 실행 최대 갯수
-     ,      3  AS JOB_M_MAX_CNT        -- 미들잡 실행 최대 갯수
-     ,      5  AS JOB_L_MAX_CNT        -- 로우잡 실행 최대 갯수
+     , 5000000 AS JOB_H_THRESHOLD      -- 하이잡임계치(5000000 이상                       )
+     , 1000000 AS JOB_M_THRESHOLD      -- 미들잡임계치(1000001-4999999사이의 값)
+     ,       1 AS JOB_L_THRESHOLD      -- 로우잡임계치(      1- 999999 사이의 값)
+     ,       2 AS JOB_H_MAX_CNT        -- 하이잡 실행 최대 갯수
+     ,       3 AS JOB_M_MAX_CNT        -- 미들잡 실행 최대 갯수
+     ,       5 AS JOB_L_MAX_CNT        -- 로우잡 실행 최대 갯수
      , SYSDATE AS REG_DT               -- 등록일시
      , 'ADMIN' AS REG_USER_ID          -- 등록자
      , SYSDATE AS MOD_DT               -- 수정일시
