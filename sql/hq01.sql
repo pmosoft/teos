@@ -74,10 +74,22 @@ spark.sql("SELECT SUM(SCENARIO_ID) FROM I_SCENARIO").take(100).foreach(println);
 
 sql("SELECT scenario_id,COUNT(*) FROM result_nr_2d_los_ru group by scenario_id").take(100).foreach(println);
 
+sql("SELECT * FROM I_RESULT_NR_2D_LOS WHERE scenario_id = 5104573").take(100).foreach(println);
+
+
 sql("SELECT DISTINCT X_POINT, Y_POINT, LOS FROM I_RESULT_NR_2D_LOS WHERE scenario_id = 5104573 ORDER BY X_POINT, Y_POINT").take(100).foreach(println);
 
+sql("SELECT DISTINCT X_POINT, Y_POINT, LOS FROM I_RESULT_NR_2D_PASSLOS WHERE scenario_id = 5104573 ORDER BY X_POINT, Y_POINT").take(100).foreach(println);
+
+
+
+sql("SELECT DISTINCT X_POINT, Y_POINT, LOS FROM I_RESULT_NR_2D_LOS WHERE scenario_id = 5104573 ORDER BY X_POINT, Y_POINT asc").take(10000).foreach(println);
+
+
+SELECT * FROM I_RESULT_NR_2D_LOS WHERE scenario_id = 5104573 ORDER BY X_POINT, Y_POINT;
 
 SELECT DISTINCT X_POINT, Y_POINT, LOS FROM I_RESULT_NR_2D_LOS WHERE scenario_id = 5104573 ORDER BY X_POINT, Y_POINT;
+;
 
-
+SELECT * FROM i_result_nr_2d_pathloss WHERE scenario_id = 5104573 ORDER BY X_POINT, Y_POINT
 ;
