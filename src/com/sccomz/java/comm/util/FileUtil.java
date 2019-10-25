@@ -22,9 +22,29 @@ public class FileUtil {
     private static Logger logger = LoggerFactory.getLogger(FileUtil.class);
 
     public static void main(String[] args) {
-        testDirFileInfo();
+        //testDirFileInfo();
+        //0x41200000 10
+        
+        byte[] aa = floatToByteArray(10f);
+        System.out.println(aa[0]);
+        System.out.println(aa[1]);
+        System.out.println(aa[2]);
+        System.out.println(aa[3]);
+
+        byte[] bb = floatToByteArray(1f);
+        System.out.println(bb[0]);
+        System.out.println(bb[1]);
+        System.out.println(bb[2]);
+        System.out.println(bb[3]);
+        
     }
 
+    public static byte[] floatToByteArray(float value) {
+        int floatValue =  Float.floatToIntBits(value);
+        return intToByteArray(floatValue);
+    }
+    
+    
     public static void testDelFiles(){
         delFiles("F:/../",".*java"); 
     }
@@ -354,10 +374,6 @@ public class FileUtil {
                 (((int)bytes[0] & 0xff)));
     }
 
-    public static byte[] floatToByteArray(float value) {
-        int floatValue =  Float.floatToIntBits(value);
-        return intToByteArray(floatValue);
-    }
 
     public float byteArrayToFloat(byte bytes[]) {
         int value =  byteArrayToInt(bytes);
