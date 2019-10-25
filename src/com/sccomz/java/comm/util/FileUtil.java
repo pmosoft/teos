@@ -35,6 +35,12 @@ public class FileUtil {
         return INT_MAX;
 	}
 
+	public static byte[] floatMax() {
+		byte[] INT_MAX = new byte[4];
+		INT_MAX[0] = (byte) 0xff;  INT_MAX[1] = (byte) 0xff; INT_MAX[2] = (byte) 0x7f; INT_MAX[3] = (byte) 0x7f;
+        return INT_MAX;
+	}
+	
 	public static byte[] intZero() {
 		byte[] INT_MAX = new byte[4];
 		INT_MAX[0] = (byte) 0x00;  INT_MAX[1] = (byte) 0x00; INT_MAX[2] = (byte) 0x00; INT_MAX[3] = (byte) 0x00;
