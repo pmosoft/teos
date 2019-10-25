@@ -26,7 +26,7 @@ public class FileUtil {
     }
 
     public static void testDelFiles(){
-        delFiles("F:/../",".*java");
+        delFiles("F:/../",".*java"); 
     }
     
 	public static byte[] intMax() {
