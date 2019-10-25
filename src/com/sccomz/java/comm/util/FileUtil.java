@@ -22,11 +22,31 @@ public class FileUtil {
     private static Logger logger = LoggerFactory.getLogger(FileUtil.class);
 
     public static void main(String[] args) {
-        testDirFileInfo();
+        //testDirFileInfo();
+        //0x41200000 10
+        
+        byte[] aa = floatToByteArray(10f);
+        System.out.println(aa[0]);
+        System.out.println(aa[1]);
+        System.out.println(aa[2]);
+        System.out.println(aa[3]);
+
+        byte[] bb = floatToByteArray(1f);
+        System.out.println(bb[0]);
+        System.out.println(bb[1]);
+        System.out.println(bb[2]);
+        System.out.println(bb[3]);
+        
     }
 
+    public static byte[] floatToByteArray(float value) {
+        int floatValue =  Float.floatToIntBits(value);
+        return intToByteArray(floatValue);
+    }
+    
+    
     public static void testDelFiles(){
-        delFiles("F:/../",".*java");
+        delFiles("F:/../",".*java"); 
     }
     
 	public static byte[] intMax() {
@@ -34,7 +54,20 @@ public class FileUtil {
 		INT_MAX[0] = (byte) 0xff;  INT_MAX[1] = (byte) 0xff; INT_MAX[2] = (byte) 0xff; INT_MAX[3] = (byte) 0x7f;
         return INT_MAX;
 	}
-		
+
+	public static byte[] floatMax() {
+		byte[] INT_MAX = new byte[4];
+		INT_MAX[0] = (byte) 0xff;  INT_MAX[1] = (byte) 0xff; INT_MAX[2] = (byte) 0x7f; INT_MAX[3] = (byte) 0x7f;
+        return INT_MAX;
+	}
+	
+	public static byte[] intZero() {
+		byte[] INT_MAX = new byte[4];
+		INT_MAX[0] = (byte) 0x00;  INT_MAX[1] = (byte) 0x00; INT_MAX[2] = (byte) 0x00; INT_MAX[3] = (byte) 0x00;
+        return INT_MAX;
+	}
+	
+	
     @SuppressWarnings("static-access")
 	public static void testListToFile(){
         System.out.println("start");
@@ -341,10 +374,6 @@ public class FileUtil {
                 (((int)bytes[0] & 0xff)));
     }
 
-    public static byte[] floatToByteArray(float value) {
-        int floatValue =  Float.floatToIntBits(value);
-        return intToByteArray(floatValue);
-    }
 
     public float byteArrayToFloat(byte bytes[]) {
         int value =  byteArrayToInt(bytes);

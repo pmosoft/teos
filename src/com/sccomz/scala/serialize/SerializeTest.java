@@ -105,8 +105,8 @@ public class SerializeTest {
 
     	System.out.println( b.getClass());
     	System.out.println( Arrays.toString(b));
-    	System.out.printf("%x",b);
-    	System.out.printf("%00x",b);
+    	//System.out.printf("%x",b);
+    	//System.out.printf("%00x",b);
      }    
     
     

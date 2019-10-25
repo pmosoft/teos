@@ -135,7 +135,7 @@ CREATE TABLE SCHEDULE_TYPE_CD (
     , REG_USER_ID        VARCHAR2(13)        NULL -- 등록자
     , MOD_DT             DATE                NULL -- 수정일자
     , MOD_USER_ID        VARCHAR2(13)        NULL -- 수정자
-    , CONSTRAINT SCHEDULE_STEP_CD_PK PRIMARY KEY (TYPE_CD)
+    , CONSTRAINT SCHEDULE_TYPE_CD_PK PRIMARY KEY (TYPE_CD)
 );
 
 

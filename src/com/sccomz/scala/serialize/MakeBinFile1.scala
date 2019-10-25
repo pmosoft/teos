@@ -52,12 +52,11 @@ object MakeBinFile1{
     // 초기화
     //---------------------------------------------------------------------------------------------------------
     var x_bin_cnt = 307; var y_bin_cnt = 301;
-    val bin = Array.ofDim[BinValue](y_bin_cnt, x_bin_cnt);
-    var i = 0; var j = 0;
+    val bin = Array.ofDim[BinValue](x_bin_cnt, y_bin_cnt);
     
-    for (i <- 0 until y_bin_cnt by 1) {
-      for (j <- 0 until x_bin_cnt by 1) {
-        bin(i)(j) = new BinValue(FileUtil.intMax());
+    for (i <- 0 until x_bin_cnt by 1) {
+      for (j <- 0 until y_bin_cnt by 1) {
+        bin(i)(j) = new BinValue(FileUtil.intZero());
       }
     }
     
@@ -72,7 +71,7 @@ object MakeBinFile1{
       x_point = rs2.getInt("x_point");
       y_point = rs2.getInt("y_point");
       los = rs2.getInt("los");
-      bin(y_point)(x_point).value = FileUtil.intToByteArray(los);
+      bin(x_point)(y_point).value = FileUtil.intToByteArray(los);
     }
     
     logger.info("======================== 파일 Write ========================");
@@ -81,8 +80,8 @@ object MakeBinFile1{
     //---------------------------------------------------------------------------------------------------------
     var file = new File("C:/Pony/Excel/result", "losTest.bin");
     var fos = new FileOutputStream(file);
-    for (i <- 0 until y_bin_cnt by 1) {
-      for (j <- 0 until x_bin_cnt by 1) {
+    for (i <- 0 until x_bin_cnt by 1) {
+      for (j <- 0 until y_bin_cnt by 1) {
         fos.write(bin(i)(j).value);
       }
     }
