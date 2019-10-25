@@ -1,4 +1,6 @@
-    SELECT SCHEDULE_ID                            AS SCHEDULE_ID
+SELECT DISTINCT X_POINT, Y_POINT, PATHLOSS FROM I_RESULT_NR_2D_PATHLOSS WHERE scenario_id = 5104573 ORDER BY X_POINT, Y_POINT;
+
+	SELECT SCHEDULE_ID                            AS SCHEDULE_ID
          , TYPE_CD                                AS TYPE_CD
          , SCENARIO_ID                            AS SCENARIO_ID
          , USER_ID                                AS USER_ID
@@ -214,20 +216,20 @@ ORDER BY REG_DT
 
 SELECT
        A.SCENARIO_ID                       --
-     , A.SCENARIO_NM                       -- ½Ã³ª¸®¿À ÀÌ¸§
+     , A.SCENARIO_NM                       -- ï¿½Ã³ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½
      , A.SIDO                              --
      , A.SIGUGUN                           --
      , A.DONG                              --
      , B.PROCESS_CD
      , B.PROCESS_MSG
-     , TRUNC((A.TM_ENDX-A.TM_STARTX) * (A.TM_ENDY-A.TM_STARTY)) AS ¸éÀû
+     , TRUNC((A.TM_ENDX-A.TM_STARTX) * (A.TM_ENDY-A.TM_STARTY)) AS ï¿½ï¿½ï¿½ï¿½
      , A.RESOLUTION                        -- RESOLUTION
      , B.BIN_X_CNT
      , B.BIN_Y_CNT
      , B.RU_CNT
      , B.ANALYSIS_WEIGHT
      , B.RESULT_TIME
-     , A.REG_DT                            -- µî·ÏÀÏ
+     , A.REG_DT                            -- ï¿½ï¿½ï¿½ï¿½ï¿½
 FROM   SCENARIO A
      , SCHEDULE B
 WHERE  A.SCENARIO_ID = B.SCENARIO_ID
@@ -239,22 +241,22 @@ ORDER BY B.SCHEDULE_ID,A.REG_DT DESC
 /
 SELECT
        SCENARIO_ID                       --
-     , SCENARIO_NM                       -- ½Ã³ª¸®¿À ÀÌ¸§
-     , TRUNC((TM_ENDX-TM_STARTX) * (TM_ENDY-TM_STARTY)) AS ¸éÀû
+     , SCENARIO_NM                       -- ï¿½Ã³ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½
+     , TRUNC((TM_ENDX-TM_STARTX) * (TM_ENDY-TM_STARTY)) AS ï¿½ï¿½ï¿½ï¿½
      , RU_CNT
      , SIDO                              --
      , SIGUGUN                           --
      , DONG                              --
      , FA_MODEL_ID                       --
-     , FA_SEQ                            -- ÁÖÆÄ¼ö ÀÏ·Ã¹øÈ£
+     , FA_SEQ                            -- ï¿½ï¿½ï¿½Ä¼ï¿½ ï¿½Ï·Ã¹ï¿½È£
      , RESOLUTION                        -- RESOLUTION
-     , REG_DT                            -- µî·ÏÀÏ
+     , REG_DT                            -- ï¿½ï¿½ï¿½ï¿½ï¿½
      , FLOORLOSS                         --
-     , SCENARIO_SUB_ID                   -- ºÎ¸ðID
-     , SCENARIO_SOLUTION_NUM             -- ¼Ö·ç¼Ç ºÐ¼® À¯Çü 4°¡Áö
+     , SCENARIO_SUB_ID                   -- ï¿½Î¸ï¿½ID
+     , SCENARIO_SOLUTION_NUM             -- ï¿½Ö·ï¿½ï¿½ ï¿½Ð¼ï¿½ ï¿½ï¿½ï¿½ï¿½ 4ï¿½ï¿½ï¿½ï¿½
      , LOSS_TYPE                         -- LOSS_TYPE
-     , BUILDINGANALYSIS3D_YN             -- 3DºÐ¼®¿©ºÎ
-     , BUILDINGANALYSIS3D_RESOLUTION     -- 3DºÐ¼®Resolution
+     , BUILDINGANALYSIS3D_YN             -- 3Dï¿½Ð¼ï¿½ï¿½ï¿½ï¿½ï¿½
+     , BUILDINGANALYSIS3D_RESOLUTION     -- 3Dï¿½Ð¼ï¿½Resolution
      , AREA_ID
 FROM SCENARIO
 WHERE REG_DT > SYSDATE -30
