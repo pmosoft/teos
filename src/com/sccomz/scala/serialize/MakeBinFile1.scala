@@ -56,7 +56,7 @@ object MakeBinFile1{
     
     for (i <- 0 until x_bin_cnt by 1) {
       for (j <- 0 until y_bin_cnt by 1) {
-        bin(i)(j) = new BinValue(FileUtil.intMax());
+        bin(i)(j) = new BinValue(FileUtil.intZero());
       }
     }
     

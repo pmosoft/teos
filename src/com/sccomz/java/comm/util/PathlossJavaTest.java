@@ -29,18 +29,17 @@ public class PathlossJavaTest {
 		
 		Connection con = null;
 		Statement stmt = null;
-//		ResultSet rs = null;
-		ResultSet rs2 = null;
+		ResultSet rs = null;
 
 		// 파일 WRITE
-		File file = new File("C:/Pony/Excel/result/pathloss.bin");
+		File file = new File("C:/Pony/Excel/result/pathlossTest.bin");
 		FileOutputStream fos = null;
 		
 		byte[] INT_MAX = new byte[4];
-		INT_MAX[0] = (byte) 0xff;
-		INT_MAX[1] = (byte) 0xff;
-		INT_MAX[2] = (byte) 0xff;
-		INT_MAX[3] = (byte) 0x7f;
+		INT_MAX[0] = (byte) 0x00;
+		INT_MAX[1] = (byte) 0x00;
+		INT_MAX[2] = (byte) 0x00;
+		INT_MAX[3] = (byte) 0x00;
         
         try {
         	logger.log(Level.INFO, "========================== 초기화 ===========================");
@@ -65,15 +64,15 @@ public class PathlossJavaTest {
         	//----------------------------------------------------------------------------------------------------------------
         	String query2 = "SELECT DISTINCT X_POINT, Y_POINT, PATHLOSS FROM I_RESULT_NR_2D_PATHLOSS WHERE scenario_id = 5104573 ORDER BY X_POINT, Y_POINT";
 
-        	rs2 = stmt.executeQuery(query2);
+        	rs = stmt.executeQuery(query2);
         	
         	int x_point = 0, y_point = 0;
         	float pathloss = 0;
         	
-			while (rs2.next()) {
-				x_point = rs2.getInt("x_point");
-				y_point = rs2.getInt("y_point");
-				pathloss = rs2.getFloat("pathloss");
+			while (rs.next()) {
+				x_point = rs.getInt("x_point");
+				y_point = rs.getInt("y_point");
+				pathloss = rs.getFloat("pathloss");
 				bin[x_point][y_point].value = floatToByteArray(pathloss);
 			}
         	
@@ -90,7 +89,6 @@ public class PathlossJavaTest {
 				}
 			
 			logger.log(Level.INFO, "======================== bin 생성 완료 ========================");
-			rs2.close();
 	}
         catch (Exception e) { e.printStackTrace() ;}
         if (fos != null) { try { fos.close() ; } catch (Exception e) { e.printStackTrace(); }}
