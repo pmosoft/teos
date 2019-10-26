@@ -16,39 +16,47 @@ public class SerializeTest {
 
         //s.array2to1();
         //s.bytePrint();
-        
+
         byte[] bb = s.floatToByteArray(Float.MAX_VALUE);
         System.out.println(bb[0]);
         System.out.println(bb[1]);
         System.out.println(bb[2]);
         System.out.println(bb[3]);
         System.out.println(byteArrayToHexString(bb));
-        
-        bb = s.floatToByteArray(135.91f);
-        System.out.println(bb[0]); 
+
+        bb = s.floatToByteArray(Float.MIN_VALUE);
+        System.out.println(bb[0]);
         System.out.println(bb[1]);
         System.out.println(bb[2]);
         System.out.println(bb[3]);
         System.out.println(byteArrayToHexString(bb));
-        
+
         //binary bytes, 11111111 11111111 11111111 01111111. decimal ... hexidecimal, FFFFFF7F
-        
-        
+
+        String myString = "BF800000";
+        myString = "42CF43D7";
+        myString = "42CF1F74";
+
+        Long i = Long.parseLong(myString, 16);
+        Float f = Float.intBitsToFloat(i.intValue());
+        System.out.println(f);
+        System.out.println(Integer.toHexString(Float.floatToIntBits(f)));
+
     }
 
-	public static String byteArrayToHexString(byte[] bytes){ 
-		
-		StringBuilder sb = new StringBuilder(); 
-		
-		for(byte b : bytes){ 
-			
-			sb.append(String.format("%02X", b&0xff)); 
-		} 
-		
-		return sb.toString(); 
-	} 
-		    
-    
+	public static String byteArrayToHexString(byte[] bytes){
+
+		StringBuilder sb = new StringBuilder();
+
+		for(byte b : bytes){
+
+			sb.append(String.format("%02X", b&0xff));
+		}
+
+		return sb.toString();
+	}
+
+
     void bytePrint(){
 
 		byte byte_min = Byte.MIN_VALUE;
@@ -65,16 +73,16 @@ public class SerializeTest {
 		float float_max = Float.MAX_VALUE;
 		double double_min = Double.MIN_VALUE;
 		double double_max = Double.MAX_VALUE;
-	
+
 		System.out.println("byte : " + byte_min + " ~ " + byte_max);
 		System.out.println("short : " + short_min + " ~ " + short_max);
 		System.out.println("int : " + int_min + " ~ " + int_max);
 		System.out.println("long : " + long_min + " ~ " + long_max);
 		System.out.println("char : " + (int)char_min + " ~ " + (int)char_max);
 		System.out.println("float : " + float_min + " ~ " + float_max);
-		System.out.println("double : " + double_min + " ~ " + double_max);    
-    }	
-    
+		System.out.println("double : " + double_min + " ~ " + double_max);
+    }
+
     void array2to1(){
       int arr[][] = new int[10][5];
       int arr1[] = new int[arr.length*arr[0].length];

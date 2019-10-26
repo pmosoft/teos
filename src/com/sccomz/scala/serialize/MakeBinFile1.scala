@@ -5,11 +5,12 @@ import java.io.File
 import java.sql.DriverManager
 import java.sql.Statement
 
-import com.sccomz.java.comm.util.BinValue
 import com.sccomz.java.comm.util.DateUtil
 import com.sccomz.java.comm.util.FileUtil
 import com.sccomz.scala.comm.App
 import java.util.logging.Logger
+import com.sccomz.java.serialize.Byte4
+import com.sccomz.java.serialize.ByteUtil
 
 object MakeBinFile1{
 
@@ -25,7 +26,7 @@ object MakeBinFile1{
     var qry=MakeBinFileSql2.selectScenarioNrRu("");
     var rs = stat.executeQuery(qry);
     var count = 0;
-    
+
     while(rs.next()) {
       count = count + 1;
       // 파일 삭제
@@ -38,7 +39,7 @@ object MakeBinFile1{
       println(dir);
     };
   }
-  
+
   // Bin 파일 생성 메소드
   def makeResultFile(scheduleId:String) = {
     Class.forName(App.dbDriverHive);
@@ -46,20 +47,20 @@ object MakeBinFile1{
     var stat: Statement = con.createStatement();
     var fu = new FileUtil;
     val logger : Logger = Logger.getLogger(this.getClass.getName());
-    
+
     logger.info("========================== 초기화 ===========================");
     //---------------------------------------------------------------------------------------------------------
     // 초기화
     //---------------------------------------------------------------------------------------------------------
     var x_bin_cnt = 307; var y_bin_cnt = 301;
-    val bin = Array.ofDim[BinValue](x_bin_cnt, y_bin_cnt);
-    
+    val bin = Array.ofDim[Byte4](x_bin_cnt, y_bin_cnt);
+
     for (i <- 0 until x_bin_cnt by 1) {
       for (j <- 0 until y_bin_cnt by 1) {
-        bin(i)(j) = new BinValue(FileUtil.intZero());
+        bin(i)(j) = new Byte4(ByteUtil.intZero());
       }
     }
-    
+
     logger.info("======================== Value 세팅 ========================");
     //---------------------------------------------------------------------------------------------------------
     // Value 세팅
@@ -71,9 +72,9 @@ object MakeBinFile1{
       x_point = rs2.getInt("x_point");
       y_point = rs2.getInt("y_point");
       los = rs2.getInt("los");
-      bin(x_point)(y_point).value = FileUtil.intToByteArray(los);
+      bin(x_point)(y_point).value = ByteUtil.intToByteArray(los);
     }
-    
+
     logger.info("======================== 파일 Write ========================");
     //---------------------------------------------------------------------------------------------------------
     // 파일 Write
