@@ -129,7 +129,7 @@ CREATE TABLE SCHEDULE_TYPE_CD (
       TYPE_CD            VARCHAR2(10)    NOT NULL -- 타입코드
     , TYPE_NM            VARCHAR2(1000)      NULL -- 타입코드명
     , TYPE_DESC          VARCHAR2(1000)      NULL -- 타입코드설명
-    , BLD_YN             VARCHAR2(1)         NULL -- 빌딩여부
+    , BD_YN              VARCHAR2(1)         NULL -- 빌딩여부
     , USE_YN             VARCHAR2(1)         NULL -- 사용여부
     , REG_DT	           DATE                NULL -- 등록일자
     , REG_USER_ID        VARCHAR2(13)        NULL -- 등록자
@@ -143,7 +143,7 @@ COMMENT ON TABLE SCHEDULE_TYPE_CD IS '스케줄타입코드';
 COMMENT ON COLUMN SCHEDULE_TYPE_CD.TYPE_CD               IS '타입코드';
 COMMENT ON COLUMN SCHEDULE_TYPE_CD.TYPE_NM               IS '타입코드명';
 COMMENT ON COLUMN SCHEDULE_TYPE_CD.TYPE_DESC             IS '타입코드설명';
-COMMENT ON COLUMN SCHEDULE_TYPE_CD.BLD_YN                IS '빌딩여부';
+COMMENT ON COLUMN SCHEDULE_TYPE_CD.BD_YN                 IS '빌딩여부';
 COMMENT ON COLUMN SCHEDULE_TYPE_CD.USE_YN                IS '사용여부';
 COMMENT ON COLUMN SCHEDULE_TYPE_CD.REG_DT	             IS '등록일자';
 COMMENT ON COLUMN SCHEDULE_TYPE_CD.REG_USER_ID           IS '등록자';

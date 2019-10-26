@@ -1,15 +1,16 @@
 package com.sccomz.scala.serialize
 
-import java.io._
 import java.io.File
+import java.io.FileOutputStream
 import java.sql.DriverManager
 import java.sql.Statement
+import java.util.logging.Logger
 
-import com.sccomz.java.comm.util.BinValue
 import com.sccomz.java.comm.util.DateUtil
 import com.sccomz.java.comm.util.FileUtil
+import com.sccomz.java.serialize.Byte4
+import com.sccomz.java.serialize.ByteUtil
 import com.sccomz.scala.comm.App
-import java.util.logging.Logger
 
 object MakeBinFile2{
 
@@ -25,7 +26,7 @@ object MakeBinFile2{
     var qry=MakeBinFileSql2.selectScenarioNrRu("");
     var rs = stat.executeQuery(qry);
     var count = 0;
-    
+
     while(rs.next()) {
       count = count + 1;
       // 파일 삭제
@@ -38,7 +39,7 @@ object MakeBinFile2{
       println(dir);
     };
   }
-  
+
   // Bin 파일 생성 메소드
   def makeResultFile(scheduleId:String) = {
     Class.forName(App.dbDriverHive);
@@ -46,20 +47,21 @@ object MakeBinFile2{
     var stat: Statement = con.createStatement();
     var fu = new FileUtil;
     val logger : Logger = Logger.getLogger(this.getClass.getName());
-    
+
     logger.info("========================== 초기화 ===========================");
     //---------------------------------------------------------------------------------------------------------
     // 초기화
     //---------------------------------------------------------------------------------------------------------
     var x_bin_cnt = 307; var y_bin_cnt = 301;
-    val bin = Array.ofDim[BinValue](x_bin_cnt, y_bin_cnt);
-    
+    val bin = Array.ofDim[Byte4](x_bin_cnt, y_bin_cnt);
+
     for (y <- 0 until y_bin_cnt by 1) {
       for (x <- 0 until x_bin_cnt by 1) {
-        bin(x)(y) = new BinValue(FileUtil.intMax());
+        bin(x)(y) = new Byte4(ByteUtil.intMax());
       }
     }
-    
+
+
     logger.info("======================== Value 세팅 ========================");
     //---------------------------------------------------------------------------------------------------------
     // Value 세팅
@@ -71,16 +73,16 @@ object MakeBinFile2{
       x_point = rs2.getInt("x_point");
       y_point = rs2.getInt("y_point");
       los = rs2.getInt("los");
-      bin(x_point)(y_point).value = FileUtil.intToByteArray(los);
+      bin(x_point)(y_point).value = ByteUtil.intToByteArray(los);
     }
-    
+
     logger.info("======================== 파일 Write ========================");
     //---------------------------------------------------------------------------------------------------------
     // 파일 Write
     //---------------------------------------------------------------------------------------------------------
     var file = new File("C:/Pony/Excel/result", "losTest2.bin");
     var fos = new FileOutputStream(file);
-    //fos.write(bin);    
+    //fos.write(bin);
     for (y <- 0 until y_bin_cnt by 1) {
       for (x <- 0 until x_bin_cnt by 1) {
         fos.write(bin(x)(y).value);

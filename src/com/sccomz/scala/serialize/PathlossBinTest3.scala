@@ -12,7 +12,7 @@ import java.io.FileOutputStream
 import com.sccomz.java.serialize.Byte4
 import com.sccomz.java.serialize.ByteUtil
 
-object PathlossBinTest2 {
+object PathlossBinTest3 {
 
   def main(args: Array[String]): Unit = {
 //    makeResultDir("");
@@ -53,11 +53,11 @@ object PathlossBinTest2 {
     //----------------------------------------------------------------------------------------------------------------
     // 초기화
     //----------------------------------------------------------------------------------------------------------------
-    var x_bin_cnt = 307; var y_bin_cnt = 301;
+    var x_bin_cnt = 1; var y_bin_cnt = 1;
     val bin = Array.ofDim[Byte4](x_bin_cnt, y_bin_cnt);
 
-    for (y <- 0 until y_bin_cnt by 1) {
-      for (x <- 0 until x_bin_cnt by 1) {
+    for(y <- 0 until y_bin_cnt by 1) {
+      for(x<- 0 until x_bin_cnt by 1) {
         bin(x)(y) = new Byte4(ByteUtil.floatMax());
       }
     }
@@ -66,22 +66,14 @@ object PathlossBinTest2 {
     //----------------------------------------------------------------------------------------------------------------
     // Value 세팅
     //----------------------------------------------------------------------------------------------------------------
-    var query = MakeBinFileSql2.test2("");
-    var rs2 = stat.executeQuery(query);
-    var x_point = 0; var y_point = 0; var pathloss = 0.0f;
-
-    while(rs2.next()) {
-      x_point = rs2.getInt("x_point");
-      y_point = rs2.getInt("y_point");
-      pathloss = rs2.getFloat("pathloss");
-      bin(x_point)(y_point).value = ByteUtil.floatToByteArray(pathloss);
-    }
+    var x_point = 0; var y_point = 0; var pathloss:Float = 103.6325f;
+    bin(x_point)(y_point).value = ByteUtil.floatToByteArray(pathloss);
 
     logger.info("============================== 파일 Write ==============================");
     //----------------------------------------------------------------------------------------------------------------
     // 파일 Write
     //----------------------------------------------------------------------------------------------------------------
-    var file = new File("C:/Pony/Excel/result", "pathlossTest2.bin");
+    var file = new File("C:/Pony/Excel/result", "pathlossTest3.bin");
     var fos = new FileOutputStream(file);
 
     for(y <- 0 until y_bin_cnt by 1) {
@@ -91,7 +83,6 @@ object PathlossBinTest2 {
     }
 
     logger.info("============================== Bin 파일 생성 완료 ==============================");
-    rs2.close();
     if(fos != null) fos.close();
   }
 

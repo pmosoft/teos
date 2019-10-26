@@ -3,10 +3,9 @@
 -------------------------------------------------
 
 SELECT A.SCHEDULE_ID
+     , A.SCENARIO_ID
      , A.REG_DT
      , A.TYPE_CD
-     , A.SCENARIO_ID
-     , A.SCENARIO_PATH
      , A.PROCESS_CD
      , A.PROCESS_MSG
      , B.SCENARIO_NM
@@ -16,15 +15,10 @@ SELECT A.SCHEDULE_ID
      , ROUND((B.TM_ENDX-B.TM_STARTX) * (B.TM_ENDY-B.TM_STARTY),0) AS AREA
      , A.RU_CNT
      , ROUND(A.RESULT_TIME,0) AS RESULT_TIME
-     , A.PRIORITIZE
-     , A.MODIFY_DT
-     , B.FLOORLOSS                         --
-     , B.SCENARIO_SUB_ID                   -- 부모ID
-     , B.SCENARIO_SOLUTION_NUM             -- 솔루션 분석 유형 4가지
-     , B.LOSS_TYPE                         -- LOSS_TYPE
-     , B.BUILDINGANALYSIS3D_YN             -- 3D분석여부
+     , B.RESOLUTION
      , B.BUILDINGANALYSIS3D_RESOLUTION     -- 3D분석Resolution
-     , B.AREA_ID
+     , B.BUILDINGANALYSIS3D_YN             -- 3D분석여부
+     , A.SCENARIO_PATH
 FROM   SCHEDULE A
      , SCENARIO B
 WHERE  A.SCENARIO_ID = B.SCENARIO_ID
@@ -33,11 +27,11 @@ WHERE  A.SCENARIO_ID = B.SCENARIO_ID
 --AND    A.PROCESS_CD = '20000'
 --AND    A.TYPE_CD = 'SC001'
 --AND    C.DONG = '대치2동'
---AND    TYPE_CD IN ('SC001','SC051')
+AND    TYPE_CD IN ('SC001','SC051')
 --AND    A.RU_CNT > 0
 --AND    A.RESULT_TIME > 0
 --AND    A.REG_DT BETWEEN '2019-09-01' AND '2019-09-30'  
-AND RESULT_TIME > 600000
+--AND RESULT_TIME > 600000
 ORDER BY REG_DT DESC
 ;
 
