@@ -58,6 +58,7 @@ public class HiveSerializeTest {
 //				y_bin_cnt = rs.getInt("y_bin_cnt");
 //			}
         	BinValue[][] bin = new BinValue[x_bin_cnt][y_bin_cnt];
+        	BinValue[] newBin = new BinValue[bin.length * bin[0].length];		// 1차원 배열 bin
        	
 			for (int i = 0; i < x_bin_cnt; i++) {
 				for (int j = 0; j < y_bin_cnt; j++) {
@@ -80,18 +81,32 @@ public class HiveSerializeTest {
 				los = rs2.getInt("los");
 				bin[x_point][y_point].value = intToByteArray(los);
 			}
-        	
+			
+			logger.log(Level.INFO, "======================= 1차원 배열로 변환 =======================");
+			//----------------------------------------------------------------------------------------------------------------
+        	// 1차원 배열로 변환
+        	//----------------------------------------------------------------------------------------------------------------
+			for (int i = 0; i < bin.length; i++) {
+				for (int j = 0; j < bin[i].length; j++) {
+					// 2차원 배열의 원소를 1차원 배열의 원소로 이동.
+					newBin[(i * bin[i].length) + j] = bin[i][j];
+				}
+			}
+			
 			logger.log(Level.INFO, "======================== 파일 Write =========================");
         	//----------------------------------------------------------------------------------------------------------------
         	// 파일 WRITE
         	//----------------------------------------------------------------------------------------------------------------
 			fos = new FileOutputStream(file);
 
-				for (int i = 0; i < x_bin_cnt; i++) {
-					for (int j = 0; j < y_bin_cnt; j++) {
-						fos.write(bin[i][j].value);
-					}
-				}
+//				for (int i = 0; i < x_bin_cnt; i++) {
+//					for (int j = 0; j < y_bin_cnt; j++) {
+//						fos.write(bin[i][j].value);
+//					}
+//				}
+			for (int i = 0; i < newBin.length; i++) {
+				fos.write(newBin[i].value);
+			}
 			
 			logger.log(Level.INFO, "======================== bin 생성 완료 ========================");
 			rs2.close();
