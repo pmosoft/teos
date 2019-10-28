@@ -8,6 +8,8 @@ import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.sccomz.java.serialize.ByteUtil;
+
 public class PathlossJavaTest {
 	
 	public class BinValue {
@@ -32,14 +34,8 @@ public class PathlossJavaTest {
 		ResultSet rs = null;
 
 		// 파일 WRITE
-		File file = new File("C:/Pony/Excel/result/pathlossTest.bin");
+		File file = new File("C:/Pony/Excel/result/Pathloss/pathlossTest2.bin");
 		FileOutputStream fos = null;
-		
-		byte[] INT_MAX = new byte[4];
-		INT_MAX[0] = (byte) 0x00;
-		INT_MAX[1] = (byte) 0x00;
-		INT_MAX[2] = (byte) 0x00;
-		INT_MAX[3] = (byte) 0x00;
         
         try {
         	logger.log(Level.INFO, "========================== 초기화 ===========================");
@@ -53,11 +49,12 @@ public class PathlossJavaTest {
 
         	BinValue[][] bin = new BinValue[x_bin_cnt][y_bin_cnt];
        	
-			for (int i = 0; i < x_bin_cnt; i++) {
-				for (int j = 0; j < y_bin_cnt; j++) {
-					bin[i][j] = new BinValue(INT_MAX);
+			for (int y = 0; y < y_bin_cnt; y++) {
+				for (int x = 0; x < x_bin_cnt; x++) {
+					bin[x][y] = new BinValue(ByteUtil.floatMax());
 				}
 			}
+			
 			logger.log(Level.INFO, "======================== Value 세팅 =========================");
         	//----------------------------------------------------------------------------------------------------------------
         	// VALUE 세팅
@@ -67,7 +64,7 @@ public class PathlossJavaTest {
         	rs = stmt.executeQuery(query2);
         	
         	int x_point = 0, y_point = 0;
-        	float pathloss = 0;
+        	float pathloss = 0.0f;
         	
 			while (rs.next()) {
 				x_point = rs.getInt("x_point");
@@ -75,18 +72,35 @@ public class PathlossJavaTest {
 				pathloss = rs.getFloat("pathloss");
 				bin[x_point][y_point].value = floatToByteArray(pathloss);
 			}
-        	
+			
+			logger.log(Level.INFO, "======================= 1차원 배열로 변환 =======================");
+			//----------------------------------------------------------------------------------------------------------------
+        	// 1차원 배열로 변환
+        	//----------------------------------------------------------------------------------------------------------------
+			BinValue[] newBin = new BinValue[bin.length * bin[0].length];		// 1차원 배열 bin
+			
+			for (int i = 0; i < bin.length; i++) {
+				for (int j = 0; j < bin[i].length; j++) {
+					// 2차원 배열의 원소를 1차원 배열의 원소로 이동.
+					newBin[(i * bin[i].length) + j] = bin[i][j];
+				}
+			}
+			
 			logger.log(Level.INFO, "======================== 파일 Write =========================");
         	//----------------------------------------------------------------------------------------------------------------
         	// 파일 WRITE
         	//----------------------------------------------------------------------------------------------------------------
 			fos = new FileOutputStream(file);
 
-				for (int i = 0; i < x_bin_cnt; i++) {
-					for (int j = 0; j < y_bin_cnt; j++) {
-						fos.write(bin[i][j].value);
-					}
-				}
+//			for (int y = 0; y < y_bin_cnt; y++) {
+//				for (int x = 0; x < x_bin_cnt; x++) {
+//					fos.write(bin[x][y].value);
+//				}
+//			}
+			
+			for (int x = 0; x < newBin.length; x++) {
+				fos.write(newBin[x].value);
+			}
 			
 			logger.log(Level.INFO, "======================== bin 생성 완료 ========================");
 	}

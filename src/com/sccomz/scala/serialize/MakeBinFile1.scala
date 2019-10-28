@@ -15,8 +15,8 @@ import com.sccomz.java.serialize.ByteUtil
 object MakeBinFile1{
 
   def main(args: Array[String]): Unit = {
-//    makeResultDir("");
-    makeResultFile("");
+    makeResultDir("");
+//    makeResultFile("");
   }
   // 폴더 생성 메소드
   def makeResultDir(scheduleId:String) = {

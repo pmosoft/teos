@@ -76,18 +76,35 @@ object PathlossBinTest {
       pathloss = rs2.getFloat("pathloss");
       bin(x_point)(y_point).value = ByteUtil.floatToByteArray(pathloss);
     }
+    
+    logger.info("============================= 1차원 배열 변환 =============================");
+    //----------------------------------------------------------------------------------------------------------------
+    // 1차원 배열 변환
+    //----------------------------------------------------------------------------------------------------------------
+    var newBin = new Array[Byte4](bin.length * bin(0).length);
+    
+    for(x <- 0 until bin.length by 1) {
+      for(y <- 0 until bin(x).length by 1) {
+        // 2차원 배열의 원소를 1차원 배열의 원소로 이동
+        newBin((x * bin(x).length) + y) = bin(x)(y);
+      }
+    }
 
     logger.info("============================== 파일 Write ==============================");
     //----------------------------------------------------------------------------------------------------------------
     // 파일 Write
     //----------------------------------------------------------------------------------------------------------------
-    var file = new File("C:/Pony/Excel/result", "pathlossTest.bin");
+    var file = new File("C:/Pony/Excel/result/Pathloss", "pathlossTest2.bin");
     var fos = new FileOutputStream(file);
 
-    for(i <- 0 until x_bin_cnt by 1) {
-      for(j <- 0 until y_bin_cnt by 1) {
-        fos.write(bin(i)(j).value);
-      }
+//    for (y <- 0 until y_bin_cnt by 1) {
+//      for (x <- 0 until x_bin_cnt by 1) {
+//        fos.write(bin(x)(y).value);
+//      }
+//    }
+
+    for (i <- 0 until newBin.length by 1) {
+      fos.write(newBin(i).value);
     }
 
     logger.info("============================== Bin 파일 생성 완료 ==============================");
