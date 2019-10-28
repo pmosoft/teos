@@ -5,6 +5,7 @@ object ScheduleDaemonSql {
 
 
 def selectSchedule10001() = {
+
 s"""
 WITH TEMP01 AS (
 -------------------
