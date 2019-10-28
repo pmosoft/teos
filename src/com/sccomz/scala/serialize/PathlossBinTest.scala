@@ -13,6 +13,8 @@ import com.sccomz.java.serialize.Byte4
 import com.sccomz.java.serialize.ByteUtil
 
 object PathlossBinTest {
+  
+  val logger : Logger = Logger.getLogger(this.getClass.getName());
 
   def main(args: Array[String]): Unit = {
 //    makeResultDir("");
@@ -27,15 +29,16 @@ object PathlossBinTest {
     var qry=MakeBinFileSql2.selectScenarioNrRu("");
     var rs = stat.executeQuery(qry);
     var count = 0;
+    count = count + 1;
+    // 파일 삭제
+    if (count == 1) {
+      FileUtil.delFiles2(App.resultPath + "/20191028/SYS/");
+      logger.info("Directory Drop Complete!!");
+    }
 
     while(rs.next()) {
-      count = count + 1;
-      // 파일 삭제
-      if(count==1) {
-        FileUtil.delFiles("C:/Pony/Excel/result", ".*");
-      }
       // 폴더 생성
-      var dir = new File("C:/Pony/Excel/result", DateUtil.getDate("yyyyMMdd") + "/SYS/" + rs.getString(1) + "/ENB_" + rs.getString(2) + "/PCI_" + rs.getString(3) + "_PORT_" + rs.getString(4) + "_" + rs.getString(5));
+      var dir = new File(App.resultPath, DateUtil.getDate("yyyyMMdd") + "/SYS/" + rs.getString(1) + "/ENB_" + rs.getString(2) + "/PCI_" + rs.getString(3) + "_PORT_" + rs.getString(4) + "_" + rs.getString(5));
       if(!dir.exists()) dir.mkdirs();
       println(dir);
     };
@@ -46,8 +49,6 @@ object PathlossBinTest {
     Class.forName(App.dbDriverHive);
     var con = DriverManager.getConnection(App.dbUrlHive,App.dbUserHive,App.dbPwHive);
     var stat:Statement=con.createStatement();
-
-    val logger : Logger = Logger.getLogger(this.getClass.getName());
 
     logger.info("================================ 초기화 ================================");
     //----------------------------------------------------------------------------------------------------------------
