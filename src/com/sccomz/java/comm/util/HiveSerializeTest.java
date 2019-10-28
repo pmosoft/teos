@@ -33,7 +33,7 @@ public class HiveSerializeTest {
 		ResultSet rs2 = null;
 
 		// 파일 WRITE
-		File file = new File("C:/Pony/Excel/result/test2.bin");
+		File file = new File("C:/Pony/Excel/result/LOS/losTest.bin");
 		FileOutputStream fos = null;
 		
 		byte[] INT_MAX = new byte[4];
@@ -99,11 +99,12 @@ public class HiveSerializeTest {
         	//----------------------------------------------------------------------------------------------------------------
 			fos = new FileOutputStream(file);
 
-//				for (int i = 0; i < x_bin_cnt; i++) {
-//					for (int j = 0; j < y_bin_cnt; j++) {
+//				for (int i = 0; i < y_bin_cnt; i++) {
+//					for (int j = 0; j < x_bin_cnt; j++) {
 //						fos.write(bin[i][j].value);
 //					}
 //				}
+			
 			for (int i = 0; i < newBin.length; i++) {
 				fos.write(newBin[i].value);
 			}
