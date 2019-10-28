@@ -25,16 +25,16 @@ object MakeBinFile1{
     var stat:Statement=con.createStatement();
     var qry=MakeBinFileSql2.selectScenarioNrRu("");
     var rs = stat.executeQuery(qry);
-    var count = 0;
+//    var count = 0;
 
     while(rs.next()) {
-      count = count + 1;
-      // 파일 삭제
-      if(count==1) {
-        FileUtil.delFiles("C:/Pony/Excel/result", ".*");
-      }
+//      count = count + 1;
+//      // 파일 삭제
+//      if(count==1) {
+//        FileUtil.delFiles("C:/Pony/Excel/result", ".*");
+//      }
       // 폴더 생성
-      var dir = new File("C:/Pony/Excel/result", DateUtil.getDate("yyyyMMdd") + "/SYS/" + rs.getString(1) + "/ENB_" + rs.getString(2) + "/PCI_" + rs.getString(3) + "_PORT_" + rs.getString(4) + "_" + rs.getString(5));
+      var dir = new File(App.resultPath, DateUtil.getDate("yyyyMMdd") + "/SYS/" + rs.getString(1) + "/ENB_" + rs.getString(2) + "/PCI_" + rs.getString(3) + "_PORT_" + rs.getString(4) + "_" + rs.getString(5));
       if(!dir.exists()) dir.mkdirs();
       println(dir);
     };
