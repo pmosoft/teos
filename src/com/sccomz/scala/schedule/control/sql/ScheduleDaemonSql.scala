@@ -240,9 +240,9 @@ AND    A.SCHEDULE_ID = C.SCHEDULE_ID(+)
 def updateScheduleBinRuCnt(scheduleId:String,binXCnt:String,binYCnt:String,ruCnt:String) = {
 s"""
 UPDATE SCHEDULE
-   SET BIN_X_CNT = ${binXCnt}
-     , BIN_Y_CNT = ${binYCnt}
-     , RU_CNT    = ${ruCnt}
+   SET BIN_X_CNT   = ${binXCnt}
+     , BIN_Y_CNT   = ${binYCnt}
+     , RU_CNT      = ${ruCnt}
 WHERE  SCHEDULE_ID = ${scheduleId}
 """
 }
@@ -292,59 +292,6 @@ AND    BASE_DT = (SELECT MAX(BASE_DT) FROM SCHEDULE_WEIGHT)
 
 
 
-
-SELECT
-       ${scheduleId}     AS SCHEDULE_ID           -- 스케줄ID
-     , 0                 AS JOB_WEIGHT            -- 잡가중치(3:상, 2:중, 1:하)
-     , JOB_H_THRESHOLD   AS JOB_H_THRESHOLD       -- 하이잡임계치(1-5 사이의 값)
-     , JOB_M_THRESHOLD   AS JOB_M_THRESHOLD       -- 미들잡임계치(1-5 사이의 값)
-     , JOB_L_THRESHOLD   AS JOB_L_THRESHOLD       -- 로우잡임계치(1-5 사이의 값)
-     , 0                 AS RU_CNT_WEIGHT         -- RU갯수가중치값(1..5)
-     , JOB_RU_CNT_WEIGHT AS JOB_RU_CNT_WEIGHT     -- RU갯수가중치
-     , ${area}           AS AREA                  -- 면적
-     , 0                 AS AREA_WEIGHT           -- 면적가중치값(1..5)
-     , JOB_AREA_WEIGHT   AS JOB_AREA_WEIGHT       -- 면적가중치
-     , SYSDATE           AS REG_DT                -- 등록일시
-     , 'ADMIN'           AS REG_USER_ID           -- 등록자
-     , SYSDATE           AS MOD_DT                -- 수정일시
-     , 'ADMIN'           AS MOD_USER_ID           -- 수정자
-FROM   SCHEDULE_WEIGHT
-WHERE  1=1
-AND    BASE_DT = (SELECT MAX(BASE_DT) FROM SCHEDULE_WEIGHT)
-
-
-
-
-
-
-	if (dr.ex < sr.sx)
-		return(RT_OUT);
-	if (sr.ex < dr.sx)
-		return(RT_OUT);
-	if (dr.ey < sr.sy)
-		return(RT_OUT);
-	if (sr.ey < dr.sy)
-		return(RT_OUT);
-
-SELECT
- ADDR_ADM_DONG
-,BD_FLOOR_MAX
-,BD_AREA
-,WTM_SX
-,WTM_SY
-,WTM_EX
-,WTM_EY
-FROM BD_LOSS
-WHERE WTM_EX >= 201431.13034243
-AND   WTM_SX <= 202386.13034243
-AND   WTM_EY >= 445365.04232378
-AND   WTM_SY <= 446098.04232378
-;
-
-
-
-
-
  VALUES WHERE SCHEDULE_ID = ${scheduleId}
 """
 }
@@ -361,6 +308,29 @@ def insertScheduleExt() = {
 
 """
 }
+
+
+def test01() = {
+"""
+
+SELECT                         
+ ADDR_ADM_DONG                 
+,BD_FLOOR_MAX                  
+,BD_AREA                       
+,WTM_SX                        
+,WTM_SY                        
+,WTM_EX                        
+,WTM_EY                        
+FROM BD_LOSS                   
+WHERE WTM_EX >= 201431.13034243
+AND   WTM_SX <= 202386.13034243
+AND   WTM_EY >= 445365.04232378
+AND   WTM_SY <= 446098.04232378
+
+
+"""
+}
+
 
 
 }

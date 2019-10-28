@@ -23,18 +23,18 @@ object ScheduleDaemon {
   var qry = "";
 
   def main(args: Array[String]): Unit = {
-
+    execute();
   }
 
 
   def execute(): Unit = {
     var loofCnt = 0;
     try {
-      while(loofCnt<3) {
+      while(loofCnt<1) {
         loofCnt += 1;
 
         updateBinRuInfo();
-        excuteJob();
+        //excuteJob();
 
         println("loofCnt="+loofCnt);
 
@@ -50,7 +50,7 @@ object ScheduleDaemon {
     } finally {
       con.close();
     }
-  } 
+  }
 
   /*
    * 메인작업 : 잡을 생성한다
@@ -81,8 +81,11 @@ object ScheduleDaemon {
     // PROCESS_CD 10001(분석요청)이면서 BIN갯수 미세팅건이나 SCHEDULE_EXT 미생생된 경우
 
     qry = ScheduleDaemonSql.selectBinRuCount(); println(qry);
+    println("1");
     rs = stat.executeQuery(qry);
+    println("2");
     while(rs.next()){
+    println("3");
       var map = HashMap[String,String]();
       map.put("SCHEDULE_ID" , rs.getString("SCHEDULE_ID"));
       map.put("BIN_X_CNT"   , rs.getString("BIN_X_CNT"  ));
@@ -90,7 +93,7 @@ object ScheduleDaemon {
       map.put("AREA"        , rs.getString("AREA"       ));
       map.put("RU_CNT"      , rs.getString("RU_CNT"     ));
       list += map;
-      //println( "SCHEDULE_ID="+rs.getString(1) );
+      println( "SCHEDULE_ID="+rs.getString(1) );
     }
 
     var scheduleId = ""; var binXCnt = ""; var binYCnt = ""; var area = ""; var ruCnt = "";
@@ -99,7 +102,6 @@ object ScheduleDaemon {
       scheduleId = m.getOrElse("SCHEDULE_ID","");
       binXCnt    = m.getOrElse("BIN_X_CNT","");
       binYCnt    = m.getOrElse("BIN_Y_CNT","");
-      area       = m.getOrElse("AREA","");
       ruCnt      = m.getOrElse("RU_CNT","");
 
       //[갱신:SCHEDULE]

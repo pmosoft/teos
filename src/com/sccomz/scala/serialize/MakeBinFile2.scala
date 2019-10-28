@@ -11,15 +11,35 @@ import com.sccomz.java.comm.util.FileUtil
 import com.sccomz.java.serialize.Byte4
 import com.sccomz.java.serialize.ByteUtil
 import com.sccomz.scala.comm.App
+import org.apache.spark.sql.SparkSession
 
 object MakeBinFile2{
 
+
+  var spark: SparkSession = null  
+  var scheduleId = ""  
+
+
   def main(args: Array[String]): Unit = {
 //    makeResultDir("");
+    spark = SparkSession.builder().appName("MakeBinFile2").getOrCreate();
     makeResultFile("");
   }
+  
+
+  def sparkTest01(scheduleId:String) = {
+    
+    var qry= "SELECT DISTINCT X_POINT, Y_POINT, LOS FROM I_RESULT_NR_2D_LOS WHERE scenario_id = 5104573 ORDER BY X_POINT, Y_POINT";    
+    val sqlDf = spark.sql(qry);
+    
+    sqlDf.foreach { row =>
+      row.toSeq.foreach{col => println(col) }
+    }
+  }
+    
   // 폴더 생성 메소드
   def makeResultDir(scheduleId:String) = {
+    
     Class.forName(App.dbDriverHive);
     var con = DriverManager.getConnection(App.dbUrlHive,App.dbUserHive,App.dbPwHive);
     var stat:Statement=con.createStatement();
