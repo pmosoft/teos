@@ -1,25 +1,12 @@
 package com.sccomz.java.serialize;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-
-import org.mozilla.universalchardet.UniversalDetector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ByteUtil {
 
-    private static Logger logger = LoggerFactory.getLogger(ByteUtil.class);
+    @SuppressWarnings("unused")
+	private static Logger logger = LoggerFactory.getLogger(ByteUtil.class);
 
     public static void main(String[] args) {
         //testDirFileInfo();
