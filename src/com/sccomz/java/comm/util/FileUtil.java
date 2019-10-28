@@ -85,6 +85,30 @@ public class FileUtil {
 
         return srcInfoList;
     }
+    
+ // 해당 파일 경로 밑에 모든 파일과 폴더들을 삭제
+    public static void delFiles2(String pathFileNm){
+        File dir = new File(pathFileNm);
+
+        try {
+        	if(dir.exists()) {
+        		File[] fileList = dir.listFiles();		// 파일리스트 얻어오기
+        		
+        		for (int i = 0; i < fileList.length; i++) {
+        			if(fileList[i].isFile()) {
+        				fileList[i].delete();
+        				System.out.println("파일이 삭제되었습니다.");
+        			} else {
+        				delFiles2(fileList[i].getPath());		// 재귀함수 호출
+        				System.out.println("폴더가 삭제되었습니다.");
+        			}
+        			fileList[i].delete();
+        		}
+        		dir.delete();		// 폴더 삭제
+        	}
+        	
+        } catch (Exception e) {e.printStackTrace();}
+    }
 
     // 해당 파일 경로 밑에 모든 파일들을 삭제(폴더들은 미삭제)
     public static void delFiles(String pathFileNm, String fileNm){
