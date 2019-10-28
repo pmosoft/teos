@@ -9,7 +9,8 @@ public class ByteUtil {
 	private static Logger logger = LoggerFactory.getLogger(ByteUtil.class);
 
     public static void main(String[] args) {
-        //testDirFileInfo();
+
+    	//testDirFileInfo();
         //0x41200000 10
 
         byte[] aa = floatToByteArray(10f);
