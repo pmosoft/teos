@@ -21,7 +21,6 @@ import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.types.StructType
 
 
-import com.sccomz.scala.schedule.control.sql.ScheduleDaemonSql
 import com.sccomz.scala.comm.App
 import com.sccomz.scala.schema.SCENARIO
 

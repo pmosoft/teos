@@ -1,6 +1,6 @@
 package com.sccomz.scala.test
 
-object CellectionTest {
+object CollectionTest {
 
   def main(args: Array[String]): Unit = {
     test01();
@@ -22,6 +22,13 @@ object CellectionTest {
     val temp3 = Array.ofDim[Integer](row, column)
     val temp4 = Array.ofDim[Byte](row, column)
 
+    //updateScheduleBinCnt
+    //for(i <- 0 to rowCnt) {}
+    //println( "list.size="+list.size );
+    //for(m <- list) println(m.get("SCHEDULE_ID").fold("")(_.toString));
+    //for((k,v) <- map) printf("key: %s, value: %s\n", k, v)
+    //map.foreach { case (key, value) => println(">>> key=" + key + ", value=" + value) }
+    
   }
 }
 

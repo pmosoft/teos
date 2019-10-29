@@ -1,4 +1,4 @@
-package com.sccomz.scala.schedule.control
+package com.sccomz.scala.schedule.real
 
 import java.sql.Connection
 import java.sql.DriverManager
@@ -8,7 +8,6 @@ import java.sql.Statement
 import scala.collection.mutable.Map
 import scala.collection.mutable.HashMap
 import scala.collection._
-import com.sccomz.scala.schedule.control.sql.ScheduleDaemonSql
 import com.sccomz.scala.comm.App
 import java.lang.Runtime
 import scala.sys.process._
@@ -34,7 +33,7 @@ object ScheduleDaemon {
         loofCnt += 1;
 
         updateBinRuInfo();
-        //excuteJob();
+        excuteJob();
 
         println("loofCnt="+loofCnt);
 
@@ -56,22 +55,24 @@ object ScheduleDaemon {
    * 메인작업 : 잡을 생성한다
    */
   def excuteJob(): Unit = {
-    qry = ScheduleDaemonSql.selectBinRuCount(); println(qry);
+    var scheduleId = "";
+    qry = ScheduleDaemonSql.selectSchedule10001(); println(qry);
     rs = stat.executeQuery(qry);
     while(rs.next()){
-
-      var map = HashMap[String,String]();
-      map.put("SCHEDULE_ID" , rs.getString("SCHEDULE_ID"));
-      //println( "SCHEDULE_ID="+rs.getString(1) );
+      scheduleId = rs.getString("SCHEDULE_ID");
+      println("SCHEDULE_ID="+scheduleId);
+      //ExecuteJob.execute();
+      val process = Process(s"""scala -classpath d:/fframe/workspace/teos/bin/teos.jar com.sccomz.scala.schedule.real.ExecuteJob ${scheduleId}""");
+      println("process="+process);
+      var tt = s""""
+      """
     }
-
   }
 
   /*
    * 사전작업 : 스케줄 테이블에 Bin갯수, Ru갯수, 빌딩크기 산출후 잡가중치를 저장한다
    */
   def updateBinRuInfo(): Unit = {
-
 
     val list = mutable.MutableList[Map[String,String]]()
 
@@ -84,15 +85,17 @@ object ScheduleDaemon {
     rs = stat.executeQuery(qry);
     while(rs.next()){
       var map = HashMap[String,String]();
-      map.put("SCHEDULE_ID" , rs.getString("SCHEDULE_ID"));
-      map.put("BIN_X_CNT"   , rs.getString("BIN_X_CNT"  ));
-      map.put("BIN_Y_CNT"   , rs.getString("BIN_Y_CNT"  ));
-      map.put("AREA"        , rs.getString("AREA"       ));
-      map.put("RU_CNT"      , rs.getString("RU_CNT"     ));
+      map.put("SCHEDULE_ID"    , rs.getString("SCHEDULE_ID"));
+      map.put("BIN_X_CNT"      , rs.getString("BIN_X_CNT"  ));
+      map.put("BIN_Y_CNT"      , rs.getString("BIN_Y_CNT"  ));
+      map.put("AREA"           , rs.getString("AREA"       ));
+      map.put("RU_CNT"         , rs.getString("RU_CNT"     ));
+      map.put("JOB_WEIGHT"     , rs.getString("JOB_WEIGHT"     ));
+      map.put("JOB_THRESHOLD"  , rs.getString("JOB_THRESHOLD"     ));
       list += map;
     }
 
-    var scheduleId = ""; var binXCnt = ""; var binYCnt = ""; var ruCnt = ""; var jobWeight = ""; var jobThreshoid = "";
+    var scheduleId = ""; var binXCnt = ""; var binYCnt = ""; var ruCnt = ""; var jobWeight = ""; var jobThreshold = "";
     for(m <- list) {
 
       scheduleId   = m.getOrElse("SCHEDULE_ID","");
@@ -100,7 +103,7 @@ object ScheduleDaemon {
       binYCnt      = m.getOrElse("BIN_Y_CNT","");
       ruCnt        = m.getOrElse("RU_CNT","");
       jobWeight    = m.getOrElse("JOB_WEIGHT","");
-      jobThreshoid = m.getOrElse("JOB_THRESHOLD","");
+      jobThreshold = m.getOrElse("JOB_THRESHOLD","");
 
       //[갱신:SCHEDULE]
       qry = ScheduleDaemonSql.updateScheduleBinRuCnt(scheduleId, binXCnt, binYCnt, ruCnt); println(qry);
@@ -111,37 +114,10 @@ object ScheduleDaemon {
       stat.execute(qry);
 
       //[삽입:SCHEDULE_EXT]
-      qry = ScheduleDaemonSql.insertScheduleExt(scheduleId,jobWeight,jobThreshoid); println(qry);
+      qry = ScheduleDaemonSql.insertScheduleExt(scheduleId,jobWeight,jobThreshold); println(qry);
       stat.execute(qry);
 
     }
-
-    //updateScheduleBinCnt
-    //for(i <- 0 to rowCnt) {}
-    //println( "list.size="+list.size );
-    //for(m <- list) println(m.get("SCHEDULE_ID").fold("")(_.toString));
-    list.clear();
-    //for((k,v) <- map) printf("key: %s, value: %s\n", k, v)
-    //map.foreach { case (key, value) => println(">>> key=" + key + ", value=" + value) }
-  }
-
-  def selectExecuteJob(): Unit = {
-  }
-
-
-  def executeEtlToPostgre(): Unit = {
-  }
-
-  def executePostgreProcedure(): Unit = {
-  }
-
-  def executeEtlToHdfs(): Unit = {
-  }
-
-  def executeSparkJob(): Unit = {
-  }
-
-  def executeMakeBinFile(): Unit = {
   }
 
 
@@ -180,7 +156,7 @@ object ScheduleDaemon {
 //    println( pids )
 //    pids.foreach(pid => {
 //        val process = Runtime.getRuntime().exec(Array("bash", "-c", s"kill -9 ${pid}"))
-//        if( process.waitFor() == 0)  // 因?有些得到的?程id是前面本身grep?生的无意?的
+//        if( process.waitFor() == 0)
 //        	killNumbers += 1
 //    })
 //    killNumbers

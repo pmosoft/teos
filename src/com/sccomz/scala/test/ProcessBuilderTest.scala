@@ -7,7 +7,7 @@ import java.io.ByteArrayInputStream
 object ProcessBuilderTest {
 
   def main(args: Array[String]): Unit = {
-    test01();
+    test02();
   }
 
   def test01(): Unit = {
@@ -20,5 +20,16 @@ object ProcessBuilderTest {
     //Process("notepad")!
   }
 
+  def test02(): Unit = {
+    //import scala.sys.process._
+    //val cmd = "notepad" // Your command
+    //val output = cmd.!! // Captures the output
+    //execute();
+    //val runtime = Runtime.getRuntime;
+    //runtime.exec("notepad");
+    Process("notepad")!
+  }
+  
+  
 }
 

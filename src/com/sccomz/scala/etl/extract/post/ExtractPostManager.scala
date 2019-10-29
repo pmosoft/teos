@@ -10,7 +10,6 @@ import scala.collection.mutable.Map
 import scala.collection.mutable.HashMap
 import scala.collection._
 
-import com.sccomz.scala.schedule.control.sql.ScheduleDaemonSql
 import com.sccomz.scala.comm.App
 import com.sccomz.scala.etl.extract.post.sql.ExtractPostLosEngResultDisSql
 import com.sccomz.scala.etl.extract.post.sql.ExtractPostLosEngResultDis1Sql
