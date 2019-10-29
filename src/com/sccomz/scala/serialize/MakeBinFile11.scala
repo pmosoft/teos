@@ -22,10 +22,14 @@ object MakeBinFile11 {
   }
   
   def sparkTest(scheduleId: String) = {
-    spark = SparkSession.builder().appName("MakeBinFile11").getOrCreate();
-    var query = "SELECT DISTINCT X_POINT, Y_POINT, LOS FROM I_RESULT_NR_2D_LOS WHERE scenario_id = 5104573 ORDER BY X_POINT, Y_POINT";
-    val df = spark.sql(query);
-    df.show();
+    spark = SparkSession.builder().appName("MakeBinFile11").config("spark.some.config.option", "some-value").getOrCreate();
+    
+    var query = "SELECT DISTINCT X_POINT, Y_POINT, LOS FROM I_RESULT_NR_2D_LOS WHERE scenario_id = 5108566 ORDER BY X_POINT, Y_POINT";
+    val df = spark.sql(query).toDF("x_point", "y_point", "los");
+
+    df.foreach { row =>
+      row.toSeq.foreach { col => println(col) }
+    }
   }
   
   // 폴더 생성 메소드
