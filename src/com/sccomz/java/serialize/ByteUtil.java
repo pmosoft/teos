@@ -26,11 +26,6 @@ public class ByteUtil {
         System.out.println(bb[3]);
     }
 
-    public static byte[] floatToByteArray(float value) {
-        int floatValue =  Float.floatToIntBits(value);
-        return intToByteArray(floatValue);
-    }
-
 	public static byte[] intMax() {
 		byte[] INT_MAX = new byte[4];
 		INT_MAX[0] = (byte) 0xff;  INT_MAX[1] = (byte) 0xff; INT_MAX[2] = (byte) 0xff; INT_MAX[3] = (byte) 0x7f;
@@ -45,7 +40,7 @@ public class ByteUtil {
 
 	public static byte[] intZero() {
 		byte[] INT_MAX = new byte[4];
-		INT_MAX[0] = (byte) 0x00;  INT_MAX[1] = (byte) 0x00; INT_MAX[2] = (byte) 0x00; INT_MAX[3] = (byte) 0x00;
+		INT_MAX[0] = (byte) 0x01;  INT_MAX[1] = (byte) 0x00; INT_MAX[2] = (byte) 0x00; INT_MAX[3] = (byte) 0x00;
         return INT_MAX;
 	}
     public static byte[] intToByteArray(int value) {
@@ -56,6 +51,11 @@ public class ByteUtil {
         byteArray[0] = (byte)(value);
         return byteArray;
     }
+    
+	public static byte[] floatToByteArray(float value) {
+		int floatValue = Float.floatToIntBits(value);
+		return intToByteArray(floatValue);
+	}
 
     public int byteArrayToInt(byte bytes[]) {
         return ((((int)bytes[3] & 0xff) << 24) |
@@ -69,6 +69,5 @@ public class ByteUtil {
         int value =  byteArrayToInt(bytes);
         return Float.intBitsToFloat(value);
     }
-
-
+    
 }
