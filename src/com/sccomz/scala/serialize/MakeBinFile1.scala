@@ -17,8 +17,9 @@ object MakeBinFile1 {
 
   def main(args: Array[String]): Unit = {
 //    makeResultDir("");
-      makeResultFile("");
+    makeResultFile("");
   }
+  
   // 폴더 생성 메소드
   def makeResultDir(scheduleId: String) = {
     Class.forName(App.dbDriverHive);

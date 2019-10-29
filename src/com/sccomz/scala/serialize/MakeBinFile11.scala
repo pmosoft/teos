@@ -15,19 +15,17 @@ import org.apache.spark.sql.SparkSession
 
 object MakeBinFile11 {
   val logger: Logger = Logger.getLogger(this.getClass.getName());
-  val spark: SparkSession = null;
+  var spark: SparkSession = null;
 
   def main(args: Array[String]): Unit = {
-    SparkSession.builder().appName("MakeBinFile11").getOrCreate();
+    sparkTest("");
   }
   
   def sparkTest(scheduleId: String) = {
+    spark = SparkSession.builder().appName("MakeBinFile11").getOrCreate();
     var query = "SELECT DISTINCT X_POINT, Y_POINT, LOS FROM I_RESULT_NR_2D_LOS WHERE scenario_id = 5104573 ORDER BY X_POINT, Y_POINT";
     val df = spark.sql(query);
-
-    df.foreach { row =>
-      row.toSeq.foreach { col => println(col) }
-    }
+    df.show();
   }
   
   // 폴더 생성 메소드

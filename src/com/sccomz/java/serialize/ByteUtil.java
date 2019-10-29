@@ -40,7 +40,7 @@ public class ByteUtil {
 
 	public static byte[] intZero() {
 		byte[] INT_MAX = new byte[4];
-		INT_MAX[0] = (byte) 0x01;  INT_MAX[1] = (byte) 0x00; INT_MAX[2] = (byte) 0x00; INT_MAX[3] = (byte) 0x00;
+		INT_MAX[0] = (byte) 0x00;  INT_MAX[1] = (byte) 0x00; INT_MAX[2] = (byte) 0x00; INT_MAX[3] = (byte) 0x00;
         return INT_MAX;
 	}
     public static byte[] intToByteArray(int value) {
