@@ -211,8 +211,10 @@ AND    B.WTM_SX <= TM_ENDX
 AND    B.WTM_EY >= TM_STARTY
 AND    B.WTM_SY <= TM_ENDY
 GROUP BY A.SCHEDULE_ID
-)
---SELECT *
+), TEMP09 AS (
+-------------------
+-- 잡무게 산출
+-------------------
 SELECT
        A.SCHEDULE_ID
      , A.TYPE_CD
@@ -234,6 +236,17 @@ FROM   TEMP06 A
      , TEMP08 C
 WHERE  A.SCHEDULE_ID = B.SCHEDULE_ID(+)
 AND    A.SCHEDULE_ID = C.SCHEDULE_ID(+)
+)
+SELECT A.*
+     , CASE WHEN JOB_THRESHOLD >= B.JOB_H_THRESHOLD THEN 3
+            WHEN JOB_THRESHOLD <= B.JOB_L_THRESHOLD THEN 1
+            ELSE 2
+       END AS JOB_WEIGHT
+     , B.*
+FROM   TEMP09 A
+     ,(SELECT JOB_H_THRESHOLD, JOB_M_THRESHOLD, JOB_L_THRESHOLD
+       FROM   SCHEDULE_WEIGHT
+       WHERE  BASE_DT = (SELECT MAX(BASE_DT) FROM SCHEDULE_WEIGHT)) B
 """
 }
 
@@ -247,55 +260,20 @@ WHERE  SCHEDULE_ID = ${scheduleId}
 """
 }
 
-
-def insertScheduleExt(scheduleId:String,ruCnt:String,area:String) = {
+def insertScheduleExt(scheduleId:String,jobWeight:String,jobThreshold:String) = {
 s"""
 INSERT INTO SCHEDULE_EXT
-WITH TEMP01 AS (
--------------------
--- 스케줄 가중치 조회
--------------------
 SELECT
        ${scheduleId}     AS SCHEDULE_ID           -- 스케줄ID
-     , 0                 AS JOB_WEIGHT            -- 잡가중치(3:상, 2:중, 1:하)
-     , JOB_H_THRESHOLD   AS JOB_H_THRESHOLD       -- 하이잡임계치(1-5 사이의 값)
-     , JOB_M_THRESHOLD   AS JOB_M_THRESHOLD       -- 미들잡임계치(1-5 사이의 값)
-     , JOB_L_THRESHOLD   AS JOB_L_THRESHOLD       -- 로우잡임계치(1-5 사이의 값)
-     , 0                 AS RU_CNT_WEIGHT         -- RU갯수가중치값(1..5)
-     , CASE WHEN ${ruCnt} > RU_CNT_W5 THEN 5
-            WHEN ${ruCnt} > RU_CNT_W4 THEN 4
-            WHEN ${ruCnt} > RU_CNT_W3 THEN 3
-            WHEN ${ruCnt} > RU_CNT_W2 THEN 2
-            WHEN ${ruCnt} > RU_CNT_W1 THEN 1
-            ELSE 1
-       END
-     , JOB_RU_CNT_WEIGHT AS JOB_RU_CNT_WEIGHT     -- RU갯수가중치
-     , ${area}           AS AREA                  -- 면적
-     , 0                 AS AREA_WEIGHT           -- 면적가중치값(1..5)
-     , JOB_AREA_WEIGHT   AS JOB_AREA_WEIGHT       -- 면적가중치
+     , ${jobWeight}      AS JOB_WEIGHT            -- 잡가중치(3:상, 2:중, 1:하)
+     , ${jobThreshold}   AS JOB_THRESHOLD         -- 임계치
      , SYSDATE           AS REG_DT                -- 등록일시
      , 'ADMIN'           AS REG_USER_ID           -- 등록자
      , SYSDATE           AS MOD_DT                -- 수정일시
      , 'ADMIN'           AS MOD_USER_ID           -- 수정자
-FROM   SCHEDULE_WEIGHT
-WHERE  1=1
-AND    BASE_DT = (SELECT MAX(BASE_DT) FROM SCHEDULE_WEIGHT)
-), TEMP02 AS (
--------------------
--- RU 및 면적 산출3
--------------------
-
-
-
-
-
-
-
-
- VALUES WHERE SCHEDULE_ID = ${scheduleId}
+FROM   DUAL
 """
 }
-
 
 def deleteScheduleExt(scheduleId:String) = {
 s"""
@@ -303,25 +281,19 @@ DELETE SCHEDULE_EXT WHERE SCHEDULE_ID = ${scheduleId}
 """
 }
 
-def insertScheduleExt() = {
-"""
-
-"""
-}
-
 
 def test01() = {
 """
 
-SELECT                         
- ADDR_ADM_DONG                 
-,BD_FLOOR_MAX                  
-,BD_AREA                       
-,WTM_SX                        
-,WTM_SY                        
-,WTM_EX                        
-,WTM_EY                        
-FROM BD_LOSS                   
+SELECT
+ ADDR_ADM_DONG
+,BD_FLOOR_MAX
+,BD_AREA
+,WTM_SX
+,WTM_SY
+,WTM_EX
+,WTM_EY
+FROM BD_LOSS
 WHERE WTM_EX >= 201431.13034243
 AND   WTM_SX <= 202386.13034243
 AND   WTM_EY >= 445365.04232378

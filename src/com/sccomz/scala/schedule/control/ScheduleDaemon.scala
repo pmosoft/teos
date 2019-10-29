@@ -81,11 +81,8 @@ object ScheduleDaemon {
     // PROCESS_CD 10001(분석요청)이면서 BIN갯수 미세팅건이나 SCHEDULE_EXT 미생생된 경우
 
     qry = ScheduleDaemonSql.selectBinRuCount(); println(qry);
-    println("1");
     rs = stat.executeQuery(qry);
-    println("2");
     while(rs.next()){
-    println("3");
       var map = HashMap[String,String]();
       map.put("SCHEDULE_ID" , rs.getString("SCHEDULE_ID"));
       map.put("BIN_X_CNT"   , rs.getString("BIN_X_CNT"  ));
@@ -93,16 +90,17 @@ object ScheduleDaemon {
       map.put("AREA"        , rs.getString("AREA"       ));
       map.put("RU_CNT"      , rs.getString("RU_CNT"     ));
       list += map;
-      println( "SCHEDULE_ID="+rs.getString(1) );
     }
 
-    var scheduleId = ""; var binXCnt = ""; var binYCnt = ""; var area = ""; var ruCnt = "";
+    var scheduleId = ""; var binXCnt = ""; var binYCnt = ""; var ruCnt = ""; var jobWeight = ""; var jobThreshoid = "";
     for(m <- list) {
 
-      scheduleId = m.getOrElse("SCHEDULE_ID","");
-      binXCnt    = m.getOrElse("BIN_X_CNT","");
-      binYCnt    = m.getOrElse("BIN_Y_CNT","");
-      ruCnt      = m.getOrElse("RU_CNT","");
+      scheduleId   = m.getOrElse("SCHEDULE_ID","");
+      binXCnt      = m.getOrElse("BIN_X_CNT","");
+      binYCnt      = m.getOrElse("BIN_Y_CNT","");
+      ruCnt        = m.getOrElse("RU_CNT","");
+      jobWeight    = m.getOrElse("JOB_WEIGHT","");
+      jobThreshoid = m.getOrElse("JOB_THRESHOLD","");
 
       //[갱신:SCHEDULE]
       qry = ScheduleDaemonSql.updateScheduleBinRuCnt(scheduleId, binXCnt, binYCnt, ruCnt); println(qry);
@@ -113,6 +111,9 @@ object ScheduleDaemon {
       stat.execute(qry);
 
       //[삽입:SCHEDULE_EXT]
+      qry = ScheduleDaemonSql.insertScheduleExt(scheduleId,jobWeight,jobThreshoid); println(qry);
+      stat.execute(qry);
+
     }
 
     //updateScheduleBinCnt
