@@ -16,8 +16,8 @@ object MakeBinFile1 {
   val logger: Logger = Logger.getLogger(this.getClass.getName());
 
   def main(args: Array[String]): Unit = {
-    makeResultDir("");
-    //    makeResultFile("");
+//    makeResultDir("");
+      makeResultFile("");
   }
   // 폴더 생성 메소드
   def makeResultDir(scheduleId: String) = {
@@ -34,7 +34,7 @@ object MakeBinFile1 {
       FileUtil.delFiles2(App.resultPath + "/20191028/SYS/");
       logger.info("Directory Drop Complete!!");
     }
-    
+
     while (rs.next()) {
       // 폴더 생성
       var dir = new File(App.resultPath, DateUtil.getDate("yyyyMMdd") + "/SYS/" + rs.getString(1) + "/ENB_" + rs.getString(2) + "/PCI_" + rs.getString(3) + "_PORT_" + rs.getString(4) + "_" + rs.getString(5));
@@ -57,9 +57,9 @@ object MakeBinFile1 {
     var x_bin_cnt = 307; var y_bin_cnt = 301;
     val bin = Array.ofDim[Byte4](x_bin_cnt, y_bin_cnt);
 
-    for (i <- 0 until x_bin_cnt by 1) {
-      for (j <- 0 until y_bin_cnt by 1) {
-        bin(i)(j) = new Byte4(ByteUtil.intZero());
+    for (y <- 0 until y_bin_cnt by 1) {
+      for (x <- 0 until x_bin_cnt by 1) {
+        bin(x)(y) = new Byte4(ByteUtil.intZero());
       }
     }
 
@@ -81,11 +81,11 @@ object MakeBinFile1 {
     //---------------------------------------------------------------------------------------------------------
     // 파일 Write
     //---------------------------------------------------------------------------------------------------------
-    var file = new File("C:/Pony/Excel/result", "losTest.bin");
+    var file = new File("C:/Pony/Excel/result/LOS", "losTest.bin");
     var fos = new FileOutputStream(file);
-    for (i <- 0 until x_bin_cnt by 1) {
-      for (j <- 0 until y_bin_cnt by 1) {
-        fos.write(bin(i)(j).value);
+    for (y <- 0 until y_bin_cnt by 1) {
+      for (x <- 0 until x_bin_cnt by 1) {
+        fos.write(bin(x)(y).value);
       }
     }
     logger.info("======================= Bin 생성 완료 =======================");

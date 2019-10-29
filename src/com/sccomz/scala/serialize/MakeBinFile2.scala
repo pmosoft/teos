@@ -17,12 +17,11 @@ object MakeBinFile2{
 
 
   var spark: SparkSession = null  
-  var scheduleId = ""  
-
+  var scheduleId = ""
 
   def main(args: Array[String]): Unit = {
 //    makeResultDir("");
-    spark = SparkSession.builder().appName("MakeBinFile2").getOrCreate();
+//    spark = SparkSession.builder().appName("MakeBinFile2").getOrCreate();
     makeResultFile("");
   }
   
@@ -100,7 +99,7 @@ object MakeBinFile2{
     //---------------------------------------------------------------------------------------------------------
     // 파일 Write
     //---------------------------------------------------------------------------------------------------------
-    var file = new File("C:/Pony/Excel/result", "losTest2.bin");
+    var file = new File("C:/Pony/Excel/result/LOS", "losTest2.bin");
     var fos = new FileOutputStream(file);
     //fos.write(bin);
     for (y <- 0 until y_bin_cnt by 1) {

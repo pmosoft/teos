@@ -22,11 +22,11 @@ object PathlossBinTest {
   }
 
   // 폴더 생성 메소드
-  def makeResultDir(scheduleId:String) = {
+  def makeResultDir(scheduleId: String) = {
     Class.forName(App.dbDriverHive);
-    var con = DriverManager.getConnection(App.dbUrlHive,App.dbUserHive,App.dbPwHive);
-    var stat:Statement=con.createStatement();
-    var qry=MakeBinFileSql2.selectScenarioNrRu("");
+    var con = DriverManager.getConnection(App.dbUrlHive, App.dbUserHive, App.dbPwHive);
+    var stat: Statement = con.createStatement();
+    var qry = MakeBinFileSql2.selectScenarioNrRu("");
     var rs = stat.executeQuery(qry);
     var count = 0;
     count = count + 1;
@@ -36,10 +36,10 @@ object PathlossBinTest {
       logger.info("Directory Drop Complete!!");
     }
 
-    while(rs.next()) {
+    while (rs.next()) {
       // 폴더 생성
       var dir = new File(App.resultPath, DateUtil.getDate("yyyyMMdd") + "/SYS/" + rs.getString(1) + "/ENB_" + rs.getString(2) + "/PCI_" + rs.getString(3) + "_PORT_" + rs.getString(4) + "_" + rs.getString(5));
-      if(!dir.exists()) dir.mkdirs();
+      if (!dir.exists()) dir.mkdirs();
       println(dir);
     };
   }
