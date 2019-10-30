@@ -219,7 +219,7 @@ CREATE TABLE PUBLIC.I_SCENARIO_NR_RU
 ,REPEATERPWRRATIO                                                                                                                                      
 ,RU_SEQ                                                                                                                                                
 ,RADIUS                                                                                                                                                
-,FEEDER_LOSS                                                                                                                                           
+,FEEDER_LOSS                                                                                                                                            
 ,NOISEFLOOR                                                                                                                                            
 ,CORRECTION_VALUE                                                                                                                                      
 ,FADE_MARGIN                                                                                                                                           
