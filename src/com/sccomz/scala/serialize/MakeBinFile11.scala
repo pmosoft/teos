@@ -18,20 +18,9 @@ object MakeBinFile11 {
   var spark: SparkSession = null;
 
   def main(args: Array[String]): Unit = {
-    sparkTest("");
+    makeResultFile("");
   }
-  
-  def sparkTest(scheduleId: String) = {
-    spark = SparkSession.builder().appName("MakeBinFile11").config("spark.some.config.option", "some-value").getOrCreate();
-    
-    var query = "SELECT DISTINCT X_POINT, Y_POINT, LOS FROM I_RESULT_NR_2D_LOS WHERE scenario_id = 5108566 ORDER BY X_POINT, Y_POINT";
-    val df = spark.sql(query).toDF("x_point", "y_point", "los");
-
-    df.foreach { row =>
-      row.toSeq.foreach { col => println(col) }
-    }
-  }
-  
+   
   // 폴더 생성 메소드
   def makeResultDir(scheduleId: String) = {
     Class.forName(App.dbDriverHive);
@@ -58,10 +47,15 @@ object MakeBinFile11 {
 
   // Bin 파일 생성 메소드
   def makeResultFile(scheduleId: String) = {
-    Class.forName(App.dbDriverHive);
-    var con = DriverManager.getConnection(App.dbUrlHive, App.dbUserHive, App.dbPwHive);
-    var stat: Statement = con.createStatement();
-    var fu = new FileUtil;
+    
+    spark = SparkSession.builder().appName("MakeBinFile11").config("spark.some.config.option", "some-value").getOrCreate();
+    
+    var query = "SELECT DISTINCT X_POINT, Y_POINT, LOS FROM I_RESULT_NR_2D_LOS WHERE scenario_id = 5108566 ORDER BY X_POINT, Y_POINT";
+    val df = spark.sql(query).toDF("x_point", "y_point", "los");
+    
+//    Class.forName(App.dbDriverHive);
+//    var con = DriverManager.getConnection(App.dbUrlHive, App.dbUserHive, App.dbPwHive);
+//    var stat: Statement = con.createStatement();
 
     logger.info("========================== 초기화 ===========================");
     //---------------------------------------------------------------------------------------------------------
@@ -80,16 +74,19 @@ object MakeBinFile11 {
     //---------------------------------------------------------------------------------------------------------
     // Value 세팅
     //---------------------------------------------------------------------------------------------------------
-    var qry = MakeBinFileSql2.test1("");
-    var rs2 = stat.executeQuery(qry);
+    //    var qry = MakeBinFileSql2.test1("");
+    //    var rs2 = stat.executeQuery(qry);
     var x_point = 0; var y_point = 0; var los = 0;
-    while (rs2.next()) {
-      x_point = rs2.getInt("x_point");
-      y_point = rs2.getInt("y_point");
-      los = rs2.getInt("los");
-      bin(x_point)(y_point).value = ByteUtil.intToByteArray(los);
-    }
-
+//    df.foreach { row =>
+//      row.X_POINT
+//      row.toSeq.foreach {
+//        col1 => x_point;
+//        col2 => y_point;
+//        col3 => los;
+//      }
+//    }
+    bin(x_point)(y_point).value = ByteUtil.intToByteArray(los);
+    
     logger.info("======================== 파일 Write ========================");
     //---------------------------------------------------------------------------------------------------------
     // 파일 Write
@@ -102,7 +99,7 @@ object MakeBinFile11 {
       }
     }
     logger.info("======================= Bin 생성 완료 =======================");
-    rs2.close();
+//    rs2.close();
     if (fos != null) fos.close();
   }
 
