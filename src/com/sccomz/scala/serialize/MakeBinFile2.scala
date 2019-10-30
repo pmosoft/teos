@@ -32,7 +32,9 @@ object MakeBinFile2{
     val sqlDf = spark.sql(qry);
     
     sqlDf.foreach { row =>
-      row.toSeq.foreach{col => println(col) }
+       println(row.mkString(",").split(",")(0));
+       println(row.mkString(",").split(",")(1));
+       println(row.mkString(",").split(",")(2));
     }
   }
     
