@@ -15,7 +15,8 @@ SELECT
        NVL(HEIGHT,0)                           ||'|'||
        NVL(BLT_HEIGHT,0)                       ||'|'||
        NVL(TOWER_HEIGHT,0)                     ||'|'||
-       SITE_ADDR                               ||'|'||
+       SITE_ADDR        
+                       ||'|'||
        TYPE                                    ||'|'||
        NVL(CORRECTION_VALUE,0)                 ||'|'||
        NVL(FEEDER_LOSS,0)                      ||'|'||

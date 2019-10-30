@@ -32,10 +32,19 @@ object MakeBinFile2{
     val sqlDf = spark.sql(qry);
     
     sqlDf.foreach { row =>
-       println(row.mkString(",").split(",")(0));
-       println(row.mkString(",").split(",")(1));
-       println(row.mkString(",").split(",")(2));
+       println(row.mkString(",").split(",")(0)+":"+row.mkString(",").split(",")(1)+":"+row.mkString(",").split(",")(2));
+       
+       //println(row.getString(0));
+       //println(row.getString(1));
+       //println(row.getString(2));
+       
     }
+    
+    
+    sqlDf.foreach { row =>
+       println(row.mkString(",").split(",")(0));
+    }
+    
   }
     
   // 폴더 생성 메소드
