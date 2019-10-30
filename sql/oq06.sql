@@ -13,7 +13,7 @@ SELECT T_DU.SCENARIO_ID                 AS SCENARIO_ID
      , T_SITE.NOISEFLOOR                AS NOISEFLOOR            
      , T_SITE.CORRECTION_VALUE          AS CORRECTION_VALUE      
      , T_SITE.FADE_MARGIN               AS FADE_MARGIN           
-     , T_SITE.TM_XPOSITION              AS XPOSITION       
+     , T_SITE.TM_XPOSITION              AS XPOSITION        
      , T_SITE.TM_YPOSITION              AS YPOSITION             
      , T_SITE.HEIGHT                    AS HEIGHT             
      , T_SITE.SITE_ADDR                 AS SITE_ADDR             
