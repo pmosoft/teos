@@ -15,8 +15,7 @@ SELECT
        NVL(HEIGHT,0)                           ||'|'||
        NVL(BLT_HEIGHT,0)                       ||'|'||
        NVL(TOWER_HEIGHT,0)                     ||'|'||
-       SITE_ADDR        
-                       ||'|'||
+       SITE_ADDR                               ||'|'||
        TYPE                                    ||'|'||
        NVL(CORRECTION_VALUE,0)                 ||'|'||
        NVL(FEEDER_LOSS,0)                      ||'|'||
@@ -50,7 +49,7 @@ WHERE  SCENARIO_ID IN (SELECT SCENARIO_ID FROM SCHEDULE WHERE SCHEDULE_ID = ${sc
 def selectSiteIns(scheduleId:String) = {
 s"""
 SELECT 
-'INSERT INTO SITE VALUES ('
+'INSERT INTO I_SITE VALUES ('
 ||' '  ||NVL(SCENARIO_ID,0)                      
 ||','''||ENB_ID                                  ||''''
 ||','  ||NVL(PCI,0)                              
@@ -61,7 +60,7 @@ SELECT
 ||','  ||NVL(HEIGHT,0)                           
 ||','  ||NVL(BLT_HEIGHT,0)                       
 ||','  ||NVL(TOWER_HEIGHT,0)                     
-||','''||SITE_ADDR                               ||''''
+||','''||TRIM(SITE_ADDR)                         ||''''
 ||','''||TYPE                                    ||''''
 ||','  ||NVL(CORRECTION_VALUE,0)                 
 ||','  ||NVL(FEEDER_LOSS,0)                      
@@ -86,7 +85,7 @@ SELECT
 ||','''||TM_XPOSITION                            ||''''
 ||','''||TM_YPOSITION                            ||''''
 ||','  ||NVL(RU_DIV_CD,0)                        
-||')'
+||');'
 FROM   SITE
 WHERE  SCENARIO_ID IN (SELECT SCENARIO_ID FROM SCHEDULE WHERE SCHEDULE_ID = ${scheduleId})
 """

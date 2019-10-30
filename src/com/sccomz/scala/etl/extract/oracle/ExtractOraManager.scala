@@ -67,6 +67,14 @@ object ExtractOraManager {
     pw = new PrintWriter(new File(App.extJavaPath+"/"+tabNm+"_"+scheduleId+".sql" ),"UTF-8");
     while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
     
+    //--------------------------------------
+        tabNm = "SITE";
+    //--------------------------------------
+    qry = ExtractOraSiteSql.selectSiteIns(scheduleId); println(qry);
+    rs = stat.executeQuery(qry);
+    pw = new PrintWriter(new File(App.extJavaPath+"/"+tabNm+"_"+scheduleId+".sql" ),"UTF-8");
+    while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
+  
   }
   
   

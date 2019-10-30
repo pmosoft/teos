@@ -150,3 +150,55 @@ ALTER TABLE PUBLIC.I_RU OWNER TO POSTGRES;
 GRANT ALL ON TABLE PUBLIC.I_RU TO POSTGRES;
 
 
+-----------------------------------------
+-- I_SITE
+-----------------------------------------
+-- DROP TABLE PUBLIC.I_SITE;
+
+CREATE TABLE PUBLIC.I_SITE
+(
+ SCENARIO_ID                   NUMERIC  
+,ENB_ID                        VARCHAR(10)  
+,PCI                           NUMERIC  
+,PCI_PORT                      NUMERIC  
+,SITE_NM                       VARCHAR(100)  
+,XPOSITION                     VARCHAR(40)  
+,YPOSITION                     VARCHAR(40)  
+,HEIGHT                        NUMERIC  
+,BLT_HEIGHT                    NUMERIC  
+,TOWER_HEIGHT                  NUMERIC  
+,SITE_ADDR                     VARCHAR(500)  
+,TYPE                          VARCHAR(10)  
+,CORRECTION_VALUE              NUMERIC  
+,FEEDER_LOSS                   NUMERIC  
+,FADE_MARGIN                   NUMERIC  
+,STATUS                        VARCHAR(10)  
+,MSC                           NUMERIC  
+,BSC                           NUMERIC  
+,NETWORKID                     NUMERIC  
+,USABLETRAFFICCH               NUMERIC  
+,SYSTEMID                      NUMERIC  
+,STRYPOS                       VARCHAR(20)  
+,STRXPOS                       VARCHAR(20)  
+,ATTENUATION                   NUMERIC  
+,SITE_GUBUN                    VARCHAR(10)  
+,RU_ID                         VARCHAR(48)  
+,RADIUS                        NUMERIC  
+,NOISEFLOOR                    NUMERIC  
+,FA_SEQ                        VARCHAR(20)  
+,RU_TYPE                       NUMERIC  
+,REG_DT                        DATE  
+,SISUL_CD                      VARCHAR(50)  
+,TM_XPOSITION                  VARCHAR(40)  
+,TM_YPOSITION                  VARCHAR(40)  
+,RU_DIV_CD                     NUMERIC  
+);
+CREATE INDEX I_SITE_IDX1 ON PUBLIC.I_SITE USING BTREE (ENB_ID,PCI,PCI_PORT,RU_ID);
+CREATE INDEX I_SITE_IDX2 ON PUBLIC.I_SITE USING BTREE (YPOSITION,XPOSITION);
+CREATE INDEX I_SITE_IDX3 ON PUBLIC.I_SITE USING BTREE (TYPE);
+CREATE INDEX I_SITE_IDX4 ON PUBLIC.I_SITE USING BTREE (SCENARIO_ID);
+ALTER TABLE PUBLIC.I_SITE OWNER TO POSTGRES;
+GRANT ALL ON TABLE PUBLIC.I_SITE TO POSTGRES;
+
+
+
