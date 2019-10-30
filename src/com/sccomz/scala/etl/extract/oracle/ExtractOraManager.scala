@@ -28,9 +28,32 @@ object ExtractOraManager {
   var tabNm = "";
 
   def main(args: Array[String]): Unit = {
-    extractOracleToHadoopCsv("8459967");
+    //extractOracleToHadoopCsv("8459967");
+    extractOracleToPostgreIns("8459967");
   }
 
+  def extractOracleToPostgreIns(scheduleId:String): Unit = {
+    var tabNm = ""; var qry = "";
+
+    //--------------------------------------
+        tabNm = "SCHEDULE"
+    //--------------------------------------
+    qry = ExtractOraScheduleSql.selectScheduleIns(scheduleId); println(qry);
+    rs = stat.executeQuery(qry);
+    var pw = new PrintWriter(new File(App.extJavaPath+"/"+tabNm+"_"+scheduleId+".sql" ),"UTF-8");
+    while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
+
+    //--------------------------------------
+        tabNm = "SCENARIO"
+    //--------------------------------------
+    qry = ExtractOraScenarioSql.selectScenarioIns(scheduleId); println(qry);
+    rs = stat.executeQuery(qry);
+    pw = new PrintWriter(new File(App.extJavaPath+"/"+tabNm+"_"+scheduleId+".sql" ),"UTF-8");
+    while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
+   
+  }
+  
+  
   def extractOracleToHadoopCsv(scheduleId:String): Unit = {
 
     var tabNm = ""; var qry = "";
@@ -79,6 +102,5 @@ object ExtractOraManager {
   def extractOracleIns(): Unit = {}
 
   def extractPostgreCsv(): Unit = {}
-  def extractPostgreIns(): Unit = {}
 
 }
