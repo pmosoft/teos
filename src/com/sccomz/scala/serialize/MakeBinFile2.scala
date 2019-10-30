@@ -40,7 +40,6 @@ object MakeBinFile2{
        
     }
     
-    
     sqlDf.foreach { row =>
        println(row.mkString(",").split(",")(0));
     }
