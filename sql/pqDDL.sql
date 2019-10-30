@@ -200,5 +200,52 @@ CREATE INDEX I_SITE_IDX4 ON PUBLIC.I_SITE USING BTREE (SCENARIO_ID);
 ALTER TABLE PUBLIC.I_SITE OWNER TO POSTGRES;
 GRANT ALL ON TABLE PUBLIC.I_SITE TO POSTGRES;
 
+-----------------------------------------
+-- I_SITE
+-----------------------------------------
+-- DROP TABLE PUBLIC.I_SCENARIO_NR_RU;
+
+CREATE TABLE PUBLIC.I_SCENARIO_NR_RU
+(
+
+ SCENARIO_ID
+,ENB_ID     
+,PCI        
+,PCI_PORT   
+,RU_ID      
+,MAKER      
+,SECTOR_ORD 
+,REPEATERATTENUATION
+,REPEATERPWRRATIO
+,RU_SEQ 
+,RADIUS                
+,FEEDER_LOSS           
+,NOISEFLOOR            
+,CORRECTION_VALUE      
+,FADE_MARGIN           
+,XPOSITION       
+,YPOSITION             
+,HEIGHT             
+,SITE_ADDR             
+,TYPE                  
+,STATUS                
+,SISUL_CD              
+,MSC                   
+,BSC                   
+,NETWORKID             
+,USABLETRAFFICCH       
+,SYSTEMID              
+,RU_TYPE
+,FA_MODEL_ID  
+,NETWORK_TYPE 
+,RESOLUTION   
+,FA_SEQ
+,SITE_STARTX
+,SITE_STARTY
+,SITE_ENDX
+,SITE_ENDY
+,X_BIN_CNT
+,Y_BIN_CNT
+
 
 
