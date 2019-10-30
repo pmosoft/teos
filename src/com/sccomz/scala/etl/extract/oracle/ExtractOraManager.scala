@@ -13,6 +13,7 @@ import com.sccomz.scala.etl.extract.oracle.sql.ExtractOraScheduleSql
 import com.sccomz.scala.etl.extract.oracle.sql.ExtractOraDuSql
 import com.sccomz.scala.etl.extract.oracle.sql.ExtractOraRuSql
 import com.sccomz.scala.etl.extract.oracle.sql.ExtractOraSiteSql
+import com.sccomz.scala.etl.extract.oracle.sql.ExtractOraMobileParameterSql
 
 /*
 import com.sccomz.scala.etl.extract.oracle.ExtractOraManager
@@ -74,7 +75,15 @@ object ExtractOraManager {
     rs = stat.executeQuery(qry);
     pw = new PrintWriter(new File(App.extJavaPath+"/"+tabNm+"_"+scheduleId+".sql" ),"UTF-8");
     while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
-  
+    
+    //--------------------------------------
+        tabNm = "MOBILE_PARAMETER";
+    //--------------------------------------
+    qry = ExtractOraMobileParameterSql.selectMobileParameterIns(scheduleId); println(qry);
+    rs = stat.executeQuery(qry);
+    pw = new PrintWriter(new File(App.extJavaPath+"/"+tabNm+"_"+scheduleId+".sql" ),"UTF-8");
+    while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
+    
   }
   
   
