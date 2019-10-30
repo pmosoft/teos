@@ -1,6 +1,9 @@
 package com.sccomz.java.serialize;
 
-public class Byte4 {
+import java.io.Serializable;
+
+@SuppressWarnings("serial")
+public class Byte4 implements Serializable {
 	public byte[] value = new byte[4];
 	
 	public Byte4(byte[] value) {
