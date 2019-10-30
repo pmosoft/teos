@@ -16,7 +16,8 @@ import org.apache.spark.sql.SparkSession
 object MakeBinFile11 {
   val logger: Logger = Logger.getLogger(this.getClass.getName());
   var spark: SparkSession = null;
-
+  spark = SparkSession.builder().appName("MakeBinFile11").master("local[*]").config("spark.some.config.option", "some-value").getOrCreate();
+  
   def main(args: Array[String]): Unit = {
     makeResultFile("");
   }
@@ -47,21 +48,11 @@ object MakeBinFile11 {
 
   // Bin 파일 생성 메소드
   def makeResultFile(scheduleId: String) = {
-    
-    spark = SparkSession.builder().appName("MakeBinFile11").config("spark.some.config.option", "some-value").getOrCreate();
-    
-    var query = "SELECT DISTINCT X_POINT, Y_POINT, LOS FROM I_RESULT_NR_2D_LOS WHERE scenario_id = 5108566 ORDER BY X_POINT, Y_POINT";
-    val df = spark.sql(query).toDF("x_point", "y_point", "los");
-    
-//    Class.forName(App.dbDriverHive);
-//    var con = DriverManager.getConnection(App.dbUrlHive, App.dbUserHive, App.dbPwHive);
-//    var stat: Statement = con.createStatement();
-
     logger.info("========================== 초기화 ===========================");
     //---------------------------------------------------------------------------------------------------------
     // 초기화
     //---------------------------------------------------------------------------------------------------------
-    var x_bin_cnt = 307; var y_bin_cnt = 301;
+    var x_bin_cnt = 503; var y_bin_cnt = 576;
     val bin = Array.ofDim[Byte4](x_bin_cnt, y_bin_cnt);
 
     for (y <- 0 until y_bin_cnt by 1) {
@@ -74,24 +65,21 @@ object MakeBinFile11 {
     //---------------------------------------------------------------------------------------------------------
     // Value 세팅
     //---------------------------------------------------------------------------------------------------------
-    //    var qry = MakeBinFileSql2.test1("");
-    //    var rs2 = stat.executeQuery(qry);
-    var x_point = 0; var y_point = 0; var los = 0;
-//    df.foreach { row =>
-//      row.X_POINT
-//      row.toSeq.foreach {
-//        col1 => x_point;
-//        col2 => y_point;
-//        col3 => los;
-//      }
-//    }
-    bin(x_point)(y_point).value = ByteUtil.intToByteArray(los);
+    var qry= "SELECT DISTINCT X_POINT, Y_POINT, LOS FROM I_RESULT_NR_2D_LOS WHERE scenario_id = 5104573 ORDER BY X_POINT, Y_POINT";    
+    val sqlDf = spark.sql(qry);
+    
+    sqlDf.foreach { row =>
+       var x_point = row.mkString(",").split(",")(0).toInt;
+       var y_point = row.mkString(",").split(",")(1).toInt;
+       var los = row.mkString(",").split(",")(2).toInt;
+       bin(x_point)(y_point).value = ByteUtil.intToByteArray(los);
+    }    
     
     logger.info("======================== 파일 Write ========================");
     //---------------------------------------------------------------------------------------------------------
     // 파일 Write
     //---------------------------------------------------------------------------------------------------------
-    var file = new File("C:/Pony/Excel/result/LOS", "losTest.bin");
+    var file = new File(App.resultPath, "losTest.bin");
     var fos = new FileOutputStream(file);
     for (y <- 0 until y_bin_cnt by 1) {
       for (x <- 0 until x_bin_cnt by 1) {
@@ -99,7 +87,6 @@ object MakeBinFile11 {
       }
     }
     logger.info("======================= Bin 생성 완료 =======================");
-//    rs2.close();
     if (fos != null) fos.close();
   }
 
