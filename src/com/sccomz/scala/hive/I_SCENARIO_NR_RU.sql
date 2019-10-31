@@ -43,3 +43,6 @@ CREATE TABLE PUBLIC.I_SCENARIO_NR_RU (
 , X_BIN_CNT                     INT                                                                                                                        
 , Y_BIN_CNT                     INT                                                                                                                        
 )
+PARTITIONED BY (SCHEDULE_ID INT)
+STORED AS PARQUET
+LOCATION '/teos/warehouse/SCENARIO_NR_RU';

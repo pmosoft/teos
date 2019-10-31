@@ -1,11 +1,12 @@
-spark2-shell --master local[*] --driver-memory 2g --executor-memory 10g --jars /home/icpap/bin/teos.jar,/home/icpap/lib/ojdbc7.jar,/home/icpap/lib/postgresql4.jar,/home/icpap/lib/hiveJdbc11.jar,/home/icpap/lib/ImpalaJDBC41.jar
-spark2-shell --deploy-mode client --driver-memory 2g --executor-memory 10g --jars /home/icpap/bin/teos.jar,/home/icpap/lib/ojdbc7.jar,/home/icpap/lib/postgresql4.jar,/home/icpap/lib/hiveJdbc11.jar,/home/icpap/lib/ImpalaJDBC41.jar
+spark2-shell --master local[*] --driver-memory 2g --executor-memory 10g --jars /home/icpap/bin/teos.jar,/home/icpap/lib/ojdbc7.jar,/home/icpap/lib/postgresql4.jar,/home/icpap/lib/hiveJdbc11.jar
+spark2-shell --deploy-mode client --driver-memory 2g --executor-memory 10g --jars /home/icpap/bin/teos.jar,/home/icpap/lib/ojdbc7.jar,/home/icpap/lib/postgresql4.jar,/home/icpap/lib/hiveJdbc11.jar
 
 spark2-submit --master local[*] --driver-memory 2g --executor-memory 10g --jars /home/icpap/lib/ojdbc7.jar,/home/icpap/lib/postgresql4.jar,/home/icpap/lib/hiveJdbc11.jar --class com.sccomz.scala.etl.extract.oracle.ExtractOraManager /home/icpap/bin/teos.jar 
 
 spark2-submit --master local[*] --driver-memory 2g --executor-memory 10g --jars /home/icpap/lib/ojdbc7.jar,/home/icpap/lib/postgresql4.jar,/home/icpap/lib/hiveJdbc11.jar --class com.sccomz.scala.serialize.MakeBinFile11 /home/icpap/bin/teos.jar 
 
 spark2-shell --master local[*] --jars /home/icpap/bin/teos.jar,/home/icpap/lib/ojdbc7.jar,/home/icpap/lib/postgresql4.jar,/home/icpap/lib/hiveJdbc11.jar,/home/icpap/lib/ImpalaJDBC41.jar
+spark2-shell --deploy-mode client --driver-memory 2g --executor-memory 10g --jars /home/icpap/bin/teos.jar,/home/icpap/lib/ojdbc7.jar,/home/icpap/lib/postgresql4.jar,/home/icpap/lib/hiveJdbc11.jar,/home/icpap/lib/ImpalaJDBC41.jar
 
 spark2-shell --deploy-mode client --master local[*] --driver-memory 2g --executor-memory 10g --jars /home/icpap/lib/ojdbc7.jar,/home/icpap/lib/hiveJdbc11.jar, /home/icpap/bin/teos.jar
 

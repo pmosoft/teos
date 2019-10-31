@@ -1,6 +1,6 @@
 DROP TABLE DU;
 
-CREATE EXTERNAL TABLE DU (
+CREATE EXTERNAL TABLE I_DU (
   SCENARIO_ID                      INT
 , ENB_ID                           STRING
 , E_NODEB_NM                       STRING
