@@ -52,7 +52,20 @@ object MakeBinFile11 {
     //---------------------------------------------------------------------------------------------------------
     // 초기화
     //---------------------------------------------------------------------------------------------------------
-    var x_bin_cnt = 503; var y_bin_cnt = 576;
+    // Spark SQL 적용
+//    var sql = "SELECT A.SCHEDULE_ID, A.SCENARIO_ID, A.REG_DT, A.PROCESS_MSG, B.SCENARIO_NM, A.BIN_X_CNT, A.BIN_Y_CNT, A.SCENARIO_PATH";
+//        sql += " FROM SCHEDULE A, SCENARIO B WHERE A.SCENARIO_ID = B.SCENARIO_ID AND A.SCHEDULE_ID = 8460970 AND A.SCENARIO_ID = 5108566";
+//        sql += " ORDER BY REG_DT DESC";
+//    val df = spark.sql(sql);
+//    var x_bin_cnt = 0; var y_bin_cnt = 0;
+//    df.foreach { row =>
+//      x_bin_cnt = row.mkString(",").split(",")(6).toInt;
+//      y_bin_cnt = row.mkString(",").split(",")(7).toInt;
+//    }
+    
+    // 임시로 값 적용
+    var x_bin_cnt = 503; var y_bin_cnt = 573;
+    
     val bin = Array.ofDim[Byte4](x_bin_cnt, y_bin_cnt);
 
     for (y <- 0 until y_bin_cnt by 1) {
@@ -73,7 +86,7 @@ object MakeBinFile11 {
        var y_point = row.mkString(",").split(",")(1).toInt;
        var los = row.mkString(",").split(",")(2).toInt;
        bin(x_point)(y_point).value = ByteUtil.intToByteArray(los);
-    }    
+    }
     
     logger.info("======================== 파일 Write ========================");
     //---------------------------------------------------------------------------------------------------------
