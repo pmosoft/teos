@@ -1,6 +1,6 @@
-DROP TABLE RU;
+DROP TABLE I_RU;
 
-CREATE EXTERNAL TABLE RU (
+CREATE EXTERNAL TABLE I_RU (
   SCENARIO_ID                      INT
 , ENB_ID                           STRING
 , PCI                              INT
@@ -22,8 +22,7 @@ CREATE EXTERNAL TABLE RU (
 , TILT_YN                          INT
 , FA_SEQ_ORG                       INT
 )
-PARTITIONED BY (SCENARIO_ID INT)
-COMMENT 'SCENARIO'
+PARTITIONED BY (SCHEDULE_ID INT)
 STORED AS PARQUET
 LOCATION '/teos/warehouse/RU';
 --

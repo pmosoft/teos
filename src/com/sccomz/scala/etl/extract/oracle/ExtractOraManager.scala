@@ -31,7 +31,7 @@ object ExtractOraManager {
 
   def main(args: Array[String]): Unit = {
     extractOracleToHadoopCsv("8459967");
-    extractOracleToPostgreIns("8459967");
+//    extractOracleToPostgreIns("8459967");
   }
 
   def extractOracleToPostgreIns(scheduleId:String): Unit = {
@@ -91,29 +91,29 @@ object ExtractOraManager {
     pw = new PrintWriter(new File(App.extJavaPath+"/"+tabNm+"_"+scheduleId+".dat" ),"UTF-8");
     while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
     
-    // //--------------------------------------
-    //     tabNm = "DU"
-    // //--------------------------------------
-    // qry = ExtractOraDUSql.selectDUCsv(scheduleId); println(qry);
-    // rs = stat.executeQuery(qry);
-    // pw = new PrintWriter(new File(App.extJavaPath+"/"+tabNm+"_"+scheduleId+".dat" ),"UTF-8");
-    // while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
-    // 
-    // //--------------------------------------
-    //     tabNm = "RU"
-    // //--------------------------------------
-    // qry = ExtractOraRUSql.selectRUCsv(scheduleId); println(qry);
-    // rs = stat.executeQuery(qry);
-    // pw = new PrintWriter(new File(App.extJavaPath+"/"+tabNm+"_"+scheduleId+".dat" ),"UTF-8");
-    // while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
-    // 
-    // //--------------------------------------
-    //     tabNm = "SITE"
-    // //--------------------------------------
-    // qry = ExtractOraSiteSql.selectSiteCsv(scheduleId); println(qry);
-    // rs = stat.executeQuery(qry);
-    // pw = new PrintWriter(new File(App.extJavaPath+"/"+tabNm+"_"+scheduleId+".dat" ),"UTF-8");
-    // while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
+     //--------------------------------------
+         tabNm = "DU"
+     //--------------------------------------
+     qry = ExtractOraDuSql.selectDuCsv(scheduleId); println(qry);
+     rs = stat.executeQuery(qry);
+     pw = new PrintWriter(new File(App.extJavaPath+"/"+tabNm+"_"+scheduleId+".dat" ),"UTF-8");
+     while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
+     
+     //--------------------------------------
+         tabNm = "RU"
+     //--------------------------------------
+     qry = ExtractOraRuSql.selectRuCsv(scheduleId); println(qry);
+     rs = stat.executeQuery(qry);
+     pw = new PrintWriter(new File(App.extJavaPath+"/"+tabNm+"_"+scheduleId+".dat" ),"UTF-8");
+     while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
+     
+     //--------------------------------------
+         tabNm = "SITE"
+     //--------------------------------------
+     qry = ExtractOraSiteSql.selectSiteCsv(scheduleId); println(qry);
+     rs = stat.executeQuery(qry);
+     pw = new PrintWriter(new File(App.extJavaPath+"/"+tabNm+"_"+scheduleId+".dat" ),"UTF-8");
+     while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
 
   }
   def extractOracleIns(): Unit = {}

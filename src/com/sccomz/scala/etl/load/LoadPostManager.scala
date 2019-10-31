@@ -40,14 +40,16 @@ object LoadPostManager {
 //    stat.execute(s"""DELETE FROM I_SCENARIO         WHERE SCENARIO_ID IN (SELECT SCENARIO_ID FROM I_SCHEDULE WHERE SCHEDULE_ID = ${scheduleId})""");
 //    stat.execute(s"""DELETE FROM I_MOBILE_PARAMETER WHERE SCENARIO_ID IN (SELECT SCENARIO_ID FROM I_SCHEDULE WHERE SCHEDULE_ID = ${scheduleId})""");
 //    stat.execute(s"""DELETE FROM I_SCHEDULE         WHERE SCHEDULE_ID=${scheduleId}""");
-    stat.execute(s"""DELETE FROM I_SCENARIO_NR_RU   WHERE SCENARIO_ID IN (SELECT SCENARIO_ID FROM I_SCHEDULE WHERE SCHEDULE_ID = ${scheduleId})""");
+//    stat.execute(s"""DELETE FROM I_SCENARIO_NR_RU   WHERE SCENARIO_ID IN (SELECT SCENARIO_ID FROM I_SCHEDULE WHERE SCHEDULE_ID = ${scheduleId})""");
+    stat.execute(s"""DELETE FROM I_DU WHERE SCHEDULE_ID=${scheduleId}""");
 
     // INSERT    
     try {
 //        for(qry <- Source.fromFile(App.extJavaPath+"/SCHEDULE_"        +scheduleId+".sql").getLines()){stat.execute(qry);}
 //        for(qry <- Source.fromFile(App.extJavaPath+"/SCENARIO_"        +scheduleId+".sql").getLines()){stat.execute(qry);}
 //        for(qry <- Source.fromFile(App.extJavaPath+"/MOBILE_PARAMETER_"+scheduleId+".sql").getLines()){stat.execute(qry);}
-        for(qry <- Source.fromFile(App.extJavaPath+"/SCENARIO_NR_RU_"  +scheduleId+".sql").getLines()){stat.execute(qry);}
+//        for(qry <- Source.fromFile(App.extJavaPath+"/SCENARIO_NR_RU_"  +scheduleId+".sql").getLines()){stat.execute(qry);}
+        for(qry <- Source.fromFile(App.extJavaPath+"/DU_"  +scheduleId+".sql").getLines()){stat.execute(qry);}
     } catch {
         case e: Exception => println(e)
     }
