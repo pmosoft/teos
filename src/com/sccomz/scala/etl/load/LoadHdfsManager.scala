@@ -39,16 +39,19 @@ object LoadManager {
 
   def main(args: Array[String]): Unit = {
     samToParquetPartition(spark,"SCHEDULE","8459967");
+    samToParquetPartition(spark,"DU","8459967");
+    samToParquetPartition(spark,"RU","8459967");
+    samToParquetPartition(spark,"SITE","8459967");
   }
 
   def oracleToHdfs(spark: SparkSession,objNm:String,scheduleId:String) = {
     samToParquetPartition(spark,"SCHEDULE","8459967");
-    samToParquetPartition(spark,"SCHEDULE","8459967");
-    samToParquetPartition(spark,"SCHEDULE","8459967");
-    samToParquetPartition(spark,"SCHEDULE","8459967");
-    samToParquetPartition(spark,"SCHEDULE","8459967");
-    samToParquetPartition(spark,"SCHEDULE","8459967");
-    samToParquetPartition(spark,"SCHEDULE","8459967");
+    samToParquetPartition(spark,"DU","8459967");
+    samToParquetPartition(spark,"RU","8459967");
+    samToParquetPartition(spark,"SITE","8459967");
+//    samToParquetPartition(spark,"SCHEDULE","8459967");
+//    samToParquetPartition(spark,"SCHEDULE","8459967");
+//    samToParquetPartition(spark,"SCHEDULE","8459967");
   }
 
   def samToParquetPartition(spark: SparkSession,objNm:String,scheduleId:String) = {

@@ -1,6 +1,6 @@
-DROP TABLE SITE;
+DROP TABLE I_SITE;
 
-CREATE EXTERNAL TABLE SITE (
+CREATE EXTERNAL TABLE I_SITE (
   SCENARIO_ID                      INT
 , ENB_ID                           STRING
 , PCI                              INT
@@ -37,8 +37,7 @@ CREATE EXTERNAL TABLE SITE (
 , TM_YPOSITION                     STRING
 , RU_DIV_CD                        INT
 )
-PARTITIONED BY (SCENARIO_ID INT)
-COMMENT 'SCENARIO'
+PARTITIONED BY (SCHEDULE_ID INT)
 STORED AS PARQUET
 LOCATION '/teos/warehouse/SITE';
 --
