@@ -63,9 +63,11 @@ SELECT
 FROM   SCENARIO
 WHERE  SCENARIO_ID IN (SELECT SCENARIO_ID FROM SCHEDULE WHERE SCHEDULE_ID = ${scheduleId})
 
+
+
 SELECT 
 FROM
-(
+( 
 SELECT T_DU.SCENARIO_ID                 AS SCENARIO_ID
      , T_DU.ENB_ID                      AS ENB_ID     
      , T_RU.PCI                         AS PCI        
