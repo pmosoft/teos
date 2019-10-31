@@ -95,7 +95,7 @@ select max(AREA.scenario_id) as scenario_id,
   group by RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution, RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution,
            (RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution - AREA.tm_startx) / AREA.resolution, (RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution - AREA.tm_starty) / AREA.resolution
 """
-sql(qry).take(100).foreach(println);
+spark.sql(qry).take(100).foreach(println);
 
 spark.sql("select * from I_SCENARIO").take(100).foreach(println);
 
@@ -114,9 +114,7 @@ spark.sql(qry).take(100).foreach(println);
 
 }
 
-def saveToParqeut() {
-  //MakeParquet.dfToParquet(objNm, true, statisDate)
-}
+def saveToParqeut() {}
 
 def test01(){
 var qry = s"""
