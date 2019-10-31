@@ -1,12 +1,10 @@
 package com.sccomz.scala.comm.connection
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.Connection
+import java.sql.DriverManager
+
 import org.apache.spark.sql.SparkSession
-import java.util.Properties
-import org.apache.spark.sql.SaveMode
+
 import com.sccomz.java.comm.util.StringUtil
 
 /*

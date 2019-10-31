@@ -41,6 +41,16 @@ object LoadManager {
     samToParquetPartition(spark,"SCHEDULE","8459967");
   }
 
+  def oracleToHdfs(spark: SparkSession,objNm:String,scheduleId:String) = {
+    samToParquetPartition(spark,"SCHEDULE","8459967");
+    samToParquetPartition(spark,"SCHEDULE","8459967");
+    samToParquetPartition(spark,"SCHEDULE","8459967");
+    samToParquetPartition(spark,"SCHEDULE","8459967");
+    samToParquetPartition(spark,"SCHEDULE","8459967");
+    samToParquetPartition(spark,"SCHEDULE","8459967");
+    samToParquetPartition(spark,"SCHEDULE","8459967");
+  }
+
   def samToParquetPartition(spark: SparkSession,objNm:String,scheduleId:String) = {
     toParquetPartition(spark,"local",objNm,scheduleId);
   }
@@ -48,7 +58,6 @@ object LoadManager {
   def hdfsToParquetPartition(spark: SparkSession,objNm:String,scheduleId:String) = {
     toParquetPartition(spark,"hdfs",objNm,scheduleId);
   }
-
 
   def toParquetPartition(spark: SparkSession,cd:String,objNm:String,scheduleId:String) = {
     //--------------------------------------
@@ -117,7 +126,7 @@ object LoadManager {
   }
 
   def impalaDropPartition(objNm:String,scheduleId:String,cdNm:String) = {
-    Class.forName(App.dbDriverImpala); 
+    Class.forName(App.dbDriverImpala);
     var con = DriverManager.getConnection(App.dbUrlImpala,App.dbUserImpala,App.dbPwImpala);
     var stat:Statement=con.createStatement();
     var qry=s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (SCHEDULE_ID=${scheduleId})""";
