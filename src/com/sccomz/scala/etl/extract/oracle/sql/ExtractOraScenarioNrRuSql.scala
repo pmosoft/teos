@@ -63,6 +63,9 @@ SELECT
 FROM   SCENARIO
 WHERE  SCENARIO_ID IN (SELECT SCENARIO_ID FROM SCHEDULE WHERE SCHEDULE_ID = ${scheduleId})
 
+SELECT 
+FROM
+(
 SELECT T_DU.SCENARIO_ID                 AS SCENARIO_ID
      , T_DU.ENB_ID                      AS ENB_ID     
      , T_RU.PCI                         AS PCI        
@@ -136,7 +139,7 @@ AND    T_SITE.TYPE            IN ('RU', 'RU_N')
 AND    T_SITE.STATUS          = 1
 AND    T_SCENARIO.SCENARIO_ID =  5103982
 ORDER BY T_RU.ENB_ID, T_RU.PCI, T_RU.PCI_PORT, T_RU.RU_ID
-
+)
 
 """
 }

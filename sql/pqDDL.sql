@@ -99,6 +99,91 @@ ALTER TABLE PUBLIC.I_SCENARIO OWNER TO POSTGRES;
 GRANT ALL ON TABLE PUBLIC.I_SCENARIO TO POSTGRES;
 
 
+                                                                                                                                                       
+-----------------------------------------                                                                                                              
+-- I_MOBILE_PARAMETER                                                                                                                                              
+-----------------------------------------                                                                                                              
+-- DROP TABLE PUBLIC.I_MOBILE_PARAMETER;                                                                                                                 
+CREATE TABLE PUBLIC.I_MOBILE_PARAMETER                                                                                                                   
+(
+ SCENARIO_ID   NUMERIC NOT NULL
+,MOBILE_ID     NUMERIC NOT NULL
+,TYPE          NUMERIC NOT NULL
+,MOBILENAME    VARCHAR(30) NOT NULL
+,MAKER         VARCHAR(30)  
+,MINPOWER      NUMERIC  
+,MAXPOWER      NUMERIC  
+,MOBILEGAIN    NUMERIC  
+,NOISEFLOOR    NUMERIC  
+,HEIGHT        NUMERIC  
+,BODYLOSS      NUMERIC  
+,BUILDINGLOSS  NUMERIC  
+,CARLOSS       NUMERIC  
+,FEEDERLOSS    NUMERIC  
+,NOISEFIGURE   NUMERIC  
+,DIVERSITYGAIN NUMERIC  
+,ANTENNAGAIN   NUMERIC  
+,RX_LAYER      NUMERIC  
+)                                                                                                                                                       
+
+CREATE INDEX I_MOBILE_PARAMETER_IDX ON PUBLIC.I_MOBILE_PARAMETER USING BTREE (SCENARIO_ID,MOBILE_ID,TYPE);                                            
+ALTER TABLE PUBLIC.I_MOBILE_PARAMETER OWNER TO POSTGRES;                                                                                                             
+GRANT ALL ON TABLE PUBLIC.I_MOBILE_PARAMETER TO POSTGRES;                                                                                                            
+
+
+-----------------------------------------
+-- I_SCENARIO_NR_RU
+-----------------------------------------
+-- DROP TABLE PUBLIC.I_SCENARIO_NR_RU;                                                                                                                 
+                                                                                                                                                       
+CREATE TABLE PUBLIC.I_SCENARIO_NR_RU(                                                                                                                                                                                                                                                                                                             
+ SCENARIO_ID                   NUMERIC     NOT NULL                                                                                                                        
+,ENB_ID                        VARCHAR(10) NOT NULL                                                                                                                        
+,PCI                           NUMERIC     NOT NULL                                                                                                                       
+,PCI_PORT                      NUMERIC     NOT NULL                                                                                                                      
+,RU_ID                         VARCHAR(48) NOT NULL                                                                                                                      
+,MAKER                         VARCHAR(30)                                                                                                                        
+,SECTOR_ORD                    NUMERIC     NOT NULL                                                                                                                      
+,REPEATERATTENUATION           NUMERIC                                                                                                                        
+,REPEATERPWRRATIO              NUMERIC                                                                                                                        
+,RU_SEQ                        NUMERIC                                                                                                                        
+,RADIUS                        NUMERIC                                                                                                                        
+,FEEDER_LOSS                   NUMERIC                                                                                                                         
+,NOISEFLOOR                    NUMERIC                                                                                                                        
+,CORRECTION_VALUE              NUMERIC                                                                                                                        
+,FADE_MARGIN                   NUMERIC                                                                                                                        
+,XPOSITION                     VARCHAR(40)                                                                                                                        
+,YPOSITION                     VARCHAR(40)                                                                                                                        
+,HEIGHT                        NUMERIC                                                                                                                        
+,SITE_ADDR                     VARCHAR(500)                                                                                                                        
+,TYPE                          VARCHAR(10)                                                                                                                        
+,STATUS                        VARCHAR(10)                                                                                                                        
+,SISUL_CD                      VARCHAR(50)                                                                                                                        
+,MSC                           NUMERIC                                                                                                                        
+,BSC                           NUMERIC                                                                                                                        
+,NETWORKID                     NUMERIC                                                                                                                        
+,USABLETRAFFICCH               NUMERIC                                                                                                                        
+,SYSTEMID                      NUMERIC                                                                                                                        
+,RU_TYPE                       NUMERIC                                                                                                                        
+,FA_MODEL_ID                   NUMERIC                                                                                                                        
+,NETWORK_TYPE                  NUMERIC                                                                                                                        
+,RESOLUTION                    NUMERIC                                                                                                                        
+,FA_SEQ                        NUMERIC                                                                                                                        
+,SITE_STARTX                   NUMERIC                                                                                                                        
+,SITE_STARTY                   NUMERIC                                                                                                                        
+,SITE_ENDX                     NUMERIC                                                                                                                        
+,SITE_ENDY                     NUMERIC                                                                                                                        
+,X_BIN_CNT                     NUMERIC                                                                                                                        
+,Y_BIN_CNT                     NUMERIC                                                                                                                        
+);
+
+CREATE INDEX I_SCENARIO_NR_RU ON PUBLIC.I_DU USING BTREE (SCENARIO_ID,ENB_ID,PCI,PCI_PORT,RU_ID,SECTOR_ORD);
+ALTER TABLE PUBLIC.I_SCENARIO_NR_RU OWNER TO POSTGRES;
+GRANT ALL ON TABLE PUBLIC.I_SCENARIO_NR_RU TO POSTGRES;
+
+--------------------------------------------------------------------------------------------------------------------------
+
+
 -----------------------------------------
 -- I_DU
 -----------------------------------------
@@ -246,37 +331,6 @@ CREATE TABLE PUBLIC.I_SCENARIO_NR_RU
 ,SITE_ENDY
 ,X_BIN_CNT
 ,Y_BIN_CNT
-
-                                                                                                                                                       
------------------------------------------                                                                                                              
--- I_MOBILE_PARAMETER                                                                                                                                              
------------------------------------------                                                                                                              
--- DROP TABLE PUBLIC.I_MOBILE_PARAMETER;                                                                                                                 
-CREATE TABLE PUBLIC.I_MOBILE_PARAMETER                                                                                                                   
-(
- SCENARIO_ID   NUMERIC NOT NULL
-,MOBILE_ID     NUMERIC NOT NULL
-,TYPE          NUMERIC NOT NULL
-,MOBILENAME    VARCHAR(30) NOT NULL
-,MAKER         VARCHAR(30)  
-,MINPOWER      NUMERIC  
-,MAXPOWER      NUMERIC  
-,MOBILEGAIN    NUMERIC  
-,NOISEFLOOR    NUMERIC  
-,HEIGHT        NUMERIC  
-,BODYLOSS      NUMERIC  
-,BUILDINGLOSS  NUMERIC  
-,CARLOSS       NUMERIC  
-,FEEDERLOSS    NUMERIC  
-,NOISEFIGURE   NUMERIC  
-,DIVERSITYGAIN NUMERIC  
-,ANTENNAGAIN   NUMERIC  
-,RX_LAYER      NUMERIC  
-)                                                                                                                                                       
-
-CREATE INDEX I_MOBILE_PARAMETER_IDX ON PUBLIC.I_MOBILE_PARAMETER USING BTREE (SCENARIO_ID,MOBILE_ID,TYPE);                                            
-ALTER TABLE PUBLIC.I_MOBILE_PARAMETER OWNER TO POSTGRES;                                                                                                             
-GRANT ALL ON TABLE PUBLIC.I_MOBILE_PARAMETER TO POSTGRES;                                                                                                            
 
 
 -----------------------------------------                                                                                                              
