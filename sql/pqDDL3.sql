@@ -120,7 +120,7 @@ CREATE TABLE public.job_dis (
 	part_id text[] NULL,
 	stat int4 NULL,
 	cluster_name text NULL,
-	update_time timestamptz NULL,
+	update_time timestamptz NULL, 
 	created_at timestamptz NULL DEFAULT CURRENT_TIMESTAMP
 )
 PARTITION BY LIST (cluster_name);
