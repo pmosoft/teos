@@ -38,17 +38,17 @@ object LoadManager {
   val spark = SparkSession.builder().appName("LoadManager").config("spark.sql.warehouse.dir","/teos/warehouse").enableHiveSupport().getOrCreate()
 
   def main(args: Array[String]): Unit = {
-    samToParquetPartition(spark,"SCHEDULE","8459967");
-    samToParquetPartition(spark,"DU","8459967");
-    samToParquetPartition(spark,"RU","8459967");
-    samToParquetPartition(spark,"SITE","8459967");
+    samToParquetPartition(spark,"SCHEDULE","8463189");
+    samToParquetPartition(spark,"DU","8463189");
+    samToParquetPartition(spark,"RU","8463189");
+    samToParquetPartition(spark,"SITE","8463189");
   }
 
   def oracleToHdfs(spark: SparkSession,objNm:String,scheduleId:String) = {
-    samToParquetPartition(spark,"SCHEDULE","8459967");
-    samToParquetPartition(spark,"DU","8459967");
-    samToParquetPartition(spark,"RU","8459967");
-    samToParquetPartition(spark,"SITE","8459967");
+    samToParquetPartition(spark,"SCHEDULE","8463189");
+    samToParquetPartition(spark,"DU","8463189");
+    samToParquetPartition(spark,"RU","8463189");
+    samToParquetPartition(spark,"SITE","8463189");
 //    samToParquetPartition(spark,"SCHEDULE","8459967");
 //    samToParquetPartition(spark,"SCHEDULE","8459967");
 //    samToParquetPartition(spark,"SCHEDULE","8459967");
@@ -119,7 +119,7 @@ object LoadManager {
     import spark.implicits._
     import spark.sql
     sql(s"""ALTER TABLE I_${objNm} DROP IF EXISTS PARTITION (SCHEDULE_ID=${scheduleId})""")
-    sql(s"""ALTER TABLE I_${objNm} ADD PARTITION (SCHEDULE_ID=8459967) LOCATION '/teos/warehouse/${objNm}/SCHEDULE_ID=8459967'""");
+    sql(s"""ALTER TABLE I_${objNm} ADD PARTITION (SCHEDULE_ID=8463189) LOCATION '/teos/warehouse/${objNm}/SCHEDULE_ID=8463189'""");
 
     //sql(s"""ALTER TABLE ${objNm} ADD PARTITION (SCHEDULE_ID=${scheduleId})""")
 
