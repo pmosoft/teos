@@ -32,7 +32,7 @@ object MakeBinFile1 {
 
     // 폴더 삭제
     if (count == 1) {
-      FileUtil.delFiles2(App.resultPath + "/20191028/SYS/");
+      FileUtil.delFiles2(App.resultPath + "/20191101/");
       logger.info("Directory Drop Complete!!");
     }
 
@@ -49,13 +49,19 @@ object MakeBinFile1 {
     Class.forName(App.dbDriverHive);
     var con = DriverManager.getConnection(App.dbUrlHive, App.dbUserHive, App.dbPwHive);
     var stat: Statement = con.createStatement();
+    var qry2 = MakeBinFileSql2.selectScenarioNrRu("");
+    var rs2 = stat.executeQuery(qry2);
     var fu = new FileUtil;
 
     logger.info("========================== 초기화 ===========================");
     //---------------------------------------------------------------------------------------------------------
     // 초기화
     //---------------------------------------------------------------------------------------------------------
-    var x_bin_cnt = 503; var y_bin_cnt = 576;
+    var x_bin_cnt = 307; var y_bin_cnt = 301;
+//    while(rs2.next()) {      
+//    	x_bin_cnt = rs2.getInt(6);
+//    	y_bin_cnt = rs2.getInt(7);
+//    }
     val bin = Array.ofDim[Byte4](x_bin_cnt, y_bin_cnt);
 
     for (y <- 0 until y_bin_cnt by 1) {
@@ -68,21 +74,21 @@ object MakeBinFile1 {
     //---------------------------------------------------------------------------------------------------------
     // Value 세팅
     //---------------------------------------------------------------------------------------------------------
-    var qry = MakeBinFileSql2.test1("");
-    var rs2 = stat.executeQuery(qry);
-    var x_point = 0; var y_point = 0; var los = 0;
-    while (rs2.next()) {
-      x_point = rs2.getInt("x_point");
-      y_point = rs2.getInt("y_point");
-      los = rs2.getInt("los");
-      bin(x_point)(y_point).value = ByteUtil.intToByteArray(los);
+    var qry3 = MakeBinFileSql2.test1("");
+    var rs3 = stat.executeQuery(qry3);
+    var x_point = 0; var y_point = 0; var value = 0;
+    while (rs3.next()) {
+      x_point = rs3.getInt("x_point");
+      y_point = rs3.getInt("y_point");
+      value = rs3.getInt("value");
+      bin(x_point)(y_point).value = ByteUtil.intToByteArray(value);
     }
 
     logger.info("======================== 파일 Write ========================");
     //---------------------------------------------------------------------------------------------------------
     // 파일 Write
     //---------------------------------------------------------------------------------------------------------
-    var file = new File("C:/Pony/Excel/result/LOS", "losTest.bin");
+    var file = new File("C:/Pony/Excel/result", "losRU.bin");
     var fos = new FileOutputStream(file);
     for (y <- 0 until y_bin_cnt by 1) {
       for (x <- 0 until x_bin_cnt by 1) {
