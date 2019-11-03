@@ -5,7 +5,7 @@ import scala.collection.mutable.ListBuffer
 object CollectionTest {
 
   def main(args: Array[String]): Unit = {
-    mapTest02();
+    mapTest04();
     //listTest01();
     //mapTest03();
   }
@@ -122,6 +122,21 @@ object CollectionTest {
 
 
   }
+
+
+  def mapTest04() = {
+    var mapAll = mutable.Map[String,String]();
+    mapAll += ("1111"->"1122");
+    mapAll += ("2111"->"2122");
+
+    println(mapAll.getOrElse("1111",""));
+    for(ruId <- mapAll) {
+      println("ruId="+ruId._1);
+      println("ruId="+ruId._2);
+    }
+
+  }
+
 
 }
 
