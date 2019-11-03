@@ -20,7 +20,7 @@ object MakeBinFile {
     Class.forName(App.dbDriverHive);
     var con = DriverManager.getConnection(App.dbUrlHive,App.dbUserHive,App.dbPwHive);
     var stat:Statement=con.createStatement();
-    var qry=MakeBinFileSql.selectScenarioNrRu("");
+    var qry=MakeBinFileSql2.selectScenarioNrRu("");
     var rs = stat.executeQuery(qry);
     while(rs.next()) {
 
@@ -35,7 +35,7 @@ object MakeBinFile {
     Class.forName(App.dbDriverHive);
     var con = DriverManager.getConnection(App.dbUrlHive,App.dbUserHive,App.dbPwHive);
     var stat:Statement=con.createStatement();
-    var qry=MakeBinFileSql.selectScenarioNrRu("");
+    var qry=MakeBinFileSql2.selectScenarioNrRu("");
     var rs = stat.executeQuery(qry);
     while(rs.next()) {
 

@@ -17,8 +17,8 @@ def main(args: Array[String]): Unit = {
 
 def selectScenarioNrRu(scheduleId:String) = {
 s"""
-SELECT * 
-FROM   SCENARIO_NR_RU 
+SELECT *
+FROM   SCENARIO_NR_RU
 --WHERE  SCHEDULE_ID = ${scheduleId}
 LIMIT 1
 """

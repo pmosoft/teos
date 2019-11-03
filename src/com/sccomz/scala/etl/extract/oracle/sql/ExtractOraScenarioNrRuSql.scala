@@ -1,7 +1,7 @@
 package com.sccomz.scala.etl.extract.oracle.sql
 
 object ExtractOraScenarioNrRuSql {
-  
+
 def selectScenarioNrRuCsv(scheduleId:String) = {
 s"""
 SELECT
@@ -44,47 +44,39 @@ SELECT
        NVL(X_BIN_CNT,0)                            ||'|'||
        NVL(Y_BIN_CNT,0)                            ||'|'||
        ${scheduleId}                               ||'|'
-FROM   SCENARIO_NR_RU
-WHERE  SCENARIO_ID IN (SELECT SCENARIO_ID FROM SCHEDULE WHERE SCHEDULE_ID = ${scheduleId})
-
-
-
-SELECT SCENARIO_ID, ENB_ID, PCI, PCI_PORT, RU_ID, MAKER, SECTOR_ORD, REPEATERATTENUATION, REPEATERPWRRATIO, RU_SEQ, RADIUS, FEEDER_LOSS
-      , NOISEFLOOR, CORRECTION_VALUE, FADE_MARGIN, XPOSITION, YPOSITION, HEIGHT, SITE_ADDR, TYPE, STATUS, SISUL_CD, MSC, BSC, NETWORKID
-      , USABLETRAFFICCH, SYSTEMID, RU_TYPE, FA_MODEL_ID, NETWORK_TYPE, RESOLUTION, FA_SEQ, SITE_STARTX, SITE_STARTY, SITE_ENDX, SITE_ENDY, X_BIN_CNT, Y_BIN_CNT
 FROM
-( 
+(
 SELECT T_DU.SCENARIO_ID                 AS SCENARIO_ID
-     , T_DU.ENB_ID                      AS ENB_ID     
-     , T_RU.PCI                         AS PCI        
-     , T_RU.PCI_PORT                    AS PCI_PORT   
-     , T_RU.RU_ID                       AS RU_ID      
-     , T_RU.MAKER                       AS MAKER      
-     , T_RU.SECTOR_ORD                  AS SECTOR_ORD 
+     , T_DU.ENB_ID                      AS ENB_ID
+     , T_RU.PCI                         AS PCI
+     , T_RU.PCI_PORT                    AS PCI_PORT
+     , T_RU.RU_ID                       AS RU_ID
+     , T_RU.MAKER                       AS MAKER
+     , T_RU.SECTOR_ORD                  AS SECTOR_ORD
      , NVL(T_RU.REPEATERATTENUATION, 0) AS REPEATERATTENUATION
      , NVL(T_RU.REPEATERPWRRATIO, 0)    AS REPEATERPWRRATIO
-     , T_RU.RU_SEQ                      AS RU_SEQ 
-     , T_SITE.RADIUS                    AS RADIUS                
-     , T_SITE.FEEDER_LOSS               AS FEEDER_LOSS           
-     , T_SITE.NOISEFLOOR                AS NOISEFLOOR            
-     , T_SITE.CORRECTION_VALUE          AS CORRECTION_VALUE      
-     , T_SITE.FADE_MARGIN               AS FADE_MARGIN           
-     , T_SITE.TM_XPOSITION              AS XPOSITION       
-     , T_SITE.TM_YPOSITION              AS YPOSITION             
-     , T_SITE.HEIGHT                    AS HEIGHT             
-     , T_SITE.SITE_ADDR                 AS SITE_ADDR             
-     , T_SITE.TYPE                      AS TYPE                  
-     , T_SITE.STATUS                    AS STATUS                
-     , T_SITE.SISUL_CD                  AS SISUL_CD              
-     , T_SITE.MSC                       AS MSC                   
-     , T_SITE.BSC                       AS BSC                   
-     , T_SITE.NETWORKID                 AS NETWORKID             
-     , T_SITE.USABLETRAFFICCH           AS USABLETRAFFICCH       
-     , T_SITE.SYSTEMID                  AS SYSTEMID              
+     , T_RU.RU_SEQ                      AS RU_SEQ
+     , T_SITE.RADIUS                    AS RADIUS
+     , T_SITE.FEEDER_LOSS               AS FEEDER_LOSS
+     , T_SITE.NOISEFLOOR                AS NOISEFLOOR
+     , T_SITE.CORRECTION_VALUE          AS CORRECTION_VALUE
+     , T_SITE.FADE_MARGIN               AS FADE_MARGIN
+     , T_SITE.TM_XPOSITION              AS XPOSITION
+     , T_SITE.TM_YPOSITION              AS YPOSITION
+     , T_SITE.HEIGHT                    AS HEIGHT
+     , T_SITE.SITE_ADDR                 AS SITE_ADDR
+     , T_SITE.TYPE                      AS TYPE
+     , T_SITE.STATUS                    AS STATUS
+     , T_SITE.SISUL_CD                  AS SISUL_CD
+     , T_SITE.MSC                       AS MSC
+     , T_SITE.BSC                       AS BSC
+     , T_SITE.NETWORKID                 AS NETWORKID
+     , T_SITE.USABLETRAFFICCH           AS USABLETRAFFICCH
+     , T_SITE.SYSTEMID                  AS SYSTEMID
      , NVL(T_SITE.RU_TYPE, -1)          AS RU_TYPE
-     , T_SCENARIO.FA_MODEL_ID           AS FA_MODEL_ID  
-     , T_SCENARIO.NETWORK_TYPE          AS NETWORK_TYPE 
-     , T_SCENARIO.RESOLUTION            AS RESOLUTION   
+     , T_SCENARIO.FA_MODEL_ID           AS FA_MODEL_ID
+     , T_SCENARIO.NETWORK_TYPE          AS NETWORK_TYPE
+     , T_SCENARIO.RESOLUTION            AS RESOLUTION
      , NVL(T_SCENARIO.FA_SEQ, 0)        AS FA_SEQ
      , CASE WHEN T_SITE.TM_XPOSITION - T_SITE.RADIUS < T_SCENARIO.TM_STARTX THEN  T_SCENARIO.TM_STARTX ELSE T_SITE.TM_XPOSITION - T_SITE.RADIUS END AS SITE_STARTX
      , CASE WHEN T_SITE.TM_YPOSITION - T_SITE.RADIUS < T_SCENARIO.TM_STARTY THEN  T_SCENARIO.TM_STARTY ELSE T_SITE.TM_YPOSITION - T_SITE.RADIUS END AS SITE_STARTY
@@ -112,7 +104,7 @@ FROM   SCENARIO T_SCENARIO
             , MAX(REPEATERPWRRATIO) AS REPEATERPWRRATIO
             , MAX(RU_SEQ) AS RU_SEQ
        FROM   RU
-       WHERE  SCENARIO_ID = 5103982
+       WHERE  SCENARIO_ID IN (SELECT SCENARIO_ID FROM SCHEDULE WHERE SCHEDULE_ID = ${scheduleId}
        GROUP BY SCENARIO_ID, ENB_ID, PCI, PCI_PORT, RU_ID, SECTOR_ORD
        ) T_RU
 WHERE  T_DU.SCENARIO_ID       = T_SCENARIO.SCENARIO_ID
@@ -125,21 +117,19 @@ AND    T_RU.PCI_PORT          = T_SITE.PCI_PORT
 AND    T_RU.RU_ID             = T_SITE.RU_ID
 AND    T_SITE.TYPE            IN ('RU', 'RU_N')
 AND    T_SITE.STATUS          = 1
-AND    T_SCENARIO.SCENARIO_ID =  5103982
+AND    T_SCENARIO.SCENARIO_ID IN (SELECT SCENARIO_ID FROM SCHEDULE WHERE SCHEDULE_ID = ${scheduleId}
 ORDER BY T_RU.ENB_ID, T_RU.PCI, T_RU.PCI_PORT, T_RU.RU_ID
 )
-
 """
 }
 
 
-
 def selectScenarioNrRuIns(scheduleId:String) = {
 s"""
-SELECT 
+SELECT
 'INSERT INTO I_SCENARIO_NR_RU VALUES ('
 ||' '  ||NVL(SCENARIO_ID,0)
-||','''||ENB_ID                                ||''''                                                                                                                        
+||','''||ENB_ID                                ||''''
 ||','  ||NVL(PCI,0)
 ||','  ||NVL(PCI_PORT,0)
 ||','''||RU_ID                                 ||''''
@@ -154,7 +144,7 @@ SELECT
 ||','  ||NVL(CORRECTION_VALUE,0)
 ||','  ||NVL(FADE_MARGIN,0)
 ||','''||XPOSITION                             ||''''
-||','''||YPOSITION                             ||''''                                                                                                                
+||','''||YPOSITION                             ||''''
 ||','  ||NVL(HEIGHT,0)
 ||','''||SITE_ADDR                             ||''''
 ||','''||TYPE                                  ||''''
@@ -177,39 +167,39 @@ SELECT
 ||','  ||NVL(X_BIN_CNT,0)
 ||','  ||NVL(Y_BIN_CNT,0)
 ||');'
-FROM 
-( 
+FROM
+(
 SELECT T_DU.SCENARIO_ID                 AS SCENARIO_ID
-     , T_DU.ENB_ID                      AS ENB_ID     
-     , T_RU.PCI                         AS PCI        
-     , T_RU.PCI_PORT                    AS PCI_PORT   
-     , T_RU.RU_ID                       AS RU_ID      
-     , T_RU.MAKER                       AS MAKER      
-     , T_RU.SECTOR_ORD                  AS SECTOR_ORD 
+     , T_DU.ENB_ID                      AS ENB_ID
+     , T_RU.PCI                         AS PCI
+     , T_RU.PCI_PORT                    AS PCI_PORT
+     , T_RU.RU_ID                       AS RU_ID
+     , T_RU.MAKER                       AS MAKER
+     , T_RU.SECTOR_ORD                  AS SECTOR_ORD
      , NVL(T_RU.REPEATERATTENUATION, 0) AS REPEATERATTENUATION
      , NVL(T_RU.REPEATERPWRRATIO, 0)    AS REPEATERPWRRATIO
-     , T_RU.RU_SEQ                      AS RU_SEQ 
-     , T_SITE.RADIUS                    AS RADIUS                
-     , T_SITE.FEEDER_LOSS               AS FEEDER_LOSS           
-     , T_SITE.NOISEFLOOR                AS NOISEFLOOR            
-     , T_SITE.CORRECTION_VALUE          AS CORRECTION_VALUE      
-     , T_SITE.FADE_MARGIN               AS FADE_MARGIN           
-     , T_SITE.TM_XPOSITION              AS XPOSITION       
-     , T_SITE.TM_YPOSITION              AS YPOSITION             
-     , T_SITE.HEIGHT                    AS HEIGHT             
-     , T_SITE.SITE_ADDR                 AS SITE_ADDR             
-     , T_SITE.TYPE                      AS TYPE                  
-     , T_SITE.STATUS                    AS STATUS                
-     , T_SITE.SISUL_CD                  AS SISUL_CD              
-     , T_SITE.MSC                       AS MSC                   
-     , T_SITE.BSC                       AS BSC                   
-     , T_SITE.NETWORKID                 AS NETWORKID             
-     , T_SITE.USABLETRAFFICCH           AS USABLETRAFFICCH       
-     , T_SITE.SYSTEMID                  AS SYSTEMID              
+     , T_RU.RU_SEQ                      AS RU_SEQ
+     , T_SITE.RADIUS                    AS RADIUS
+     , T_SITE.FEEDER_LOSS               AS FEEDER_LOSS
+     , T_SITE.NOISEFLOOR                AS NOISEFLOOR
+     , T_SITE.CORRECTION_VALUE          AS CORRECTION_VALUE
+     , T_SITE.FADE_MARGIN               AS FADE_MARGIN
+     , T_SITE.TM_XPOSITION              AS XPOSITION
+     , T_SITE.TM_YPOSITION              AS YPOSITION
+     , T_SITE.HEIGHT                    AS HEIGHT
+     , T_SITE.SITE_ADDR                 AS SITE_ADDR
+     , T_SITE.TYPE                      AS TYPE
+     , T_SITE.STATUS                    AS STATUS
+     , T_SITE.SISUL_CD                  AS SISUL_CD
+     , T_SITE.MSC                       AS MSC
+     , T_SITE.BSC                       AS BSC
+     , T_SITE.NETWORKID                 AS NETWORKID
+     , T_SITE.USABLETRAFFICCH           AS USABLETRAFFICCH
+     , T_SITE.SYSTEMID                  AS SYSTEMID
      , NVL(T_SITE.RU_TYPE, -1)          AS RU_TYPE
-     , T_SCENARIO.FA_MODEL_ID           AS FA_MODEL_ID  
-     , T_SCENARIO.NETWORK_TYPE          AS NETWORK_TYPE 
-     , T_SCENARIO.RESOLUTION            AS RESOLUTION   
+     , T_SCENARIO.FA_MODEL_ID           AS FA_MODEL_ID
+     , T_SCENARIO.NETWORK_TYPE          AS NETWORK_TYPE
+     , T_SCENARIO.RESOLUTION            AS RESOLUTION
      , NVL(T_SCENARIO.FA_SEQ, 0)        AS FA_SEQ
      , CASE WHEN T_SITE.TM_XPOSITION - T_SITE.RADIUS < T_SCENARIO.TM_STARTX THEN  T_SCENARIO.TM_STARTX ELSE T_SITE.TM_XPOSITION - T_SITE.RADIUS END AS SITE_STARTX
      , CASE WHEN T_SITE.TM_YPOSITION - T_SITE.RADIUS < T_SCENARIO.TM_STARTY THEN  T_SCENARIO.TM_STARTY ELSE T_SITE.TM_YPOSITION - T_SITE.RADIUS END AS SITE_STARTY
@@ -237,7 +227,7 @@ FROM   SCENARIO T_SCENARIO
             , MAX(REPEATERPWRRATIO) AS REPEATERPWRRATIO
             , MAX(RU_SEQ) AS RU_SEQ
        FROM   RU
-       WHERE  SCENARIO_ID = 5103982
+       WHERE  SCENARIO_ID IN (SELECT SCENARIO_ID FROM SCHEDULE WHERE SCHEDULE_ID = ${scheduleId}
        GROUP BY SCENARIO_ID, ENB_ID, PCI, PCI_PORT, RU_ID, SECTOR_ORD
        ) T_RU
 WHERE  T_DU.SCENARIO_ID       = T_SCENARIO.SCENARIO_ID
@@ -250,7 +240,7 @@ AND    T_RU.PCI_PORT          = T_SITE.PCI_PORT
 AND    T_RU.RU_ID             = T_SITE.RU_ID
 AND    T_SITE.TYPE            IN ('RU', 'RU_N')
 AND    T_SITE.STATUS          = 1
-AND    T_SCENARIO.SCENARIO_ID =  5103982
+AND    T_SCENARIO.SCENARIO_ID IN (SELECT SCENARIO_ID FROM SCHEDULE WHERE SCHEDULE_ID = ${scheduleId}
 ORDER BY T_RU.ENB_ID, T_RU.PCI, T_RU.PCI_PORT, T_RU.RU_ID)
 WHERE  SCENARIO_ID IN (SELECT SCENARIO_ID FROM SCHEDULE WHERE SCHEDULE_ID = ${scheduleId})
 """
