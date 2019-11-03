@@ -40,7 +40,6 @@ object MakeBinFile3 {
   // 2D 폴더 생성
   def makeEngResult(scheduleId: String, cdNm: String) = {
     var ruInfo = makeResultPath(scheduleId);
-
     makeEngSectorResult(scheduleId, cdNm, ruInfo.getOrElse("SECTOR_PATH",""));
     makeEngRuResult(scheduleId, cdNm, ruInfo);
   }
