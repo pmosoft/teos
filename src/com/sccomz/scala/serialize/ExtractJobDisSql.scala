@@ -18,7 +18,8 @@ def main(args: Array[String]): Unit = {
 
 def selectBinCnt(scheduleId:String) = {
 s"""
-SELECT A.X_BIN_CNT, A.Y_BIN_CNT
+SELECT A.X_BIN_CNT
+     , A.Y_BIN_CNT
 FROM   SCHEDULE A
 WHERE  A.SCHEDULE_ID = ${scheduleId}
 """

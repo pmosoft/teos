@@ -36,7 +36,7 @@ object ExtractPostManager {
   def extractPostToHadoopCsv(scheduleId:String): Unit = {
 
     var tabNm = ""; var qry = "";
-    
+
     //---------------------------------------
          tabNm = "LOS_ENG_RESULT_DIS"
     //---------------------------------------
@@ -44,7 +44,7 @@ object ExtractPostManager {
     rs = stat.executeQuery(qry);
     var pw = new PrintWriter(new File(App.extJavaPath+"/"+tabNm+"_"+scheduleId+".dat" ),"UTF-8");
     while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
-    
+
     // //---------------------------------------
     //      tabNm = "LOS_ENG_RESULT_DIS1"
     // //---------------------------------------
@@ -52,7 +52,7 @@ object ExtractPostManager {
     // rs = stat.executeQuery(qry);
     // pw = new PrintWriter(new File(App.extJavaPath+"/"+tabNm+"_"+scheduleId+".dat" ),"UTF-8");
     // while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
-    // 
+    //
     // //---------------------------------------
     //      tabNm = "LOS_BLD_RESULT_DIS"
     // //---------------------------------------
@@ -60,7 +60,7 @@ object ExtractPostManager {
     // rs = stat.executeQuery(qry);
     // pw = new PrintWriter(new File(App.extJavaPath+"/"+tabNm+"_"+scheduleId+".dat" ),"UTF-8");
     // while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
-    // 
+    //
     // //---------------------------------------
     //      tabNm = "LOS_BLD_RESULT_DIS1"
     // //---------------------------------------
@@ -71,8 +71,5 @@ object ExtractPostManager {
 
   }
   def extractPostcleIns(): Unit = {}
-
-  def extractPostgreCsv(): Unit = {}
-  def extractPostgreIns(): Unit = {}
 
 }

@@ -51,7 +51,7 @@ object ExtractOraManager {
     qry = ExtractOraScenarioSql.selectScenarioIns(scheduleId); println(qry);
     rs = stat.executeQuery(qry);
     pw = new PrintWriter(new File(App.extJavaPath+"/"+tabNm+"_"+scheduleId+".sql" ),"UTF-8");
-    while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close; 
+    while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
 
     //--------------------------------------
         tabNm = "MOBILE_PARAMETER";
@@ -69,8 +69,8 @@ object ExtractOraManager {
     pw = new PrintWriter(new File(App.extJavaPath+"/"+tabNm+"_"+scheduleId+".sql" ),"UTF-8");
     while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
   }
-  
-  
+
+
   def extractOracleToHadoopCsv(scheduleId:String): Unit = {
 
     var tabNm = ""; var qry = "";
@@ -90,7 +90,7 @@ object ExtractOraManager {
     rs = stat.executeQuery(qry);
     pw = new PrintWriter(new File(App.extJavaPath+"/"+tabNm+"_"+scheduleId+".dat" ),"UTF-8");
     while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
-    
+
      //--------------------------------------
          tabNm = "DU"
      //--------------------------------------
@@ -98,7 +98,7 @@ object ExtractOraManager {
      rs = stat.executeQuery(qry);
      pw = new PrintWriter(new File(App.extJavaPath+"/"+tabNm+"_"+scheduleId+".dat" ),"UTF-8");
      while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
-     
+
      //--------------------------------------
          tabNm = "RU"
      //--------------------------------------
@@ -106,7 +106,7 @@ object ExtractOraManager {
      rs = stat.executeQuery(qry);
      pw = new PrintWriter(new File(App.extJavaPath+"/"+tabNm+"_"+scheduleId+".dat" ),"UTF-8");
      while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
-     
+
      //--------------------------------------
          tabNm = "SITE"
      //--------------------------------------
@@ -116,8 +116,5 @@ object ExtractOraManager {
      while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
 
   }
-  def extractOracleIns(): Unit = {}
-
-  def extractPostgreCsv(): Unit = {}
 
 }

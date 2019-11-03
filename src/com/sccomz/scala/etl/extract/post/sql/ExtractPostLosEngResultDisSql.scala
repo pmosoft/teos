@@ -1,7 +1,7 @@
 package com.sccomz.scala.etl.extract.post.sql
 
 object ExtractPostLosEngResultDisSql {
-  
+
 def selectLosEngResultDisCsv(scheduleId:String) = {
 s"""
 SELECT
@@ -21,7 +21,7 @@ SELECT
        SECTOR_Z                          ||'|'||
        '${scheduleId}'                   ||'|'
 FROM   LOS_ENG_RESULT_DIS
-LIMIT  100
+WHERE  SCHEDULE_ID = ${scheduleId}
 """
 }
 
