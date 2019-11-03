@@ -11,12 +11,12 @@ import scala.collection.mutable.HashMap
 import scala.collection._
 
 import com.sccomz.scala.comm.App
-import com.sccomz.scala.etl.extract.post.sql.ExtractPostLosEngResultDisSql
 import com.sccomz.scala.etl.extract.post.sql.ExtractPostLosEngResultDis1Sql
 import com.sccomz.scala.etl.extract.post.sql.ExtractPostLosBldResultDisSql
 import com.sccomz.scala.etl.extract.post.sql.ExtractPostLosBldResultDis1Sql
 import com.sccomz.scala.etl.extract.post.sql.ExtractJobDisSql
 import com.sccomz.scala.etl.extract.post.sql.ExtractPostLosEngResultSql
+import com.sccomz.scala.etl.load.LoadHdfsLosManager
 
 /*
 import com.sccomz.scala.etl.extract.post.ExtractPostManager
@@ -87,13 +87,23 @@ object ExtractLoadPostManager {
     qry = ExtractJobDisSql.selectExtRu(scheduleId);
     rs = stat.executeQuery(qry);
 
+    var extList = mutable.Map[String,String]();
 
     while(rs.next()) {
+        extList += (rs.getString("RU_ID") -> rs.getString("CLUSTER_NAME"));
         ruId  = rs.getString("RU_ID");
         clusterName = rs.getString("CLUSTER_NAME");
-        ExtractPostManager.extractPostToHadoopCsv(scheduleId);
-
+        //
     };
+
+    for(ext <- extList) {
+        ruId  = ext._1; clusterName = ext._2;
+        updateRuStat(scheduleId,ruId,"4")
+        extractPostToHadoopCsv(scheduleId,ruId,clusterName);
+        LoadHdfsLosManager.samToParquetPartition("LOS_ENG_RESULT_DIS", scheduleId, ruId);
+        updateRuStat(scheduleId,ruId,"5")
+    }
+
   }
 
 
@@ -123,6 +133,14 @@ object ExtractLoadPostManager {
     // pw = new PrintWriter(new File(App.extJavaPath+"/"+tabNm+"_"+scheduleId+".dat" ),"UTF-8");
     // while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
     //
+  }
+
+  def updateRuStat(scheduleId:String,ruId:String,stat2:String) : Unit = {
+    Class.forName(App.dbDriverPost);
+    var con = DriverManager.getConnection(App.dbUrlPost,App.dbUserPost,App.dbPwPost);
+    var stat:Statement=con.createStatement();
+    var qry = ExtractJobDisSql.updateRuStat(scheduleId, ruId, stat2); println(qry);
+    rs = stat.executeQuery(qry);
   }
 
 

@@ -33,45 +33,19 @@ LoadManager.samToParquetPartition(spark,"SCENARIO","8459967");
 //LoadManager.impalaAddPartition("SCHEDULE","8459967","impala");
 
  * */
-object LoadLosHdfsManager {
+object LoadHdfsLosManager {
 
-  val spark = SparkSession.builder().appName("LoadManager").config("spark.sql.warehouse.dir","/teos/warehouse").enableHiveSupport().getOrCreate()
+  val spark = SparkSession.builder().appName("LoadHdfsLosManager").config("spark.sql.warehouse.dir","/teos/warehouse").enableHiveSupport().getOrCreate();
 
   def main(args: Array[String]): Unit = {
-    samToParquetPartition(spark,"SCHEDULE","8463189");
-    samToParquetPartition(spark,"DU","8463189");
-    samToParquetPartition(spark,"RU","8463189");
-    samToParquetPartition(spark,"SITE","8463189");
   }
 
-  def oracleToHdfs(spark: SparkSession,objNm:String,scheduleId:String) = {
-    samToParquetPartition(spark,"SCHEDULE","8463189");
-    samToParquetPartition(spark,"DU","8463189");
-    samToParquetPartition(spark,"RU","8463189");
-    samToParquetPartition(spark,"SITE","8463189");
-//    samToParquetPartition(spark,"SCHEDULE","8459967");
-//    samToParquetPartition(spark,"SCHEDULE","8459967");
-//    samToParquetPartition(spark,"SCHEDULE","8459967");
-  }
-
-  def postLosToHdfs(spark: SparkSession,objNm:String,scheduleId:String, ruId:String) = {
-    toParquetPartition2(spark,"local","LOS_ENG_RESULT",scheduleId,ruId);
-  }
-
-  def samToParquetPartition(spark: SparkSession,objNm:String,scheduleId:String) = {
-    toParquetPartition(spark,"local",objNm,scheduleId);
-  }
-
-  def hdfsToParquetPartition(spark: SparkSession,objNm:String,scheduleId:String) = {
-    toParquetPartition(spark,"hdfs",objNm,scheduleId);
-  }
-
-  def toParquetPartition2(spark: SparkSession,cd:String,objNm:String,scheduleId:String,ruId:String) = {
-
+  def samToParquetPartition(objNm:String,scheduleId:String,ruId:String) = {
+    toParquetPartition("local",objNm,scheduleId);
   }
 
 
-  def toParquetPartition(spark: SparkSession,cd:String,objNm:String,scheduleId:String) = {
+  def toParquetPartition(cd:String,objNm:String,scheduleId:String) = {
     //--------------------------------------
         println("samToParquet 시작");
     //--------------------------------------
