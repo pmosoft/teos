@@ -76,16 +76,32 @@ object App {
   val dbUrlPost        =
            if(ip=="192.168.0.6")    "jdbc:postgresql://localhost:5432/postgres"
       else if(ip=="192.168.73.71")  "jdbc:postgresql://localhost:5432/postgres"
-      else if(ip=="150.23.21.44")   "jdbc:postgresql://localhost:55432/postgres"
-      else if(ip=="150.23.21.207")  "jdbc:postgresql://localhost:55432/postgres"
+      else if(ip=="150.23.21.44")   "jdbc:postgresql://localhost:54321/postgres"
+      else if(ip=="150.23.21.207")  "jdbc:postgresql://localhost:54321/postgres"
       else                          "jdbc:postgresql://185.15.16.156:5432/postgres";
   val dbUserPost       = "postgres";
   val dbPwPost         = "postgres";
+
+  val dbUrlPost1        =
+           if(ip=="150.23.21.44")   "jdbc:postgresql://localhost:54321/postgres"
+      else if(ip=="150.23.21.207")  "jdbc:postgresql://localhost:54321/postgres"
+      else                          "jdbc:postgresql://185.15.16.156:5432/postgres";
+
+  val dbUrlPost2        =
+           if(ip=="150.23.21.44")   "jdbc:postgresql://localhost:54322/postgres"
+      else if(ip=="150.23.21.207")  "jdbc:postgresql://localhost:54322/postgres"
+      else                          "jdbc:postgresql://185.15.16.157:5432/postgres";
+
+  val dbUrlPost3        =
+           if(ip=="150.23.21.44")   "jdbc:postgresql://localhost:54323/postgres"
+      else if(ip=="150.23.21.207")  "jdbc:postgresql://localhost:54323/postgres"
+      else                          "jdbc:postgresql://185.15.16.158:5432/postgres";
   
-  val dbUrlPost1        = "jdbc:postgresql://185.15.16.156:5432/postgres";
-  val dbUrlPost2        = "jdbc:postgresql://185.15.16.157:5432/postgres";
-  val dbUrlPost3        = "jdbc:postgresql://185.15.16.158:5432/postgres";
-  val dbUrlPost4        = "jdbc:postgresql://185.15.16.159:5432/postgres";
+  val dbUrlPost4        =
+           if(ip=="150.23.21.44")   "jdbc:postgresql://localhost:54324/postgres"
+      else if(ip=="150.23.21.207")  "jdbc:postgresql://localhost:54324/postgres"
+      else                          "jdbc:postgresql://185.15.16.159:5432/postgres";
+  
   
   /**********************************************************
    * Hive DB 접속 정보
