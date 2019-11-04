@@ -19,8 +19,8 @@ def main(args: Array[String]): Unit = {
 // X,Y Total Bin Count
 def selectBinCnt(scheduleId:String) = {
 s"""
-SELECT A.BIN_X_CNT
-     , A.BIN_Y_CNT
+SELECT 307 as BIN_X_CNT
+     , 301 as BIN_Y_CNT
 FROM   SCHEDULE A
 WHERE  A.SCHEDULE_ID = ${scheduleId}
 """

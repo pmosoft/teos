@@ -16,15 +16,20 @@ import com.sccomz.java.comm.util.FileUtil
 import com.sccomz.scala.comm.App
 import com.sccomz.java.serialize.Byte4
 import com.sccomz.java.serialize.ByteUtil
+/*
 
+import com.sccomz.scala.serialize.MakeBinFile4
+MakeBinFile4.executeEngResult("8460062");
+  
+ * */
 object MakeBinFile4 {
 
   val logger: Logger = Logger.getLogger(this.getClass.getName());
   var spark: SparkSession = null;
-  spark = SparkSession.builder().appName("MakeBinFile4").master("local[*]").getOrCreate();
+  spark = SparkSession.builder().appName("MakeBinFile4").getOrCreate();
   
   def main(args: Array[String]): Unit = {
-    executeEngResult("schedule_id");
+    executeEngResult("8460062");
   }
 
   // 2D Bin
@@ -70,11 +75,14 @@ object MakeBinFile4 {
       // RU 정보 생성
       ruInfo += (rs.getString("RU_ID") -> rs.getString("RU_PATH"));
 
-      // 폴더 생성
-      var dir = new File(App.resultPath, DateUtil.getDate("yyyyMMdd") + "/"+rs.getString("RU_PATH"));
-      if (!dir.exists()) dir.mkdirs();
-      println(dir);
+      if (rowCnt <= 150) {      
+      
+        // 폴더 생성
+        var dir = new File(App.resultPath, DateUtil.getDate("yyyyMMdd") + "/"+rs.getString("RU_PATH"));
+        if (!dir.exists()) dir.mkdirs();
+        println(dir);
 
+      }
       rowCnt = rowCnt + 1;
     };
     ruInfo;
@@ -86,13 +94,13 @@ object MakeBinFile4 {
 
     logger.info("========================== 초기화 ===========================");
     var qry2= MakeBinFileSql4.selectBinCnt(scheduleId);
-    println(qry2);
     var sqlDf = spark.sql(qry2);
     var x_bin_cnt = 0;  var y_bin_cnt = 0;
     sqlDf.foreach { row =>
-       x_bin_cnt = row.mkString(",").split(",")(1).toInt;
-       y_bin_cnt = row.mkString(",").split(",")(2).toInt;
+       x_bin_cnt = row.mkString(",").split(",")(0).toInt;
+       y_bin_cnt = row.mkString(",").split(",")(1).toInt;
     }
+    println(x_bin_cnt + " : " + y_bin_cnt);
 
     val bin = Array.ofDim[Byte4](x_bin_cnt, y_bin_cnt);
     
@@ -200,7 +208,5 @@ object MakeBinFile4 {
   // 3D Ru별 결과
   def makeBdRuResult(scheduleId: String) = {
   }
-
-
 
 }
