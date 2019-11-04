@@ -68,3 +68,5 @@ SELECT * FROM I_SCENARIO;
 sql("SELECT * FROM I_SCENARIO").take(100).foreach(println);
 spark.sql("SELECT SUM(SCENARIO_ID) FROM I_SCENARIO").take(100).foreach(println);
 
+LOAD DATA INPATH '/home/hadoop/mh_hr_employees.csv'  
+INTO TABLE Employee PARTITION (state='Maharashtra', department='HR');

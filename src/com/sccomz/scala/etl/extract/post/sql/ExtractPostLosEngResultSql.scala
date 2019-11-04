@@ -5,7 +5,6 @@ object ExtractPostLosEngResultSql {
 def selectLosEngResultCsv(scheduleId:String, ruId:String) = {
 s"""
 SELECT
-       SECTOR_ID                  ||'|'||
        BIN_ID                     ||'|'||
        BIN_X                      ||'|'||
        BIN_Y                      ||'|'||
