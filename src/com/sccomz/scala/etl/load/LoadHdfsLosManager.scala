@@ -44,7 +44,6 @@ object LoadHdfsLosManager {
     toParquetPartition("local",objNm,scheduleId);
   }
 
-
   def toParquetPartition(cd:String,objNm:String,scheduleId:String) = {
     //--------------------------------------
         println("samToParquet 시작");

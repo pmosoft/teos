@@ -1,19 +1,21 @@
 DROP TABLE LOS_ENG_RESULT_DIS;
 
 CREATE EXTERNAL TABLE LOS_ENG_RESULT (
-  JOB_ID                            STRING
-, SCENARIO_ID                       INT
-, SCHEDULE_ID                       INT
-, BIN_ID                            STRING
+  BIN_ID                            STRING
 , BIN_X                             FLOAT
 , BIN_Y                             FLOAT
 , BIN_Z                             FLOAT
+, BLD_ID                            STRING
 , BIN_SIZE                          INT
 , LOS                               BOOLEAN
-, THETA                             INT
-, PHI                               INT
-, SECTOR_ID                         STRING
+, IN_BLD                            BOOLEAN
+, THETA_DEG                         INT
+, PHI_DEG                           INT
 , SECTOR_X                          FLOAT
 , SECTOR_Y                          FLOAT
 , SECTOR_Z                          FLOAT
 )
+PARTITIONED BY (SCHEDULE_ID INT, RU_ID STRING)
+STORED AS PARQUET
+LOCATION '/teos/warehouse/LOS_ENG_RESULT';
+
