@@ -35,7 +35,7 @@ object MakeBinFile4 {
   // 2D Bin
   def executeEngResult(scheduleId: String) = {
     makeEngResult(scheduleId, "LOS");
-    makeEngResult(scheduleId, "PATHLOSS");
+//    makeEngResult(scheduleId, "PATHLOSS");
   }
 
   // 3D Bin
@@ -57,6 +57,7 @@ object MakeBinFile4 {
     var qry = MakeBinFileSql4.selectBinFilePath(scheduleId);
     var rs = stat.executeQuery(qry);
     var rowCnt = 1;
+    var count = 1;
 
     var ruInfo = mutable.Map[String,String]();
     var ruIdList = mutable.MutableList[String]();
@@ -64,21 +65,19 @@ object MakeBinFile4 {
 
     while (rs.next()) {
       if (rowCnt == 1) {
-
         ruInfo += ("SECTOR_PATH" -> rs.getString("SECTOR_PATH"));
 
         // 폴더 삭제
-        FileUtil.delFiles2(App.resultPath + "/"+DateUtil.getDate("yyyyMMdd")+"/"+rs.getString("SECTOR_PATH"));
+        FileUtil.delFiles2(App.resultPath + "/" + DateUtil.getDate("yyyyMMdd") + "/" + rs.getString("SECTOR_PATH"));
         logger.info("Directory Drop Complete!!");
       }
 
       // RU 정보 생성
       ruInfo += (rs.getString("RU_ID") -> rs.getString("RU_PATH"));
 
-      if (rowCnt <= 150) {      
-      
+      if (rowCnt <= 150) {
         // 폴더 생성
-        var dir = new File(App.resultPath, DateUtil.getDate("yyyyMMdd") + "/"+rs.getString("RU_PATH"));
+        var dir = new File(App.resultPath, DateUtil.getDate("yyyyMMdd") + "/" + rs.getString("RU_PATH"));
         if (!dir.exists()) dir.mkdirs();
         println(dir);
 
@@ -89,18 +88,17 @@ object MakeBinFile4 {
   }
 
 
-  // 2D 섹테 결과
+  // 2D 섹터 결과
   def makeEngSectorResult(scheduleId: String, cdNm: String, sectorPath: String) = {
 
     logger.info("========================== 초기화 ===========================");
     var qry2= MakeBinFileSql4.selectBinCnt(scheduleId);
-    var sqlDf = spark.sql(qry2);
-    var x_bin_cnt = 0;  var y_bin_cnt = 0;
+    var sqlDf = spark.sql("SELECT BIN_X_CNT, BIN_Y_CNT FROM SCHEDULE A WHERE A.SCHEDULE_ID = 8460062");
+    var x_bin_cnt = 307;  var y_bin_cnt = 301;
     sqlDf.foreach { row =>
        x_bin_cnt = row.mkString(",").split(",")(0).toInt;
        y_bin_cnt = row.mkString(",").split(",")(1).toInt;
     }
-    println(x_bin_cnt + " : " + y_bin_cnt);
 
     val bin = Array.ofDim[Byte4](x_bin_cnt, y_bin_cnt);
     

@@ -21,8 +21,8 @@ object MakeBinFile2{
 
   def main(args: Array[String]): Unit = {
 //    makeResultDir("");
-    spark = SparkSession.builder().appName("MakeBinFile2").getOrCreate();
-//    makeResultFile("");
+//    spark = SparkSession.builder().appName("MakeBinFile2").getOrCreate();
+    makeResultFile("");
   }
   
 
@@ -101,7 +101,7 @@ object MakeBinFile2{
     while(rs2.next()) {
       x_point = rs2.getInt("x_point");
       y_point = rs2.getInt("y_point");
-      los = rs2.getInt("los");
+      los = rs2.getInt("value");
       bin(x_point)(y_point).value = ByteUtil.intToByteArray(los);
     }
 
@@ -109,7 +109,7 @@ object MakeBinFile2{
     //---------------------------------------------------------------------------------------------------------
     // 파일 Write
     //---------------------------------------------------------------------------------------------------------
-    var file = new File("C:/Pony/Excel/result/LOS", "losTest2.bin");
+    var file = new File("C:/Pony/Excel/result/LOS", "losTest3.bin");
     var fos = new FileOutputStream(file);
     //fos.write(bin);
     for (y <- 0 until y_bin_cnt by 1) {
