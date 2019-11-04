@@ -25,12 +25,15 @@ import com.sccomz.scala.comm.App
 import com.sccomz.scala.schema.SCENARIO
 
 /*
-import com.sccomz.scala.etl.load.LoadManager
-LoadManager.samToParquetPartition(spark,"SCHEDULE","8459967");
-LoadManager.samToParquetPartition(spark,"SCENARIO","8459967");
+import com.sccomz.scala.etl.load.LoadHdfsLosManager
+LoadHdfsLosManager.samToParquetPartition("LOS_ENG_RESULT","8460062","1012242284")
+spark.sql("SELECT * FROM parquet.`/teos/warehouse/LOS_ENG_RESULT`").take(100).foreach(println);
 
-//LoadManager.impalaDropPartition("SCHEDULE","8459967","impala");
-//LoadManager.impalaAddPartition("SCHEDULE","8459967","impala");
+ALTER TABLE I_LOS_ENG_RESULT DROP IF EXISTS PARTITION (SCHEDULE_ID=8460062,RU_ID=1012242284)
+
+sql("ALTER TABLE I_LOS_ENG_RESULT ADD PARTITION (SCHEDULE_ID=8460062,RU_ID=1012242284) LOCATION '/teos/warehouse/LOS_ENG_RESULT/SCHEDULE_ID=8460062/RU_ID='1012242284''");
+
+LOAD DATA INPATH '/disk2/etl/LOS_ENG_RESULT_8460062_1012242284.dat' INTO TABLE I_LOS_ENG_RESULT PARTITION (SCHEDULE_ID=8460062, RU_ID='1012242284');
 
  * */
 object LoadHdfsLosManager {
@@ -38,18 +41,14 @@ object LoadHdfsLosManager {
   val spark = SparkSession.builder().appName("LoadHdfsLosManager").config("spark.sql.warehouse.dir","/teos/warehouse").enableHiveSupport().getOrCreate();
 
   def main(args: Array[String]): Unit = {
+    samToParquetPartition("LOS_ENG_RESULT","8460062","1012242284")
   }
 
   def samToParquetPartition(objNm:String,scheduleId:String,ruId:String) = {
-    toParquetPartition("local",objNm,scheduleId);
-  }
-
-  def toParquetPartition(cd:String,objNm:String,scheduleId:String) = {
     //--------------------------------------
         println("samToParquet 시작");
     //--------------------------------------
-    var srcEntityPath = if (cd=="local") App.hdfsLinuxEtlPath else if(cd=="hdfs") App.hdfsEtlPath;
-    var isPartion = if(scheduleId=="all") false else true;
+    var srcEntityPath = App.hdfsLinuxEtlPath;
 /*
     var objNm = "SCENARIO"
     var scheduleId = "8459967"
@@ -60,8 +59,8 @@ object LoadHdfsLosManager {
     //--------------------------------------
         println("입출력 변수 세팅");
     //--------------------------------------
-    var source = if(isPartion) srcEntityPath+"/"+objNm+"_"+scheduleId+".dat" else srcEntityPath+"/"+objNm+".dat"
-    var target = if(isPartion) App.hdfsWarehousePath+"/"+objNm+"/SCHEDULE_ID="+scheduleId else App.hdfsWarehousePath+"/"+objNm+"/"+objNm
+    var source = srcEntityPath+"/"+objNm+"_"+scheduleId+"_"+ruId+".dat";
+    var target = App.hdfsWarehousePath+"/"+objNm+"/SCHEDULE_ID="+scheduleId+"/RU_ID="+ruId;
 
     //--------------------------------------
         println("스키마 세팅");
@@ -96,12 +95,13 @@ object LoadHdfsLosManager {
     //--------------------------------------
         println("Hive partition 생성");
     //--------------------------------------
+    var qry = "";
     //println(s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (SCHEDULE_ID=${scheduleId})""");
     //println(s"""ALTER TABLE ${objNm} ADD PARTITION (SCHEDULE_ID=${scheduleId}) LOCATION '/teos/warehouse/${objNm}/SCHEDULE_ID=${scheduleId}'""");
     import spark.implicits._
     import spark.sql
-    sql(s"""ALTER TABLE I_${objNm} DROP IF EXISTS PARTITION (SCHEDULE_ID=${scheduleId})""")
-    sql(s"""ALTER TABLE I_${objNm} ADD PARTITION (SCHEDULE_ID=8463189) LOCATION '/teos/warehouse/${objNm}/SCHEDULE_ID=8463189'""");
+    qry = s"""ALTER TABLE I_${objNm} DROP IF EXISTS PARTITION (SCHEDULE_ID=${scheduleId},RU_ID=${ruId})"""; println(qry); sql(qry)
+    qry = s"""ALTER TABLE I_${objNm} ADD PARTITION (SCHEDULE_ID=${scheduleId},RU_ID=${ruId}) LOCATION '/teos/warehouse/${objNm}/SCHEDULE_ID=${scheduleId}/RU_ID=${ruId}'"""; println(qry); sql(qry)
 
     //sql(s"""ALTER TABLE ${objNm} ADD PARTITION (SCHEDULE_ID=${scheduleId})""")
 

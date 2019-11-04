@@ -19,8 +19,8 @@ import com.sccomz.scala.etl.extract.post.sql.ExtractPostLosEngResultSql
 import com.sccomz.scala.etl.load.LoadHdfsLosManager
 
 /*
-import com.sccomz.scala.etl.extract.post.ExtractPostManager
-ExtractPostManager.extractPostToHadoopCsv("8459967")
+import com.sccomz.scala.etl.extract.post.ExtractLoadPostManager
+ExtractLoadPostManager.extractPostToHadoopCsv("8460062","1012242284","gis01");
 
  * */
 object ExtractLoadPostManager {
@@ -32,7 +32,14 @@ object ExtractLoadPostManager {
   var tabNm = "";
 
   def main(args: Array[String]): Unit = {
-    monitorJobDis("");
+    //monitorJobDis("");
+    println("ExtractLoadPostManager start");
+    
+    //extractPostToHadoopCsv("8460062","1012242284","gis01");
+
+    monitorJobDis("8460062");
+    
+    println("ExtractLoadPostManager end");
   }
 
   def monitorJobDis(scheduleId:String): Unit = {
@@ -98,10 +105,10 @@ object ExtractLoadPostManager {
 
     for(ext <- extList) {
         ruId  = ext._1; clusterName = ext._2;
-        updateRuStat(scheduleId,ruId,"4")
+        insertJobDisExt(scheduleId,ruId,"4")
         extractPostToHadoopCsv(scheduleId,ruId,clusterName);
-        LoadHdfsLosManager.samToParquetPartition("LOS_ENG_RESULT_DIS", scheduleId, ruId);
-        updateRuStat(scheduleId,ruId,"5")
+        //LoadHdfsLosManager.samToParquetPartition("LOS_ENG_RESULT", scheduleId, ruId);
+        updateJobDisExt(scheduleId,ruId,"5")
     }
 
   }
@@ -110,7 +117,7 @@ object ExtractLoadPostManager {
   def extractPostToHadoopCsv(scheduleId:String,ruId:String,clusterName:String) : Unit = {
 
     Class.forName(App.dbDriverPost);
-    var dbUrl = if(clusterName=="gis01") App.dbUrlPost else if(clusterName=="gis02") App.dbUrlPost else if(clusterName=="gis03") App.dbUrlPost else if(clusterName=="gis04") App.dbUrlPost else App.dbUrlPost;
+    var dbUrl = if(clusterName=="gis01") App.dbUrlPost else if(clusterName=="gis02") App.dbUrlPost2 else if(clusterName=="gis03") App.dbUrlPost3 else if(clusterName=="gis04") App.dbUrlPost4 else App.dbUrlPost;
     var con = DriverManager.getConnection(dbUrl,App.dbUserPost,App.dbPwPost);
     var stat:Statement=con.createStatement();
     var rs:ResultSet = null;
@@ -118,11 +125,12 @@ object ExtractLoadPostManager {
     var tabNm = ""; var qry = "";
 
     //---------------------------------------
-         tabNm = "LOS_ENG_RESULT_DIS";
+         tabNm = "LOS_ENG_RESULT";
     //---------------------------------------
     qry = ExtractPostLosEngResultSql.selectLosEngResultCsv(scheduleId,ruId); println(qry);
-    rs = stat.executeQuery(qry);
-    var pw = new PrintWriter(new File(App.extJavaPath+"/"+tabNm+"_"+ruId+"_"+scheduleId+".dat" ),"UTF-8");
+    rs = stat.executeQuery(qry); 
+    var filePathNm = App.extJavaPath+"/"+tabNm+"_"+scheduleId+"_"+ruId+".dat"; println(filePathNm);
+    var pw = new PrintWriter(new File(filePathNm),"UTF-8");
     while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
 
     // //---------------------------------------
@@ -135,12 +143,19 @@ object ExtractLoadPostManager {
     //
   }
 
-  def updateRuStat(scheduleId:String,ruId:String,stat2:String) : Unit = {
+  def insertJobDisExt(scheduleId:String,ruId:String,stat2:String) : Unit = {
     Class.forName(App.dbDriverPost);
     var con = DriverManager.getConnection(App.dbUrlPost,App.dbUserPost,App.dbPwPost);
     var stat:Statement=con.createStatement();
-    var qry = ExtractJobDisSql.updateRuStat(scheduleId, ruId, stat2); println(qry);
-    rs = stat.executeQuery(qry);
+    var qry = ExtractJobDisSql.insertJobDisExt(scheduleId, ruId, stat2); println(qry); stat.execute(qry);
+    
+  }  
+  
+  def updateJobDisExt(scheduleId:String,ruId:String,stat2:String) : Unit = {
+    Class.forName(App.dbDriverPost);
+    var con = DriverManager.getConnection(App.dbUrlPost,App.dbUserPost,App.dbPwPost);
+    var stat:Statement=con.createStatement();
+    var qry = ExtractJobDisSql.updateJobDisExt(scheduleId, ruId, stat2); println(qry); stat.execute(qry);
   }
 
 

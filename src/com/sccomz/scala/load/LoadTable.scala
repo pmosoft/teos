@@ -14,6 +14,7 @@ spark.sql("SELECT * FROM parquet.`/teos/warehouse/SCENARIO`").take(100).foreach(
 spark.sql("SELECT * FROM I_SCHEDULE").take(100).foreach(println);
 spark.sql("SELECT SUM(SCENARIO_ID) FROM I_SCHEDULE").take(100).foreach(println);
 
+spark.sql("SELECT * FROM parquet.`/teos/warehouse/LOS_ENG_RESULT`").take(100).foreach(println);
 
 sql("SELECT * FROM I_SCHEDULE").take(100).foreach(println);
 sql("SELECT * FROM I_SCENARIO").take(100).foreach(println);

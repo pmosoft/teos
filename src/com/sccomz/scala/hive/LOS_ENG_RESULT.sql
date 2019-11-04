@@ -1,6 +1,6 @@
-DROP TABLE LOS_ENG_RESULT_DIS;
+DROP TABLE I_LOS_ENG_RESULT;
 
-CREATE EXTERNAL TABLE LOS_ENG_RESULT (
+CREATE EXTERNAL TABLE I_LOS_ENG_RESULT (
   BIN_ID                            STRING
 , BIN_X                             FLOAT
 , BIN_Y                             FLOAT
