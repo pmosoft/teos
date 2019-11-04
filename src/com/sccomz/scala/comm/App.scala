@@ -92,7 +92,7 @@ object App {
    **********************************************************/
 
   val dbDriverHive     = "org.apache.hive.jdbc.HiveDriver";
-  val dbUrlHive        =
+  val dbUrlHive         =
            if(ip=="192.168.0.6")    "jdbc:hive2://name.dmtech.biz:10000/default"
       else if(ip=="192.168.73.71")  "jdbc:hive2://name.dmtech.biz:10000/default"
       else if(ip=="150.23.21.44")   "jdbc:hive2://localhost:10000"
