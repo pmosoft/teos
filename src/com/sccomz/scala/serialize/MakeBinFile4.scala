@@ -58,12 +58,12 @@ object MakeBinFile4 {
     var qry = MakeBinFileSql4.selectBinFilePath(scheduleId);
     var rs = stat.executeQuery(qry);
     var rowCnt = 1;
-    var count = 1;
 
     var ruIdList = mutable.MutableList[String]();
     var ruPathList = mutable.MutableList[String]();
 
     while (rs.next()) {
+      // 처음 시작하자마자 폴더 유무 확인 후 있으면 삭제하고 다시 생성
       if (rowCnt == 1) {
         ruInfo += ("SECTOR_PATH" -> rs.getString("SECTOR_PATH"));
 
@@ -88,12 +88,13 @@ object MakeBinFile4 {
 
   // 2D 섹터 결과
   def makeEngSectorResult(scheduleId: String, cdNm: String, sectorPath: String) = {
+    var x_bin_cnt = 0; var y_bin_cnt = 0;
 
     logger.info("========================== 초기화 ===========================");
     var qry2= MakeBinFileSql4.selectBinCnt(scheduleId);
     var sqlDf = spark.sql("SELECT BIN_X_CNT, BIN_Y_CNT FROM SCHEDULE A WHERE A.SCHEDULE_ID = 8460062");
-    var x_bin_cnt = 307;  var y_bin_cnt = 301;
-    sqlDf.foreach { row =>
+    
+    for (row <- sqlDf.collect) {
        x_bin_cnt = row.mkString(",").split(",")(0).toInt;
        y_bin_cnt = row.mkString(",").split(",")(1).toInt;
     }
@@ -159,23 +160,20 @@ object MakeBinFile4 {
 
   // 2D RU별 결과
   def makeEngRuResult(scheduleId: String, cdNm: String, ruInfo : mutable.Map[String,String]) = {
+    var x_bin_cnt = 0; var y_bin_cnt = 0;
 
     for(ruId <- ruInfo) {
-      //println(ruId.get(0));
       if(ruId._1 != "SECTOR_PATH") {       
         logger.info("=========================== 초기화 ============================");
         //---------------------------------------------------------------------------------------------------------
         // 초기화
         //---------------------------------------------------------------------------------------------------------
+        
         var qry = MakeBinFileSql4.select2dRuBinCnt(ruId._1);
-        logger.info("1111111111111111111111111");
 
         println(qry); var sqlDf = spark.sql(qry);
-        logger.info("1111111111111111111111112");
-        var x_bin_cnt = 0; var y_bin_cnt = 0;
-          logger.info("1111111111111111111111113");
-      sqlDf.foreach { row =>
-        logger.info("1111111111111111111111114");
+
+        for (row <- sqlDf.collect) {
           x_bin_cnt = row.mkString(",").split(",")(0).toInt;
           y_bin_cnt = row.mkString(",").split(",")(1).toInt;
         }
@@ -200,17 +198,16 @@ object MakeBinFile4 {
         //---------------------------------------------------------------------------------------------------------
         // Value 세팅
         //---------------------------------------------------------------------------------------------------------
-        logger.info("1111111111111111111111115");
+        
         var tabNm = "";
              if(cdNm=="LOS"     ) { tabNm = "RESULT_NR_2D_LOS_RU"      ; }
         else if(cdNm=="PATHLOSS") { tabNm = "RESULT_NR_2D_PATHLOSS_RU" ; }
         var qry2 = MakeBinFileSql4.selectRuResult(scheduleId, tabNm, ruId._1);
         println(qry2);
         val sqlDf2 = spark.sql(qry2);
-        logger.info("1111111111111111111111116");
+        
         if(cdNm == "LOS") {
         	sqlDf2.foreach { row =>
-        	  logger.info("1111111111111111111111117");
         	var x_point = row.mkString(",").split(",")(0).toInt;
         	var y_point = row.mkString(",").split(",")(1).toInt;
         	var value = row.mkString(",").split(",")(2).toInt;
@@ -218,7 +215,6 @@ object MakeBinFile4 {
         	}
         } else {
           sqlDf2.foreach { row =>
-            logger.info("1111111111111111111111118");
         	var x_point = row.mkString(",").split(",")(0).toInt;
         	var y_point = row.mkString(",").split(",")(1).toInt;
         	var value = row.mkString(",").split(",")(2).toFloat;
@@ -230,7 +226,7 @@ object MakeBinFile4 {
         //---------------------------------------------------------------------------------------------------------
         // 파일 Write
         //---------------------------------------------------------------------------------------------------------
-        var file = new File(App.resultPath, DateUtil.getDate("yyyyMMdd") + "/" +ruId._2+ "/" + ruId._1+".bin");
+        var file = new File(App.resultPath, DateUtil.getDate("yyyyMMdd") + "/" +ruId._2+ "/" + cdNm +".bin");
         var fos = new FileOutputStream(file);
         for (y <- 0 until y_bin_cnt by 1) {
           for (x <- 0 until x_bin_cnt by 1) {
