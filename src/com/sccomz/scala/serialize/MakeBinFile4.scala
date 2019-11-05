@@ -47,7 +47,7 @@ object MakeBinFile4 {
   // 2D 폴더 생성
   def makeEngResult(scheduleId: String, cdNm: String) = {
     makeEngSectorResult(scheduleId, cdNm, ruInfo.getOrElse("SECTOR_PATH",""));
-//    makeEngRuResult(scheduleId, cdNm, ruInfo);
+    makeEngRuResult(scheduleId, cdNm, ruInfo);
   }
 
   // 폴더 생성 메소드
@@ -75,17 +75,16 @@ object MakeBinFile4 {
       // RU 정보 생성
       ruInfo += (rs.getString("RU_ID") -> rs.getString("RU_PATH"));
 
-      if (rowCnt <= 150) {
+//      if (rowCnt <= 150) {
         // 폴더 생성
         var dir = new File(App.resultPath, DateUtil.getDate("yyyyMMdd") + "/" + rs.getString("RU_PATH"));
         if (!dir.exists()) dir.mkdirs();
         println(dir);
-      }
+//      }
       rowCnt = rowCnt + 1;
     };
     ruInfo;
   }
-
 
   // 2D 섹터 결과
   def makeEngSectorResult(scheduleId: String, cdNm: String, sectorPath: String) = {
@@ -159,40 +158,77 @@ object MakeBinFile4 {
 
 
   // 2D RU별 결과
-  def makeEngRuResult(scheduleId: String, cdNm: String, ruInfo : mutable.Map[String,String] ) = {
+  def makeEngRuResult(scheduleId: String, cdNm: String, ruInfo : mutable.Map[String,String]) = {
 
     for(ruId <- ruInfo) {
       //println(ruId.get(0));
-      if(ruId._1 != "SECTOR_PATH") {
-        logger.info("========================= Value 세팅 =========================");
+      if(ruId._1 != "SECTOR_PATH") {       
+        logger.info("=========================== 초기화 ============================");
+        //---------------------------------------------------------------------------------------------------------
+        // 초기화
+        //---------------------------------------------------------------------------------------------------------
+        var qry = MakeBinFileSql4.select2dRuBinCnt(ruId._2);
+        var sqlDf = spark.sql(qry);
+        var x_bin_cnt = 0; var y_bin_cnt = 0;
+        sqlDf.foreach { row =>
+          x_bin_cnt = row.mkString(",").split(",")(0).toInt;
+          y_bin_cnt = row.mkString(",").split(",")(1).toInt;
+        }
+
+        val bin = Array.ofDim[Byte4](x_bin_cnt, y_bin_cnt);
+
+        if (cdNm == "LOS") {
+          for (y <- 0 until y_bin_cnt by 1) {
+            for (x <- 0 until x_bin_cnt by 1) {
+              bin(x)(y) = new Byte4(ByteUtil.intZero());
+            }
+          }
+        } else {
+          for (y <- 0 until y_bin_cnt by 1) {
+            for (x <- 0 until x_bin_cnt by 1) {
+              bin(x)(y) = new Byte4(ByteUtil.floatMax());
+            }
+          }
+        }
+        
+        logger.info("========================= RU별 Value 세팅 =========================");
         //---------------------------------------------------------------------------------------------------------
         // Value 세팅
         //---------------------------------------------------------------------------------------------------------
         var tabNm = "";
              if(cdNm=="LOS"     ) { tabNm = "RESULT_NR_2D_LOS_RU"      ; }
         else if(cdNm=="PATHLOSS") { tabNm = "RESULT_NR_2D_PATHLOSS_RU" ; }
-        var qry= MakeBinFileSql3.selectRuResult(scheduleId, tabNm, ruId._1);
-        val sqlDf = spark.sql(qry);
-
-        sqlDf.foreach { row =>
-           var x_point = row.mkString(",").split(",")(0).toInt;
-           var y_point = row.mkString(",").split(",")(1).toInt;
-           var value = row.mkString(",").split(",")(2).toInt;
-           //bin(x_point)(y_point).value = ByteUtil.intToByteArray(los);
+        var qry2 = MakeBinFileSql4.selectRuResult(scheduleId, tabNm, ruId._1);
+        val sqlDf2 = spark.sql(qry2);
+        
+        if(cdNm == "LOS") {
+        	sqlDf2.foreach { row =>
+        	var x_point = row.mkString(",").split(",")(0).toInt;
+        	var y_point = row.mkString(",").split(",")(1).toInt;
+        	var value = row.mkString(",").split(",")(2).toInt;
+        	bin(x_point)(y_point).value = ByteUtil.intToByteArray(value);
+        	}
+        } else {
+          sqlDf2.foreach { row =>
+        	var x_point = row.mkString(",").split(",")(0).toInt;
+        	var y_point = row.mkString(",").split(",")(1).toInt;
+        	var value = row.mkString(",").split(",")(2).toFloat;
+        	bin(x_point)(y_point).value = ByteUtil.floatToByteArray(value);
+        	}
         }
 
-        logger.info("========================= 파일 Write =========================");
+        logger.info("========================= RU별 파일 Write =========================");
         //---------------------------------------------------------------------------------------------------------
         // 파일 Write
         //---------------------------------------------------------------------------------------------------------
         var file = new File(App.resultPath, DateUtil.getDate("yyyyMMdd") + "/" +ruId._2+ "/" + ruId._1+".bin");
         var fos = new FileOutputStream(file);
-        //for (y <- 0 until y_bin_cnt by 1) {
-        //  for (x <- 0 until x_bin_cnt by 1) {
-        //    fos.write(bin(x)(y).value);
-        //  }
-        //}
-        logger.info("======================== Bin 생성 완료 ========================");
+        for (y <- 0 until y_bin_cnt by 1) {
+          for (x <- 0 until x_bin_cnt by 1) {
+            fos.write(bin(x)(y).value);
+          }
+        }
+        logger.info("======================== RU별 Bin 생성 완료 ========================");
         if (fos != null) fos.close();
       }
     }
