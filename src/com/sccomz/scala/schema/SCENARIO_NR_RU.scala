@@ -6,7 +6,7 @@ import org.apache.spark.sql.types.StringType
 import org.apache.spark.sql.types.IntegerType
 import org.apache.spark.sql.types.FloatType
 
-object I_SCENARIO_NR_RU {
+object SCENARIO_NR_RU {
 final val schema : StructType= StructType(Array(
  StructField("SCENARIO_ID"                   ,IntegerType)
 ,StructField("ENB_ID"                        ,StringType)

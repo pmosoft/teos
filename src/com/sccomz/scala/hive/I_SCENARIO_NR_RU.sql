@@ -1,9 +1,9 @@
 -----------------------------------------                                                                                                              
 -- I_SCENARIO_NR_RU                                                                                                                                              
 -----------------------------------------                                                                                                              
-DROP TABLE PUBLIC.I_SCENARIO_NR_RU;                                                                                                                 
-                                                                                                                                                       
-CREATE TABLE PUBLIC.I_SCENARIO_NR_RU (                                                                                                                                                                                                                                                                                                             
+DROP TABLE I_SCENARIO_NR_RU;                                                                                                                 
+
+CREATE EXTERNAL TABLE I_SCENARIO_NR_RU (                                                                                                                                                                                                                                                                                                             
   SCENARIO_ID                   INT                                                                                                                        
 , ENB_ID                        STRING                                                                                                                        
 , PCI                           INT                                                                                                                       

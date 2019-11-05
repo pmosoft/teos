@@ -25,33 +25,40 @@ import com.sccomz.scala.comm.App
 import com.sccomz.scala.schema.SCENARIO
 
 /*
-import com.sccomz.scala.etl.load.LoadManager
-LoadManager.samToParquetPartition(spark,"SCHEDULE","8459967");
-LoadManager.samToParquetPartition(spark,"SCENARIO","8459967");
+import com.sccomz.scala.etl.load.LoadHdfsManager
+LoadHdfsManager.oracleToHdfs(spark,"8460178");
+LoadHdfsManager.oracleToHdfs(spark,"8460179");
+LoadHdfsManager.oracleToHdfs(spark,"8460062");
+LoadHdfsManager.oracleToHdfs(spark,"8460063");
 
-//LoadManager.impalaDropPartition("SCHEDULE","8459967","impala");
-//LoadManager.impalaAddPartition("SCHEDULE","8459967","impala");
+LoadHdfsManager.oracleToHdfs(spark,"8463189");
+
 
  * */
 object LoadHdfsManager {
 
-  val spark = SparkSession.builder().appName("LoadManager").config("spark.sql.warehouse.dir","/teos/warehouse").enableHiveSupport().getOrCreate()
+  val spark = SparkSession.builder().appName("LoadHdfsManager").config("spark.sql.warehouse.dir","/teos/warehouse").enableHiveSupport().getOrCreate()
 
   def main(args: Array[String]): Unit = {
-    samToParquetPartition(spark,"SCHEDULE","8463189");
-    samToParquetPartition(spark,"DU","8463189");
-    samToParquetPartition(spark,"RU","8463189");
-    samToParquetPartition(spark,"SITE","8463189");
+    println("LoadHdfsManager start");
+    //samToParquetPartition(spark,"SCHEDULE","8463189");
+    //samToParquetPartition(spark,"DU","8463189");
+    //samToParquetPartition(spark,"RU","8463189");
+    //samToParquetPartition(spark,"SITE","8463189");
+    
+    oracleToHdfs(spark,"8463189");
+    
+    println("LoadHdfsManager end");
   }
 
-  def oracleToHdfs(spark: SparkSession,objNm:String,scheduleId:String) = {
-    samToParquetPartition(spark,"SCHEDULE","8463189");
-    samToParquetPartition(spark,"DU","8463189");
-    samToParquetPartition(spark,"RU","8463189");
-    samToParquetPartition(spark,"SITE","8463189");
-//    samToParquetPartition(spark,"SCHEDULE","8459967");
-//    samToParquetPartition(spark,"SCHEDULE","8459967");
-//    samToParquetPartition(spark,"SCHEDULE","8459967");
+  def oracleToHdfs(spark: SparkSession,scheduleId:String) = {
+    samToParquetPartition(spark,"SCHEDULE",scheduleId);
+    samToParquetPartition(spark,"SCENARIO",scheduleId);
+    samToParquetPartition(spark,"DU",scheduleId);
+    samToParquetPartition(spark,"RU",scheduleId);
+    samToParquetPartition(spark,"SITE",scheduleId);
+    samToParquetPartition(spark,"SCENARIO_NR_RU",scheduleId);
+    samToParquetPartition(spark,"SCENARIO_NR_ANTENNA",scheduleId);
   }
 
   def samToParquetPartition(spark: SparkSession,objNm:String,scheduleId:String) = {

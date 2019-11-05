@@ -28,10 +28,16 @@ object LoadPostManager {
     
     println("LoadPostManager start");    
     
-    oracleToPostgre("8460178",1);
-    oracleToPostgre("8460179",1);
-    oracleToPostgre("8460062",1);
-    oracleToPostgre("8460063",1);
+    //oracleToPostgre("8460178",1);
+    //oracleToPostgre("8460179",1);
+    //oracleToPostgre("8460062",1);
+    //oracleToPostgre("8460063",1);
+
+    oracleToPostgreAll("8460178");
+    oracleToPostgreAll("8460179");
+    oracleToPostgreAll("8460062");
+    oracleToPostgreAll("8460063");
+  
     
     println("LoadPostManager end");    
     

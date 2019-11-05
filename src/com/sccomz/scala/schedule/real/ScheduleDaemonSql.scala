@@ -64,47 +64,41 @@ WITH TEMP01 AS (
 -------------------
 -- 스케줄 수행대상건 조회
 -------------------
+---------------------------------------------------------
+-- orgin
+---------------------------------------------------------
+--SELECT A.SCHEDULE_ID, A.SCENARIO_ID, A.TYPE_CD, B.BD_YN
+--     --, A.BIN_X_CNT, A.BIN_Y_CNT
+--FROM   SCHEDULE A
+--     , SCHEDULE_TYPE_CD B
+--WHERE  1=1
+--AND    A.TYPE_CD = B.TYPE_CD
+--AND    A.PROCESS_CD = '20001'
+--AND   (NVL(A.RU_CNT,0) = 0 OR NVL(A.BIN_X_CNT,0) = 0 OR NVL(A.BIN_Y_CNT,0) = 0)
+--AND    B.USE_YN = 'Y'
+--UNION
+--SELECT A.SCHEDULE_ID, A.SCENARIO_ID, A.TYPE_CD, A.BD_YN
+--FROM  (SELECT A.SCHEDULE_ID, A.SCENARIO_ID, A.TYPE_CD, B.BD_YN
+--            --, A.BIN_X_CNT, A.BIN_Y_CNT
+--       FROM   SCHEDULE A
+--            , SCHEDULE_TYPE_CD B
+--       WHERE  1=1
+--       AND    A.TYPE_CD = B.TYPE_CD
+--       AND    A.PROCESS_CD = '20001'
+--       AND    B.USE_YN = 'Y'
+--       ) A
+--       LEFT JOIN SCHEDULE_EXT B
+--           ON A.SCHEDULE_ID = B.SCHEDULE_ID
+--WHERE  1=1
+--AND    B.SCHEDULE_ID IS NULL
+-----------------------------------------------
 SELECT A.SCHEDULE_ID, A.SCENARIO_ID, A.TYPE_CD, B.BD_YN
      --, A.BIN_X_CNT, A.BIN_Y_CNT
 FROM   SCHEDULE A
      , SCHEDULE_TYPE_CD B
 WHERE  1=1
 AND    A.TYPE_CD = B.TYPE_CD
-AND    A.PROCESS_CD = '20001'
-AND   (NVL(A.RU_CNT,0) = 0 OR NVL(A.BIN_X_CNT,0) = 0 OR NVL(A.BIN_Y_CNT,0) = 0)
-AND    B.USE_YN = 'Y'
-UNION
-SELECT A.SCHEDULE_ID, A.SCENARIO_ID, A.TYPE_CD, A.BD_YN
-FROM  (SELECT A.SCHEDULE_ID, A.SCENARIO_ID, A.TYPE_CD, B.BD_YN
-            --, A.BIN_X_CNT, A.BIN_Y_CNT
-       FROM   SCHEDULE A
-            , SCHEDULE_TYPE_CD B
-       WHERE  1=1
-       AND    A.TYPE_CD = B.TYPE_CD
-       AND    A.PROCESS_CD = '20001'
-       AND    B.USE_YN = 'Y'
-       ) A
-       LEFT JOIN SCHEDULE_EXT B
-           ON A.SCHEDULE_ID = B.SCHEDULE_ID
-WHERE  1=1
-AND    B.SCHEDULE_ID IS NULL
---SELECT A.SCHEDULE_ID, A.SCENARIO_ID
---     --, A.BIN_X_CNT, A.BIN_Y_CNT
---FROM   SCHEDULE A
---WHERE  1=1
---AND    A.TYPE_CD IN (SELECT TYPE_CD FROM SCHEDULE_TYPE_CD WHERE USE_YN = 'Y')
-----AND    A.PROCESS_CD = '20001'
---AND   (NVL(A.RU_CNT,0) = 0 OR NVL(A.BIN_X_CNT,0) = 0 OR NVL(A.BIN_Y_CNT,0) = 0)
---UNION
---SELECT A.SCHEDULE_ID, A.SCENARIO_ID
---     --, A.BIN_X_CNT, A.BIN_Y_CNT
---FROM   SCHEDULE A
---       LEFT JOIN SCHEDULE_EXT B
---           ON A.SCHEDULE_ID = B.SCHEDULE_ID
---WHERE  1=1
---AND    A.TYPE_CD IN (SELECT TYPE_CD FROM SCHEDULE_TYPE_CD WHERE USE_YN = 'Y')
-----AND    A.PROCESS_CD = '20001'
---AND    B.SCHEDULE_ID IS NULL
+AND    A.SCHEDULE_ID IN (8460178,8460179,8460062,8460063)
 ), TEMP02 AS (
 -------------------
 -- 시나리오 정보 조회

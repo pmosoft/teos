@@ -5,7 +5,7 @@ import org.apache.spark.sql.types.StructField
 import org.apache.spark.sql.types.StringType
 import org.apache.spark.sql.types.IntegerType
 
-object I_SCENARIO_NR_ANTENNA {  
+object SCENARIO_NR_ANTENNA {  
 final val schema: StructType = StructType(Array(
  StructField("SCENARIO_ID"                   ,IntegerType)
 ,StructField("ANTENA_SEQ"                    ,IntegerType)

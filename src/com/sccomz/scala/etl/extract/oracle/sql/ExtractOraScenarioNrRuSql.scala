@@ -23,7 +23,7 @@ SELECT
        XPOSITION                                   ||'|'||
        YPOSITION                                   ||'|'||
        NVL(HEIGHT,0)                               ||'|'||
-       SITE_ADDR                                   ||'|'||
+       TRIM(SITE_ADDR)                             ||'|'||
        TYPE                                        ||'|'||
        STATUS                                      ||'|'||
        SISUL_CD                                    ||'|'||
@@ -104,7 +104,7 @@ FROM   SCENARIO T_SCENARIO
             , MAX(REPEATERPWRRATIO) AS REPEATERPWRRATIO
             , MAX(RU_SEQ) AS RU_SEQ
        FROM   RU
-       WHERE  SCENARIO_ID IN (SELECT SCENARIO_ID FROM SCHEDULE WHERE SCHEDULE_ID = ${scheduleId}
+       WHERE  SCENARIO_ID IN (SELECT SCENARIO_ID FROM SCHEDULE WHERE SCHEDULE_ID = ${scheduleId})
        GROUP BY SCENARIO_ID, ENB_ID, PCI, PCI_PORT, RU_ID, SECTOR_ORD
        ) T_RU
 WHERE  T_DU.SCENARIO_ID       = T_SCENARIO.SCENARIO_ID
@@ -117,7 +117,7 @@ AND    T_RU.PCI_PORT          = T_SITE.PCI_PORT
 AND    T_RU.RU_ID             = T_SITE.RU_ID
 AND    T_SITE.TYPE            IN ('RU', 'RU_N')
 AND    T_SITE.STATUS          = 1
-AND    T_SCENARIO.SCENARIO_ID IN (SELECT SCENARIO_ID FROM SCHEDULE WHERE SCHEDULE_ID = ${scheduleId}
+AND    T_SCENARIO.SCENARIO_ID IN (SELECT SCENARIO_ID FROM SCHEDULE WHERE SCHEDULE_ID = ${scheduleId})
 ORDER BY T_RU.ENB_ID, T_RU.PCI, T_RU.PCI_PORT, T_RU.RU_ID
 )
 """

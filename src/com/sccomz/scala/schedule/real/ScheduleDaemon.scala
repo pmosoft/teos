@@ -22,7 +22,8 @@ object ScheduleDaemon {
   var qry = "";
 
   def main(args: Array[String]): Unit = {
-    execute();
+    //execute();
+    updateBinRuInfo();
   }
 
 
