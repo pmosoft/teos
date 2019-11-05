@@ -15,6 +15,7 @@ import java.io.ByteArrayInputStream
 import com.sccomz.scala.etl.extract.oracle.ExtractOraManager
 import com.sccomz.scala.etl.load.LoadPostManager
 import com.sccomz.scala.etl.load.LoadHdfsManager
+import com.amazonaws.services.simpleworkflow.flow.core.TryCatch
 
 /*
 
@@ -43,35 +44,66 @@ object ExecuteJob {
     //execute();
   }
 
-  def execute(scheduleId:String): Unit = {
-    executeEtlOracleToPostgre(scheduleId);
-    executeEtlOracleToHdfs(scheduleId);
-    
-    //var isLoof = true;
-    //var typeStepCd = "01";
-    //while(isLoof) {
-    //  qry = ScheduleDaemonSql.selectSchedule10001(); println(qry);
-    //  rs = stat.executeQuery(qry);rs.next();
-    //  typeStepCd=rs.getString("TYPE_STEP_CD");
-    //  if(typeStepCd=="02") {executePostgreShell();}
-    //  if(typeStepCd=="02") {executeEtlPostgreToHdfs();}
-    //  if(typeStepCd=="03") {executeSparkEngJob();}
-    //  if(typeStepCd=="05") {executeSparkMakeBinFile();}
-    //  if(typeStepCd=="06") {isLoof=false;}
-    //  Thread.sleep(1000*3);
-    //}    
+  def delStepLog(scheduleId:String) = { qry = ExecuteJobSql.deleteScheduleStepAll(scheduleId); println(qry); stat.execute(qry); }
+  def insStepLog(scheduleId:String,typeStepCd:String) = { 
+    var prevTypeStepCd = if(typeStepCd=="01") "00" else if(typeStepCd=="02") "01" else if(typeStepCd=="03") "02" else if(typeStepCd=="04") "03" else if(typeStepCd=="05") "04" else if(typeStepCd=="06") "05" else if(typeStepCd=="07") "06" else if(typeStepCd=="08") "07" else if(typeStepCd=="09") "08" else if(typeStepCd=="10") "09" else "00"
+    qry = ExecuteJobSql.insertScheduleStep(scheduleId, typeStepCd); println(qry); stat.execute(qry);
+    qry = ExecuteJobSql.updateScheduleStep(scheduleId, prevTypeStepCd, "정상"); println(qry); stat.execute(qry);
+  }
+
+  def updStepErrLog(scheduleId:String,typeStepCd:String) = { 
+    qry = ExecuteJobSql.updateScheduleStep(scheduleId, typeStepCd, "오류"); println(qry); stat.execute(qry);
   }
   
-  def executeEtlOracleToPostgre(scheduleId:String): Unit = {
-    ExtractOraManager.extractOracleToPostgreIns(scheduleId);
-    LoadPostManager.oracleToPostgreAll(scheduleId);
+  
+  def selMaxStep(scheduleId:String) = { 
+    qry = ExecuteJobSql.selectScheduleStep(scheduleId); println(qry); rs = stat.executeQuery(qry); rs.next(); rs.getString("MAX_TYPE_STEP_CD");
   }
-  def executeEtlOracleToHdfs(scheduleId:String): Unit = {
-    ExtractOraManager.extractOracleToHadoopCsv(scheduleId);
-    LoadHdfsManager.oracleToHdfs(scheduleId);
+  
+  
+  def execute(scheduleId:String): Unit = {
+    var typeStepCd = "01";
+    delStepLog(scheduleId);
+
+    typeStepCd="01"; 
+    executeEtlOracleToPostgre(scheduleId,typeStepCd); 
+    executeEtlOracleToHdfs(scheduleId,typeStepCd);
+    typeStepCd="02";   
+    var isLoof = true; 
+    while(isLoof) {
+      typeStepCd=selMaxStep(scheduleId);
+      if(typeStepCd=="02") {executePostgreShell();}
+      if(typeStepCd=="02") {executeEtlPostgreToHdfs();}
+      if(typeStepCd=="03") {executeSparkEngJob();}
+      if(typeStepCd=="05") {executeSparkMakeBinFile();}
+      if(typeStepCd=="06") {isLoof=false;}
+      Thread.sleep(1000*3);
+    }
+  }
+  
+  def executeEtlOracleToPostgre(scheduleId:String, typeStepCd:String): Unit = {
+    insStepLog(scheduleId,typeStepCd);
+    
+    try {
+      ExtractOraManager.extractOracleToPostgreIns(scheduleId);
+      LoadPostManager.oracleToPostgreAll(scheduleId);
+    } catch {
+      case _:Throwable=>updStepErrLog(scheduleId,typeStepCd);
+    }
+  }
+  def executeEtlOracleToHdfs(scheduleId:String, typeStepCd:String): Unit = {
+    insStepLog(scheduleId,typeStepCd);
+
+    try {
+      ExtractOraManager.extractOracleToHadoopCsv(scheduleId);
+      LoadHdfsManager.oracleToHdfs(scheduleId);
+    } catch {
+      case _:Throwable=>updStepErrLog(scheduleId,typeStepCd);
+    }    
   }
 
   def executePostgreShell(): Unit = {
+    
   }
 
   def executeEtlPostgreToHdfs(): Unit = {

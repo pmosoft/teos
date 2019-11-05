@@ -70,7 +70,7 @@ CREATE TABLE SCHEDULE_STEP (
     , END_DT             DATE                NULL -- 종료일시
     , PROCESS_TIME       INT                 NULL -- 소요시간
     , PROCESS_LOG        VARCHAR2(1000)      NULL -- 프로세스로그
-    , REG_DT	           DATE                NULL -- 등록일자
+    , REG_DT	         DATE                NULL -- 등록일자
     , REG_USER_ID        VARCHAR2(13)        NULL -- 등록자
     , MOD_DT             DATE                NULL -- 수정일자
     , MOD_USER_ID        VARCHAR2(13)        NULL -- 수정자
