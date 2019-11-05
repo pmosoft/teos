@@ -26,13 +26,11 @@ import com.sccomz.scala.schema.SCENARIO
 
 /*
 import com.sccomz.scala.etl.load.LoadHdfsManager
-LoadHdfsManager.oracleToHdfs(spark,"8460178");
-LoadHdfsManager.oracleToHdfs(spark,"8460179");
-LoadHdfsManager.oracleToHdfs(spark,"8460062");
-LoadHdfsManager.oracleToHdfs(spark,"8460063");
-
-LoadHdfsManager.oracleToHdfs(spark,"8463189");
-
+LoadHdfsManager.oracleToHdfs("8460178");
+LoadHdfsManager.oracleToHdfs("8460179");
+LoadHdfsManager.oracleToHdfs("8460062");
+LoadHdfsManager.oracleToHdfs("8460063");
+LoadHdfsManager.oracleToHdfs("8463189");
 
  * */
 object LoadHdfsManager {
@@ -46,12 +44,12 @@ object LoadHdfsManager {
     //samToParquetPartition(spark,"RU","8463189");
     //samToParquetPartition(spark,"SITE","8463189");
     
-    oracleToHdfs(spark,"8463189");
+    oracleToHdfs("8463189");
     
     println("LoadHdfsManager end");
   }
 
-  def oracleToHdfs(spark: SparkSession,scheduleId:String) = {
+  def oracleToHdfs(scheduleId:String) = {
     samToParquetPartition(spark,"SCHEDULE",scheduleId);
     samToParquetPartition(spark,"SCENARIO",scheduleId);
     samToParquetPartition(spark,"DU",scheduleId);
