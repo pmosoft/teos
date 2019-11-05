@@ -27,6 +27,7 @@ object MakeBinFile4 {
   val logger: Logger = Logger.getLogger(this.getClass.getName());
   var spark: SparkSession = null;
   spark = SparkSession.builder().appName("MakeBinFile4").getOrCreate();
+  var ruInfo = mutable.Map[String,String]();
   
   def main(args: Array[String]): Unit = {
     executeEngResult("8460062");
@@ -34,8 +35,9 @@ object MakeBinFile4 {
 
   // 2D Bin
   def executeEngResult(scheduleId: String) = {
+    makeResultPath(scheduleId);
     makeEngResult(scheduleId, "LOS");
-//    makeEngResult(scheduleId, "PATHLOSS");
+    makeEngResult(scheduleId, "PATHLOSS");
   }
 
   // 3D Bin
@@ -44,7 +46,6 @@ object MakeBinFile4 {
 
   // 2D 폴더 생성
   def makeEngResult(scheduleId: String, cdNm: String) = {
-    var ruInfo = makeResultPath(scheduleId);
     makeEngSectorResult(scheduleId, cdNm, ruInfo.getOrElse("SECTOR_PATH",""));
 //    makeEngRuResult(scheduleId, cdNm, ruInfo);
   }
@@ -59,7 +60,6 @@ object MakeBinFile4 {
     var rowCnt = 1;
     var count = 1;
 
-    var ruInfo = mutable.Map[String,String]();
     var ruIdList = mutable.MutableList[String]();
     var ruPathList = mutable.MutableList[String]();
 
@@ -80,7 +80,6 @@ object MakeBinFile4 {
         var dir = new File(App.resultPath, DateUtil.getDate("yyyyMMdd") + "/" + rs.getString("RU_PATH"));
         if (!dir.exists()) dir.mkdirs();
         println(dir);
-
       }
       rowCnt = rowCnt + 1;
     };
@@ -143,8 +142,7 @@ object MakeBinFile4 {
     	}
     }
 
-
-    logger.info("======================== 파일 Write ========================");
+    logger.info("========================= 파일 Write =========================");
     //---------------------------------------------------------------------------------------------------------
     // 파일 Write
     //---------------------------------------------------------------------------------------------------------
@@ -155,7 +153,7 @@ object MakeBinFile4 {
         fos.write(bin(x)(y).value);
       }
     }
-    logger.info("======================= Bin 생성 완료 =======================");
+    logger.info("======================== Bin 생성 완료 ========================");
     if (fos != null) fos.close();
   }
 
@@ -166,6 +164,7 @@ object MakeBinFile4 {
     for(ruId <- ruInfo) {
       //println(ruId.get(0));
       if(ruId._1 != "SECTOR_PATH") {
+        logger.info("========================= Value 세팅 =========================");
         //---------------------------------------------------------------------------------------------------------
         // Value 세팅
         //---------------------------------------------------------------------------------------------------------
@@ -182,7 +181,7 @@ object MakeBinFile4 {
            //bin(x_point)(y_point).value = ByteUtil.intToByteArray(los);
         }
 
-        logger.info("======================== 파일 Write ========================");
+        logger.info("========================= 파일 Write =========================");
         //---------------------------------------------------------------------------------------------------------
         // 파일 Write
         //---------------------------------------------------------------------------------------------------------
@@ -193,7 +192,7 @@ object MakeBinFile4 {
         //    fos.write(bin(x)(y).value);
         //  }
         //}
-        logger.info("======================= Bin 생성 완료 =======================");
+        logger.info("======================== Bin 생성 완료 ========================");
         if (fos != null) fos.close();
       }
     }
