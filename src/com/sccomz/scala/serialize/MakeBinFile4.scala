@@ -199,10 +199,10 @@ object MakeBinFile4 {
         // Value 세팅
         //---------------------------------------------------------------------------------------------------------
         
-        var tabNm = "";
-             if(cdNm=="LOS"     ) { tabNm = "RESULT_NR_2D_LOS_RU"      ; }
-        else if(cdNm=="PATHLOSS") { tabNm = "RESULT_NR_2D_PATHLOSS_RU" ; }
-        var qry2 = MakeBinFileSql4.selectRuResult(scheduleId, tabNm, ruId._1);
+        var tabNm = ""; var colNm = "";
+             if(cdNm=="LOS"     ) { tabNm = "RESULT_NR_2D_LOS_RU"      ; colNm = "VALUE";}
+        else if(cdNm=="PATHLOSS") { tabNm = "RESULT_NR_2D_PATHLOSS_RU" ; colNm = "LOS";}
+        var qry2 = MakeBinFileSql4.selectRuResult(scheduleId, tabNm, colNm, ruId._1);
         println(qry2);
         val sqlDf2 = spark.sql(qry2);
         
@@ -217,8 +217,8 @@ object MakeBinFile4 {
           sqlDf2.foreach { row =>
         	var x_point = row.mkString(",").split(",")(0).toInt;
         	var y_point = row.mkString(",").split(",")(1).toInt;
-        	var value = row.mkString(",").split(",")(2).toFloat;
-        	bin(x_point)(y_point).value = ByteUtil.floatToByteArray(value);
+        	var los = row.mkString(",").split(",")(2).toFloat;
+        	bin(x_point)(y_point).value = ByteUtil.floatToByteArray(los);
         	}
         }
 
