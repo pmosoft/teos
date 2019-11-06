@@ -4,6 +4,9 @@ SELECT * FROM I_SCENARIO
 SELECT * FROM i_schedule
 ;
 
+SELECT * FROM i_schedule
+
+
 
 
 CREATE EXTERNAL TABLE I_SCENARIO_NR_RU (                                                                                                                                                                                                                                                                                                             
