@@ -30,7 +30,6 @@ ExecuteJob.delStepLog("8460178");
 
 ExecuteJob.executePostgreShell("8460178")
 
-
  */
 
 object ExecuteJob {

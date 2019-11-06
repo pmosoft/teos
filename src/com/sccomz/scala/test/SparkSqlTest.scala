@@ -52,8 +52,41 @@ SELECT A.SCHEDULE_ID,
  ORDER BY X_POINT, Y_POINT
 """).take(100).foreach(println);
 
+spark.sql(s"""
+with AREA as
+(
+select a.scenario_id, b.schedule_id,
+       a.tm_startx div a.resolution * a.resolution as tm_startx,
+       a.tm_starty div a.resolution * a.resolution as tm_starty,
+       a.tm_endx div a.resolution * a.resolution as tm_endx,
+       a.tm_endy div a.resolution * a.resolution as tm_endy,
+       a.resolution
+  from SCENARIO a, SCHEDULE b
+ where b.schedule_id = 8463189
+   and a.scenario_id = b.scenario_id
+)
+select max(AREA.scenario_id) as scenario_id,
+       RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution as rx_tm_xpos,
+       RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution as rx_tm_ypos,
+       (RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution - AREA.tm_startx) / AREA.resolution as x_point,
+       (RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution - AREA.tm_starty) / AREA.resolution as y_point,
+       case when sum(case when RSLT.value = 1 then 1 else 0 end) > 0 then 1 else 0 end as los,
+--       case when sum(case when upper(RSLT.is_bld) = 'T' THEN 1 else 0 end) > 0 then 1 else 0 end as los, -- PLB Check Only
+       max(AREA.schedule_id) as schedule_id
+  from AREA, RESULT_NR_2D_LOS_RU RSLT
+ where RSLT.schedule_id = AREA.schedule_id
+   and AREA.tm_startx <= RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution and RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution < AREA.tm_endx
+   and AREA.tm_starty <= RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution and RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution < AREA.tm_endy
+  group by RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution, RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution,
+           (RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution - AREA.tm_startx) / AREA.resolution, (RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution - AREA.tm_starty) / AREA.resolution
+""").take(100).foreach(println);
+
+
 }
-  
+
+
+
+
   
 }
 
