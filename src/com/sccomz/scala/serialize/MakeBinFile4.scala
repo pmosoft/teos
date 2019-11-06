@@ -38,6 +38,9 @@ object MakeBinFile4 {
     makeResultPath(scheduleId);
     makeEngResult(scheduleId, "LOS");
     makeEngResult(scheduleId, "PATHLOSS");
+    makeEngResult(scheduleId, "BESTSERVER");
+    makeEngResult(scheduleId, "RSRP");
+    makeEngResult(scheduleId, "RSSI");
   }
 
   // 3D Bin
@@ -92,7 +95,7 @@ object MakeBinFile4 {
 
     logger.info("========================== 초기화 ===========================");
     var qry2= MakeBinFileSql4.selectBinCnt(scheduleId);
-    var sqlDf = spark.sql("SELECT BIN_X_CNT, BIN_Y_CNT FROM SCHEDULE A WHERE A.SCHEDULE_ID = 8460062");
+    var sqlDf = spark.sql(qry2);
     
     for (row <- sqlDf.collect) {
        x_bin_cnt = row.mkString(",").split(",")(0).toInt;
@@ -101,20 +104,19 @@ object MakeBinFile4 {
 
     val bin = Array.ofDim[Byte4](x_bin_cnt, y_bin_cnt);
     
-    if(cdNm == "LOS") {      
+    if(cdNm == "PATHLOSS") {
     	for (y <- 0 until y_bin_cnt by 1) {
     		for (x <- 0 until x_bin_cnt by 1) {
-    			bin(x)(y) = new Byte4(ByteUtil.intZero());
+    			bin(x)(y) = new Byte4(ByteUtil.floatMax());
     		}
     	}
     } else {
       for (y <- 0 until y_bin_cnt by 1) {
     		for (x <- 0 until x_bin_cnt by 1) {
-    			bin(x)(y) = new Byte4(ByteUtil.floatMax());
+    		  bin(x)(y) = new Byte4(ByteUtil.intZero());
     		}
     	}
     }
-
 
     logger.info("========================= Value 세팅 =========================");
     //---------------------------------------------------------------------------------------------------------
@@ -123,40 +125,64 @@ object MakeBinFile4 {
     var tabNm = "";  var colNm = "";
          if(cdNm=="LOS"     ) { tabNm = "RESULT_NR_2D_LOS"      ; colNm = "LOS"     ;}
     else if(cdNm=="PATHLOSS") { tabNm = "RESULT_NR_2D_PATHLOSS" ; colNm = "PATHLOSS";}
+    else if(cdNm=="BEST_SERVER") { tabNm = "RESULT_NR_2D_BESTSERVER" ; colNm = "RU_SEQ";}
+    else if(cdNm=="RSRP") { tabNm = "RESULT_NR_2D_RSRP" ; colNm = "RSRP";}
+    else if(cdNm=="RSSI") { tabNm = "RESULT_NR_2D_RSSI" ; colNm = "RSSI";}
     qry2= MakeBinFileSql4.selectSectorResult(scheduleId, tabNm, colNm);
     sqlDf = spark.sql(qry2);
     
     if(colNm == "LOS") {
-    	sqlDf.foreach { row =>
+    	for (row <- sqlDf.collect) {
     	var x_point = row.mkString(",").split(",")(0).toInt;
     	var y_point = row.mkString(",").split(",")(1).toInt;
     	var los = row.mkString(",").split(",")(2).toInt;
     	bin(x_point)(y_point).value = ByteUtil.intToByteArray(los);
     	}      
+    } else if(colNm == "PATHLOSS") {
+      for (row <- sqlDf.collect) {
+        var x_point = row.mkString(",").split(",")(0).toInt;
+        var y_point = row.mkString(",").split(",")(1).toInt;
+        var pathloss = row.mkString(",").split(",")(2).toFloat;
+        bin(x_point)(y_point).value = ByteUtil.floatToByteArray(pathloss);
+      }
+    } else if(colNm == "RU_SEQ") {
+      for (row <- sqlDf.collect) {
+        var x_point = row.mkString(",").split(",")(0).toInt;
+        var y_point = row.mkString(",").split(",")(1).toInt;
+        var bestServer = row.mkString(",").split(",")(2).toInt;
+        bin(x_point)(y_point).value = ByteUtil.intToByteArray(bestServer);
+      }
+    } else if(colNm == "RSRP") {
+      for (row <- sqlDf.collect) {
+        var x_point = row.mkString(",").split(",")(0).toInt;
+        var y_point = row.mkString(",").split(",")(1).toInt;
+        var rsrp = row.mkString(",").split(",")(2).toFloat;
+        bin(x_point)(y_point).value = ByteUtil.floatToByteArray(rsrp);
+      }
     } else {
-      sqlDf.foreach { row =>
-    	var x_point = row.mkString(",").split(",")(0).toInt;
-    	var y_point = row.mkString(",").split(",")(1).toInt;
-    	var pathloss = row.mkString(",").split(",")(2).toFloat;
-    	bin(x_point)(y_point).value = ByteUtil.floatToByteArray(pathloss);
-    	}
+      for (row <- sqlDf.collect) {
+        var x_point = row.mkString(",").split(",")(0).toInt;
+        var y_point = row.mkString(",").split(",")(1).toInt;
+        var rssi = row.mkString(",").split(",")(2).toFloat;
+        bin(x_point)(y_point).value = ByteUtil.floatToByteArray(rssi);
+      }
     }
 
     logger.info("========================= 파일 Write =========================");
     //---------------------------------------------------------------------------------------------------------
     // 파일 Write
     //---------------------------------------------------------------------------------------------------------
-    var file = new File(App.resultPath, DateUtil.getDate("yyyyMMdd") + "/" +sectorPath+ "/" + colNm+".bin");
+    var file = new File(App.resultPath, DateUtil.getDate("yyyyMMdd") + "/" +sectorPath+ "/" + cdNm+".bin");
     var fos = new FileOutputStream(file);
     for (y <- 0 until y_bin_cnt by 1) {
       for (x <- 0 until x_bin_cnt by 1) {
         fos.write(bin(x)(y).value);
       }
     }
+    
     logger.info("======================== Bin 생성 완료 ========================");
     if (fos != null) fos.close();
   }
-
 
   // 2D RU별 결과
   def makeEngRuResult(scheduleId: String, cdNm: String, ruInfo : mutable.Map[String,String]) = {
@@ -207,14 +233,14 @@ object MakeBinFile4 {
         val sqlDf2 = spark.sql(qry2);
         
         if(cdNm == "LOS") {
-        	sqlDf2.foreach { row =>
+        	for (row <- sqlDf2.collect) {
         	var x_point = row.mkString(",").split(",")(0).toInt;
         	var y_point = row.mkString(",").split(",")(1).toInt;
         	var value = row.mkString(",").split(",")(2).toInt;
         	bin(x_point)(y_point).value = ByteUtil.intToByteArray(value);
         	}
         } else {
-          sqlDf2.foreach { row =>
+          for (row <- sqlDf2.collect) {
         	var x_point = row.mkString(",").split(",")(0).toInt;
         	var y_point = row.mkString(",").split(",")(1).toInt;
         	var los = row.mkString(",").split(",")(2).toFloat;

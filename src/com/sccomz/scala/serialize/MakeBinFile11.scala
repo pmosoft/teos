@@ -53,18 +53,14 @@ object MakeBinFile11 {
     // 초기화
     //---------------------------------------------------------------------------------------------------------
     // Spark SQL 적용
-//    var sql = "SELECT A.SCHEDULE_ID, A.SCENARIO_ID, A.REG_DT, A.PROCESS_MSG, B.SCENARIO_NM, A.BIN_X_CNT, A.BIN_Y_CNT, A.SCENARIO_PATH";
-//        sql += " FROM SCHEDULE A, SCENARIO B WHERE A.SCENARIO_ID = B.SCENARIO_ID AND A.SCHEDULE_ID = 8460970 AND A.SCENARIO_ID = 5108566";
-//        sql += " ORDER BY REG_DT DESC";
-//    val df = spark.sql(sql);
-//    var x_bin_cnt = 0; var y_bin_cnt = 0;
-//    df.foreach { row =>
-//      x_bin_cnt = row.mkString(",").split(",")(6).toInt;
-//      y_bin_cnt = row.mkString(",").split(",")(7).toInt;
-//    }
+    var sql = "SELECT BIN_X_CNT, BIN_Y_CNT FROM SCHEDULE A WHERE A.SCHEDULE_ID = 8460062";
+    val df = spark.sql(sql);
+    var x_bin_cnt = 0; var y_bin_cnt = 0;
     
-    // 임시로 값 적용
-    var x_bin_cnt = 503; var y_bin_cnt = 573;
+    for (row <- df.collect) {      
+    	x_bin_cnt = row.mkString(",").split(",")(0).toInt;
+    	y_bin_cnt = row.mkString(",").split(",")(1).toInt;
+    }
     
     val bin = Array.ofDim[Byte4](x_bin_cnt, y_bin_cnt);
 
@@ -78,21 +74,21 @@ object MakeBinFile11 {
     //---------------------------------------------------------------------------------------------------------
     // Value 세팅
     //---------------------------------------------------------------------------------------------------------
-    var qry= "SELECT DISTINCT X_POINT, Y_POINT, LOS FROM I_RESULT_NR_2D_LOS WHERE scenario_id = 5108566 ORDER BY X_POINT, Y_POINT";    
+    var qry= "SELECT DISTINCT X_POINT, Y_POINT, RU_SEQ FROM RESULT_NR_2D_BESTSERVER WHERE scenario_id = 5104573 ORDER BY X_POINT, Y_POINT";
     val sqlDf = spark.sql(qry);
     
-    sqlDf.foreach { row =>
+    for (row <- sqlDf.collect) {
        var x_point = row.mkString(",").split(",")(0).toInt;
        var y_point = row.mkString(",").split(",")(1).toInt;
-       var los = row.mkString(",").split(",")(2).toInt;
-       bin(x_point)(y_point).value = ByteUtil.intToByteArray(los);
+       var ru_seq = row.mkString(",").split(",")(2).toInt;
+       bin(x_point)(y_point).value = ByteUtil.intToByteArray(ru_seq);
     }
     
     logger.info("======================== 파일 Write ========================");
     //---------------------------------------------------------------------------------------------------------
     // 파일 Write
     //---------------------------------------------------------------------------------------------------------
-    var file = new File(App.resultPath, "losTest.bin");
+    var file = new File(App.resultPath, "bestServerTest.bin");
     var fos = new FileOutputStream(file);
     for (y <- 0 until y_bin_cnt by 1) {
       for (x <- 0 until x_bin_cnt by 1) {
