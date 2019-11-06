@@ -28,28 +28,26 @@ def execute(scheduleId:String) = {
   println(objNm + " 시작");
   //------------------------------------------------------
   spark = SparkSession.builder().appName("Los").getOrCreate();
-  loadTables(); 
   excuteSql(scheduleId);
-}
-
-def loadTables() = { 
-  //LoadTable.lodTable(spark,"SCHEDULE",scheduleId,"*","",true)
-  //LoadTable.lodTable(spark,"SCENARIO",scheduleId,"*","",true)
 }
 
 def excuteSql(scheduleId:String) = {
 
-var scheduleId = "8460062"; 
+//var scheduleId = "8460062"; 
   
-//--------------------------------------
-    println("target 파일 삭제");
-//--------------------------------------
+//---------------------------------------------------
+    println("partiton 파일 삭제 및 drop table partition");
+//---------------------------------------------------
 val conf = new Configuration()
 val fs = FileSystem.get(conf)
-
-fs.delete(new Path(s"""/user/hive/warehouse/result_nr_2d_los/schedule_id=${scheduleId}"""),true)
+fs.delete(new Path(s"""/teos/warehouse/RESULT_NR_2D_LOS/schedule_id=${scheduleId}"""),true)
 spark.sql(s"""ALTER TABLE I_RESULT_NR_2D_LOS DROP IF EXISTS PARTITION (SCHEDULE_ID=${scheduleId})""")    
-    
+
+
+//---------------------------------------------------
+    println("insert partition table");
+//---------------------------------------------------
+
 var qry = ""; qry = s"""
 insert into table I_RESULT_NR_2D_LOS partition (schedule_id=${scheduleId})
 select max(AREA.scenario_id) as scenario_id,
@@ -66,14 +64,12 @@ select max(AREA.scenario_id) as scenario_id,
                a.tm_endy div a.resolution * a.resolution as tm_endy,
                a.resolution
           from SCENARIO a, SCHEDULE b
-         where b.schedule_id = 8460062  
+         where b.schedule_id = ${scheduleId}  
            and a.scenario_id = b.scenario_id
         ) AREA, 
        (select 5104573 as scenario_id, 8460062 as schedule_id, '' as ru_id,
                rx_tm_xpos, rx_tm_ypos, --value
                1 value
- --from PATHLOSSPLB_temp               
- --            from RESULT_NR_2D_LOS_RU_temp_8460062_1012242295
    from RESULT_NR_2D_LOS_RU_temp_8460062
          where (is_bld = 't' or is_bld = 'T')
        ) RSLT
