@@ -22,9 +22,12 @@ import java.io.File
 /*
 
 import com.sccomz.scala.schedule.real.ExecuteJob
+ExecuteJob.execute("8460178");
+
+ExecuteJob.delStepLog("8460178");
+
 ExecuteJob.executePostgreShell("8460178")
 
-ExecuteJob.execute("8460178");
 
  */
 
@@ -69,25 +72,23 @@ object ExecuteJob {
     var typeStepCd = "01";
     delStepLog(scheduleId);
 
-    typeStepCd="01"; 
+    typeStepCd="01"; insStepLog(scheduleId,typeStepCd);
     executeEtlOracleToPostgre(scheduleId,typeStepCd); 
     executeEtlOracleToHdfs(scheduleId,typeStepCd);
-    typeStepCd="02";   
+    typeStepCd="02"; insStepLog(scheduleId,typeStepCd);   
     var isLoof = true; 
     while(isLoof) {
-      typeStepCd=selMaxStep(scheduleId);
+      typeStepCd=selMaxStep(scheduleId); println("typeStepCd="+typeStepCd);
       if(typeStepCd=="02") {executePostgreShell(scheduleId);}
-      if(typeStepCd=="02") {executeEtlPostgreToHdfs(scheduleId);}
-      if(typeStepCd=="03") {executeSparkEngJob(scheduleId);}
-      if(typeStepCd=="05") {executeSparkMakeBinFile(scheduleId);}
-      if(typeStepCd=="06") {isLoof=false;}
+      if(typeStepCd=="02") {executeEtlPostgreToHdfs(scheduleId);insStepLog(scheduleId,"03");}
+      if(typeStepCd=="03") {executeSparkEngJob(scheduleId)     ;insStepLog(scheduleId,"04");}
+      if(typeStepCd=="04") {executeSparkMakeBinFile(scheduleId);insStepLog(scheduleId,"05");}
+      if(typeStepCd=="05") {isLoof=false;}
       Thread.sleep(1000*3);
     }
   }
   
   def executeEtlOracleToPostgre(scheduleId:String, typeStepCd:String): Unit = {
-    insStepLog(scheduleId,typeStepCd);
-    
     try {
       ExtractOraManager.extractOracleToPostgreIns(scheduleId);
       LoadPostManager.oracleToPostgreAll(scheduleId);
@@ -96,7 +97,6 @@ object ExecuteJob {
     }
   }
   def executeEtlOracleToHdfs(scheduleId:String, typeStepCd:String): Unit = {
-    insStepLog(scheduleId,typeStepCd);
 
     try {
       ExtractOraManager.extractOracleToHadoopCsv(scheduleId);
@@ -124,6 +124,8 @@ object ExecuteJob {
   }
 
   def executeEtlPostgreToHdfs(scheduleId:String): Unit = {
+    
+    
   }
   
   def executeSparkEngJob(scheduleId:String): Unit = {
