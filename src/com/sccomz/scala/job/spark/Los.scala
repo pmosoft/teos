@@ -27,17 +27,16 @@ object Los {
 
 var spark: SparkSession = null
 var objNm = "LOS"
-var scheduleId = ""
-//var scheduleId = "8460062"
+val conf = new Configuration()
+val fs = FileSystem.get(conf)
 
 def execute(scheduleId:String) = {
   //------------------------------------------------------
   println(objNm + " 시작");
   //------------------------------------------------------
-  this.scheduleId = scheduleId;
-  
   spark = SparkSession.builder().appName("Los").getOrCreate();
-  loadTables(); excuteSql(); saveToParqeut();
+  loadTables(); 
+  excuteSql(scheduleId);
 }
 
 def loadTables() = { 
@@ -45,21 +44,14 @@ def loadTables() = {
   //LoadTable.lodTable(spark,"SCENARIO",scheduleId,"*","",true)
 }
 
-def excuteSql() = {
-    var scheduleId = "8460062"
-    //--------------------------------------
-        println("HDFS 세션 생성");
-    //--------------------------------------
-    //schema = SCENARIO.schema;
-    val conf = new Configuration()
-    val fs = FileSystem.get(conf)
-
-    //--------------------------------------
-        println("target 파일 삭제");
-    //--------------------------------------
-    fs.delete(new Path(s"""/user/hive/warehouse/result_nr_2d_los/schedule_id=${scheduleId}"""),true)
-
-    spark.sql(s"""ALTER TABLE I_RESULT_NR_2D_LOS DROP IF EXISTS PARTITION (SCHEDULE_ID=${scheduleId})""")    
+def excuteSql(scheduleId:String) = {
+  //var scheduleId = "8460062"
+  
+  //--------------------------------------
+      println("target 파일 삭제");
+  //--------------------------------------
+  fs.delete(new Path(s"""/user/hive/warehouse/result_nr_2d_los/schedule_id=${scheduleId}"""),true)
+  spark.sql(s"""ALTER TABLE I_RESULT_NR_2D_LOS DROP IF EXISTS PARTITION (SCHEDULE_ID=${scheduleId})""")    
     
 var qry = ""
 qry = s"""
@@ -95,15 +87,6 @@ select max(AREA.scenario_id) as scenario_id,
   group by RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution, RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution,
            (RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution - AREA.tm_startx) / AREA.resolution, (RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution - AREA.tm_starty) / AREA.resolution
 """
-spark.sql(qry).take(100).foreach(println);
-
-spark.sql("select * from I_SCENARIO").take(100).foreach(println);
-
-spark.sql("INSERT INTO I_RESULT_NR_2D_LOS PARTITION (SCHEDULE_ID=8460970) SELECT SCENARIO_ID, RX_TM_XPOS , RX_TM_YPOS , X_POINT    , Y_POINT    , LOS FROM RESULT_NR_2D_LOS WHERE scenario_id = 8460970").take(100).foreach(println);
-
-spark.sql("SELECT * FROM I_RESULT_NR_2D_LOS").take(100).foreach(println);
-
-spark.sql("SELECT DISTINCT SCHEDULE_ID, SCENARIO_ID FROM RESULT_NR_2D_LOS").take(100).foreach(println);
 
 //--------------------------------------
 println(qry);

@@ -107,7 +107,7 @@ object ExtractLoadPostManager {
         ruId  = ext._1; clusterName = ext._2;
         insertJobDisExt(scheduleId,ruId,"4")
         extractPostToHadoopCsv(scheduleId,ruId,clusterName);
-        //LoadHdfsLosManager.samToParquetPartition("LOS_ENG_RESULT", scheduleId, ruId);
+        LoadHdfsLosManager.samToParquetPartition("LOS_ENG_RESULT", scheduleId, ruId);
         updateJobDisExt(scheduleId,ruId,"5")
     }
 

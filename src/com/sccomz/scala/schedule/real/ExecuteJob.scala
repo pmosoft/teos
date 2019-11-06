@@ -18,6 +18,8 @@ import com.sccomz.scala.etl.load.LoadPostManager
 import com.sccomz.scala.etl.load.LoadHdfsManager
 import com.amazonaws.services.simpleworkflow.flow.core.TryCatch
 import java.io.File
+import com.sccomz.scala.etl.extract.post.ExtractLoadPostManager
+import com.sccomz.scala.job.spark.Los
 
 /*
 
@@ -124,10 +126,11 @@ object ExecuteJob {
   }
 
   def executeEtlPostgreToHdfs(scheduleId:String): Unit = {
-    
+    //ExtractLoadPostManager.monitorJobDis(scheduleId);  
   }
   
   def executeSparkEngJob(scheduleId:String): Unit = {
+    Los.execute(scheduleId);
   }
   
   def executeSparkMakeBinFile(scheduleId:String): Unit = {
