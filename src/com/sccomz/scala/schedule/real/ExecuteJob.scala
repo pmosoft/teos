@@ -125,7 +125,6 @@ object ExecuteJob {
 
   def executeEtlPostgreToHdfs(scheduleId:String): Unit = {
     
-    
   }
   
   def executeSparkEngJob(scheduleId:String): Unit = {
