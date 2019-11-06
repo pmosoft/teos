@@ -4,14 +4,16 @@ import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.ResultSet
 import java.sql.Statement
+import java.lang.Runtime
+import java.io.ByteArrayInputStream
 
 import scala.collection.mutable.Map
 import scala.collection.mutable.HashMap
 import scala.collection._
-import com.sccomz.scala.comm.App
-import java.lang.Runtime
 import scala.sys.process._
-import java.io.ByteArrayInputStream
+
+import com.sccomz.scala.comm.App
+
 
 object ScheduleDaemon {
 

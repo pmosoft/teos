@@ -4,22 +4,26 @@ import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.ResultSet
 import java.sql.Statement
+import java.lang.Runtime
+import java.io.ByteArrayInputStream
 
 import scala.collection.mutable.Map
 import scala.collection.mutable.HashMap
 import scala.collection._
-import com.sccomz.scala.comm.App
-import java.lang.Runtime
 import scala.sys.process._
-import java.io.ByteArrayInputStream
+
+import com.sccomz.scala.comm.App
 import com.sccomz.scala.etl.extract.oracle.ExtractOraManager
 import com.sccomz.scala.etl.load.LoadPostManager
 import com.sccomz.scala.etl.load.LoadHdfsManager
 import com.amazonaws.services.simpleworkflow.flow.core.TryCatch
+import java.io.File
 
 /*
 
 import com.sccomz.scala.schedule.real.ExecuteJob
+ExecuteJob.executePostgreShell("8460178")
+
 ExecuteJob.execute("8460178");
 
  */
@@ -72,10 +76,10 @@ object ExecuteJob {
     var isLoof = true; 
     while(isLoof) {
       typeStepCd=selMaxStep(scheduleId);
-      if(typeStepCd=="02") {executePostgreShell();}
-      if(typeStepCd=="02") {executeEtlPostgreToHdfs();}
-      if(typeStepCd=="03") {executeSparkEngJob();}
-      if(typeStepCd=="05") {executeSparkMakeBinFile();}
+      if(typeStepCd=="02") {executePostgreShell(scheduleId);}
+      if(typeStepCd=="02") {executeEtlPostgreToHdfs(scheduleId);}
+      if(typeStepCd=="03") {executeSparkEngJob(scheduleId);}
+      if(typeStepCd=="05") {executeSparkMakeBinFile(scheduleId);}
       if(typeStepCd=="06") {isLoof=false;}
       Thread.sleep(1000*3);
     }
@@ -102,16 +106,32 @@ object ExecuteJob {
     }    
   }
 
-  def executePostgreShell(): Unit = {
+  def executePostgreShell(scheduleId:String): Unit = {
+    println("executePostgreShell start");
+    //var scheduleId = "8460062";
+    var res = Process(s"sh /home/icpap/sh/execPostgre.sh ${scheduleId}").lineStream;
+    
+    //var logFile = new File(s"sh /home/icpap/sh/${scheduleId}_end_log.txt");
+    var logFile = new File(s"/home/icpap/sh/${scheduleId}_end_log.txt");
+    
+    while(!logFile.exists()){
+      Thread.sleep(1000*1);
+      println("ing...");
+    }
+
+    println("executePostgreShell end");
     
   }
 
-  def executeEtlPostgreToHdfs(): Unit = {
+  def executeEtlPostgreToHdfs(scheduleId:String): Unit = {
   }
-  def executeSparkEngJob(): Unit = {
+  
+  def executeSparkEngJob(scheduleId:String): Unit = {
   }
-  def executeSparkMakeBinFile(): Unit = {
+  
+  def executeSparkMakeBinFile(scheduleId:String): Unit = {
   }  
+  
   
   //def executePassLoss(scheduleId : String) = { PassLoss.executeReal(scheduleId) }
 
