@@ -16,6 +16,7 @@ import com.sccomz.scala.etl.extract.oracle.sql.ExtractOraScenarioNrRuSql
 import com.sccomz.scala.etl.extract.oracle.sql.ExtractOraScenarioSql
 import com.sccomz.scala.etl.extract.oracle.sql.ExtractOraScheduleSql
 import com.sccomz.scala.etl.extract.oracle.sql.ExtractOraSiteSql
+import com.sccomz.scala.etl.extract.oracle.sql.ExtractOraFabaseSql
 
 /*
 import com.sccomz.scala.etl.extract.oracle.ExtractOraManager
@@ -80,7 +81,6 @@ object ExtractOraManager {
     while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
   }
 
-
   def extractOracleToHadoopCsv(scheduleId:String): Unit = {
 
     var tabNm = ""; var qry = "";
@@ -143,4 +143,18 @@ object ExtractOraManager {
      
   }
 
+  def extractOracleToHadoopCsvBatch(workDt:String): Unit = {
+
+    var tabNm = ""; var qry = "";
+
+    //--------------------------------------
+        tabNm = "FABASE";
+    //--------------------------------------
+    qry = ExtractOraFabaseSql.selectFabaseCsv(); println(qry);
+    rs = stat.executeQuery(qry);
+    var pw = new PrintWriter(new File(App.extJavaPath+"/"+tabNm+"_"+workDt+".dat" ),"UTF-8");
+    while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
+    
+  }  
+  
 }

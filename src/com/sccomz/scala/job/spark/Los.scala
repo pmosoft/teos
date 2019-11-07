@@ -49,6 +49,18 @@ spark.sql(s"""ALTER TABLE I_RESULT_NR_2D_LOS DROP IF EXISTS PARTITION (SCHEDULE_
 //---------------------------------------------------
 
 var qry = ""; qry = s"""
+with AREA as
+(
+select a.scenario_id, b.schedule_id,
+       a.tm_startx div a.resolution * a.resolution as tm_startx,
+       a.tm_starty div a.resolution * a.resolution as tm_starty,
+       a.tm_endx div a.resolution * a.resolution as tm_endx,
+       a.tm_endy div a.resolution * a.resolution as tm_endy,
+       a.resolution
+  from SCENARIO a, SCHEDULE b
+ where b.schedule_id = ${scheduleId}
+   and a.scenario_id = b.scenario_id
+)
 insert into table I_RESULT_NR_2D_LOS partition (schedule_id=${scheduleId})
 select max(AREA.scenario_id) as scenario_id,
        RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution as rx_tm_xpos,
@@ -56,17 +68,7 @@ select max(AREA.scenario_id) as scenario_id,
        (RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution - AREA.tm_startx) / AREA.resolution as x_point,
        (RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution - AREA.tm_starty) / AREA.resolution as y_point,
        case when sum(case when RSLT.value = 1 then 1 else 0 end) > 0 then 1 else 0 end as los
-  from (
-        select a.scenario_id, b.schedule_id,
-               a.tm_startx div a.resolution * a.resolution as tm_startx,
-               a.tm_starty div a.resolution * a.resolution as tm_starty,
-               a.tm_endx div a.resolution * a.resolution as tm_endx,
-               a.tm_endy div a.resolution * a.resolution as tm_endy,
-               a.resolution
-          from SCENARIO a, SCHEDULE b
-         where b.schedule_id = ${scheduleId}  
-           and a.scenario_id = b.scenario_id
-        ) AREA, 
+  from AREA, 
        (select 5104573 as scenario_id, 8460062 as schedule_id, '' as ru_id,
                rx_tm_xpos, rx_tm_ypos, --value
                1 value
@@ -83,6 +85,8 @@ select max(AREA.scenario_id) as scenario_id,
 println(qry);
 //--------------------------------------
 spark.sql(qry).take(100).foreach(println);
+
+
 }
 
 }

@@ -39,10 +39,10 @@ object LoadHdfsManager {
 
   def main(args: Array[String]): Unit = {
     println("LoadHdfsManager start");
-    //samToParquetPartition(spark,"SCHEDULE","8463189");
-    //samToParquetPartition(spark,"DU","8463189");
-    //samToParquetPartition(spark,"RU","8463189");
-    //samToParquetPartition(spark,"SITE","8463189");
+    //toParquetPartition(spark,"local","SCHEDULE","8463189");
+    //toParquetPartition(spark,"local","DU","8463189");
+    //toParquetPartition(spark,"local","RU","8463189");
+    //toParquetPartition(spark,"local","SITE","8463189");
     
     oracleToHdfs("8463189");
     
@@ -50,23 +50,19 @@ object LoadHdfsManager {
   }
 
   def oracleToHdfs(scheduleId:String) = {
-    samToParquetPartition(spark,"SCHEDULE",scheduleId);
-    samToParquetPartition(spark,"SCENARIO",scheduleId);
-    samToParquetPartition(spark,"DU",scheduleId);
-    samToParquetPartition(spark,"RU",scheduleId);
-    samToParquetPartition(spark,"SITE",scheduleId);
-    samToParquetPartition(spark,"SCENARIO_NR_RU",scheduleId);
-    samToParquetPartition(spark,"SCENARIO_NR_ANTENNA",scheduleId);
+    toParquetPartition(spark,"local","SCHEDULE",scheduleId);
+    toParquetPartition(spark,"local","SCENARIO",scheduleId);
+    toParquetPartition(spark,"local","DU",scheduleId);
+    toParquetPartition(spark,"local","RU",scheduleId);
+    toParquetPartition(spark,"local","SITE",scheduleId);
+    toParquetPartition(spark,"local","SCENARIO_NR_RU",scheduleId);
+    toParquetPartition(spark,"local","SCENARIO_NR_ANTENNA",scheduleId);
   }
 
-  def samToParquetPartition(spark: SparkSession,objNm:String,scheduleId:String) = {
-    toParquetPartition(spark,"local",objNm,scheduleId);
+  def oracleToHdfsBatch(workDt:String) = {
+    toParquetPartitionBatch(spark,"local","FABASE",workDt);
   }
-
-  def hdfsToParquetPartition(spark: SparkSession,objNm:String,scheduleId:String) = {
-    toParquetPartition(spark,"hdfs",objNm,scheduleId);
-  }
-
+  
   def toParquetPartition(spark: SparkSession,cd:String,objNm:String,scheduleId:String) = {
     //--------------------------------------
         println("samToParquet 시작");
@@ -133,6 +129,71 @@ object LoadHdfsManager {
     //--------------------------------------
   }
 
+  def toParquetPartitionBatch(spark: SparkSession,cd:String,objNm:String,workDt:String) = {
+    //--------------------------------------
+        println("samToParquet 시작");
+    //--------------------------------------
+    var srcEntityPath = if (cd=="local") App.hdfsLinuxEtlPath else if(cd=="hdfs") App.hdfsEtlPath;
+    var isPartion = if(workDt=="all") false else true;
+/*
+    var objNm = "SCENARIO"
+    var scheduleId = "8459967"
+    var cd = "local"
+    var schema = SCENARIO.schema;
+* * */
+
+    //--------------------------------------
+        println("입출력 변수 세팅");
+    //--------------------------------------
+    var source = if(isPartion) srcEntityPath+"/"+objNm+"_"+workDt+".dat" else srcEntityPath+"/"+objNm+".dat"
+    var target = if(isPartion) App.hdfsWarehousePath+"/"+objNm+"/WORK_DT="+workDt else App.hdfsWarehousePath+"/"+objNm+"/"+objNm
+
+    //--------------------------------------
+        println("스키마 세팅");
+    //--------------------------------------
+    val runtimeMirror = universe.runtimeMirror(getClass.getClassLoader)
+    val module = runtimeMirror.staticModule(s"com.sccomz.scala.schema.${objNm}")
+    val im = runtimeMirror.reflectModule(module)
+    val method = im.symbol.info.decl(universe.TermName("schema")).asMethod
+    val objMirror = runtimeMirror.reflect(im.instance)
+    val schema = objMirror.reflectMethod(method)().asInstanceOf[StructType]
+
+    println("source ="+source);
+    println("target ="+target);
+
+    //--------------------------------------
+        println("HDFS 세션 생성");
+    //--------------------------------------
+    //schema = SCENARIO.schema;
+    val conf = new Configuration()
+    val fs = FileSystem.get(conf)
+
+    //--------------------------------------
+        println("target 파일 삭제");
+    //--------------------------------------
+    fs.delete(new Path(target),true)
+
+    //--------------------------------------
+        println("target 파일 생성");
+    //--------------------------------------
+    spark.read.format("csv").option("delimiter", "|").schema(schema).load(source).write.parquet(target)
+
+    if(isPartion) {
+      //--------------------------------------
+          println("Hive partition 생성");
+      //--------------------------------------
+      import spark.implicits._
+      import spark.sql
+      sql(s"""ALTER TABLE I_${objNm} DROP IF EXISTS PARTITION (WORK_DT=${workDt})""")
+      sql(s"""ALTER TABLE I_${objNm} ADD PARTITION (WORK_DT=${workDt}) LOCATION '/teos/warehouse/${objNm}/WORK_DT=${workDt}'""");
+    }
+
+    //--------------------------------------
+        println("samToParquet 종료");
+    //--------------------------------------
+  }
+  
+  
   def impalaDropPartition(objNm:String,scheduleId:String,cdNm:String) = {
     Class.forName(App.dbDriverImpala);
     var con = DriverManager.getConnection(App.dbUrlImpala,App.dbUserImpala,App.dbPwImpala);
