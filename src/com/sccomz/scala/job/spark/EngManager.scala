@@ -10,14 +10,18 @@ import com.sccomz.scala.job.spark.eng.PathLoss
 import com.sccomz.scala.job.spark.Los
 Los.execute("8459967");
 
- */
+*/
 
 object EngManager {
 
   def execute(scheduleId:String) = {
     Los.execute(scheduleId);
     PathLoss.execute(scheduleId);
-    
   }
-
+  
+  def test01(scheduleId:String) = {
+    println("scheduleId==="+scheduleId);
+  }
+  
+  
 }
