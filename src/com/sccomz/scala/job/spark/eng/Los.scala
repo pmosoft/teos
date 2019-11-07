@@ -18,7 +18,7 @@ Los.execute("8459967");
 object Los {
 
 var spark: SparkSession = null
-var objNm = "LOS"
+var objNm = "RESULT_NR_2D_LOS"
 
 def execute(scheduleId:String) = {
   //------------------------------------------------------
@@ -37,8 +37,8 @@ def excuteSql(scheduleId:String) = {
 //---------------------------------------------------
 val conf = new Configuration()
 val fs = FileSystem.get(conf)
-fs.delete(new Path(s"""/teos/warehouse/RESULT_NR_2D_LOS/schedule_id=${scheduleId}"""),true)
-spark.sql(s"""ALTER TABLE I_RESULT_NR_2D_LOS DROP IF EXISTS PARTITION (SCHEDULE_ID=${scheduleId})""")    
+fs.delete(new Path(s"""/teos/warehouse/${objNm}/schedule_id=${scheduleId}"""),true)
+spark.sql(s"""ALTER TABLE I_${objNm} DROP IF EXISTS PARTITION (SCHEDULE_ID=${scheduleId})""")    
 
 
 //---------------------------------------------------
