@@ -39,9 +39,9 @@ object MakeBinFile4 {
     makeEngResult(scheduleId, "LOS");
     makeEngResult(scheduleId, "PATHLOSS");
     makeEngResult(scheduleId, "BEST_SERVER");
-    makeEngResult(scheduleId, "PILOT_EC");     // RSRP
-    makeEngResult(scheduleId, "RSSI");
-    makeEngResult(scheduleId, "C2I");      // SINR
+    //makeEngResult(scheduleId, "PILOT_EC");     // RSRP
+    //makeEngResult(scheduleId, "RSSI");
+    //makeEngResult(scheduleId, "C2I");      // SINR
   }
 
   // 3D Bin
@@ -198,7 +198,6 @@ object MakeBinFile4 {
 
   // 2D RU별 결과
   def makeEngRuResult(scheduleId: String, cdNm: String, ruInfo : mutable.Map[String,String]) = {
-    var x_bin_cnt = 0; var y_bin_cnt = 0;
 
     for(ruId <- ruInfo) {
       if(ruId._1 != "SECTOR_PATH") {       
@@ -206,6 +205,7 @@ object MakeBinFile4 {
         //---------------------------------------------------------------------------------------------------------
         // 초기화
         //---------------------------------------------------------------------------------------------------------
+        var x_bin_cnt = 0; var y_bin_cnt = 0;
         
         var qry = MakeBinFileSql4.select2dRuBinCnt(ruId._1);
 
