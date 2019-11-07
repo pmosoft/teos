@@ -112,7 +112,7 @@ SELECT PATHLOSS.scenario_id, PATHLOSS.ru_id, PARAM.enb_id, PARAM.cell_id,
    and PATHLOSS.schedule_id = PARAM.schedule_id
    AND PATHLOSS.ru_id = PARAM.ru_id
 )
-insert into I_RESULT_NR_2D_RSRPPILOT_RU partition (schedule_id=${scheduleId})
+insert into I_${objNm} partition (schedule_id=${scheduleId})
 select PLPRIME_temp.scenario_id
      , PLPRIME_temp.ru_id
      , PLPRIME_temp.enb_id

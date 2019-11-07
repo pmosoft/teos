@@ -1,3 +1,22 @@
+DROP TABLE I_RESULT_NR_2D_BESTSERVER;
+
+CREATE EXTERNAL TABLE I_RESULT_NR_2D_BESTSERVER (
+  SCENARIO_ID INT
+, RX_TM_XPOS  INT
+, RX_TM_YPOS  INT
+, X_POINT     INT
+, Y_POINT     INT
+, RU_SEQ      INT
+)
+PARTITIONED BY (SCHEDULE_ID INT)
+STORED AS PARQUET
+LOCATION '/teos/warehouse/RESULT_NR_2D_BESTSERVER';
+
+SELECT COUNT(*) FROM I_RESULT_NR_2D_BESTSERVER;
+
+SELECT COUNT(*) FROM I_RESULT_NR_2D_RSRP_RU
+;
+
 DROP TABLE I_RESULT_NR_2D_RSRP;
 
 CREATE EXTERNAL TABLE I_RESULT_NR_2D_RSRP (
@@ -12,6 +31,34 @@ PARTITIONED BY (SCHEDULE_ID INT)
 STORED AS PARQUET
 LOCATION '/teos/warehouse/RESULT_NR_2D_RSRP'
 ;
+
+
+with AREA as
+(
+select a.scenario_id, b.schedule_id,
+       a.tm_startx div a.resolution * a.resolution as tm_startx,
+       a.tm_starty div a.resolution * a.resolution as tm_starty,
+       a.tm_endx div a.resolution * a.resolution as tm_endx,
+       a.tm_endy div a.resolution * a.resolution as tm_endy,
+       a.resolution
+  from SCENARIO a, SCHEDULE b
+ where b.schedule_id = 8463189
+   and a.scenario_id = b.scenario_id
+)
+select max(AREA.scenario_id) as scenario_id,
+       RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution as rx_tm_xpos,
+       RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution as rx_tm_ypos,
+       (RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution - AREA.tm_startx) / AREA.resolution as x_point,
+       (RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution - AREA.tm_starty) / AREA.resolution as y_point,       
+       max(rsrp) as rsrp
+  from AREA, I_RESULT_NR_2D_RSRP_RU RSLT
+ where RSLT.schedule_id = AREA.schedule_id
+   and RSLT.schedule_id = 8463189
+   and AREA.tm_startx <= RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution and RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution < AREA.tm_endx
+   and AREA.tm_starty <= RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution and RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution < AREA.tm_endy
+  group by RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution, RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution,
+           (RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution - AREA.tm_startx) / AREA.resolution, (RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution - AREA.tm_starty) / AREA.resolution
+;           
 
 
 DROP TABLE I_RESULT_NR_2D_RSRP_RU;
