@@ -1,4 +1,4 @@
-package com.sccomz.scala.schedule.real
+package com.sccomz.scala.schedule.batch
 
 import java.sql.Connection
 import java.sql.DriverManager
@@ -23,8 +23,8 @@ import com.sccomz.scala.job.spark.Los
 
 /*
 
-import com.sccomz.scala.schedule.real.ExecuteJob
-ExecuteJob.execute("8460178");
+import com.sccomz.scala.schedule.batch.BatchJob
+BatchJob.execute("20191107");
 
  */
 
@@ -45,10 +45,10 @@ object BatchJob {
     //---------------------------------------------------------------------------------------------
     println("BatchJob : " + workDt);
     //---------------------------------------------------------------------------------------------
-    //execute();
+    execute(workDt);
   }
 
-  def executeJob(workDt:String): Unit = {
+  def execute(workDt:String): Unit = {
       executeFabaseEtlOracleToHdfs(workDt);
   }
   

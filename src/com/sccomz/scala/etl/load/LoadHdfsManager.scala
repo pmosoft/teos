@@ -26,6 +26,9 @@ import com.sccomz.scala.schema.SCENARIO
 
 /*
 import com.sccomz.scala.etl.load.LoadHdfsManager
+LoadHdfsManager.oracleToHdfsBatch("20191107");
+
+
 LoadHdfsManager.oracleToHdfs("8460178");
 LoadHdfsManager.oracleToHdfs("8460179");
 LoadHdfsManager.oracleToHdfs("8460062");
@@ -134,7 +137,7 @@ object LoadHdfsManager {
         println("samToParquet 시작");
     //--------------------------------------
     var srcEntityPath = if (cd=="local") App.hdfsLinuxEtlPath else if(cd=="hdfs") App.hdfsEtlPath;
-    var isPartion = if(workDt=="all") false else true;
+    var isPartion = false;
 /*
     var objNm = "SCENARIO"
     var scheduleId = "8459967"
@@ -145,8 +148,8 @@ object LoadHdfsManager {
     //--------------------------------------
         println("입출력 변수 세팅");
     //--------------------------------------
-    var source = if(isPartion) srcEntityPath+"/"+objNm+"_"+workDt+".dat" else srcEntityPath+"/"+objNm+".dat"
-    var target = if(isPartion) App.hdfsWarehousePath+"/"+objNm+"/WORK_DT="+workDt else App.hdfsWarehousePath+"/"+objNm+"/"+objNm
+    var source = srcEntityPath+"/"+objNm+"_"+workDt+".dat";
+    var target = App.hdfsWarehousePath+"/"+objNm;
 
     //--------------------------------------
         println("스키마 세팅");
@@ -178,6 +181,8 @@ object LoadHdfsManager {
     //--------------------------------------
     spark.read.format("csv").option("delimiter", "|").schema(schema).load(source).write.parquet(target)
 
+    //
+    
     if(isPartion) {
       //--------------------------------------
           println("Hive partition 생성");

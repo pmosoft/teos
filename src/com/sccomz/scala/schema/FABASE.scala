@@ -6,7 +6,7 @@ import org.apache.spark.sql.types.StringType
 import org.apache.spark.sql.types.FloatType  
 import org.apache.spark.sql.types.IntegerType
 
-object FABASE{
+object FABASE {
 final val schema : StructType= StructType( Array(
  StructField("FA_SEQ"                , IntegerType)
 ,StructField("SYSTEMTYPE"            , IntegerType)
@@ -16,8 +16,8 @@ final val schema : StructType= StructType( Array(
 ,StructField("ANALY_CHECK"           , IntegerType)
 ,StructField("PASSLOSS_MODEL"        , StringType )
 ,StructField("FREQ"                  , StringType )
-,StructField("UPLINKFREQ_COMMENT"    , StringType )
-,StructField("DOWNLINKFREQ_COMMENT"  , StringType )
+//,StructField("UPLINKFREQ_COMMENT"    , StringType )
+//,StructField("DOWNLINKFREQ_COMMENT"  , StringType )
 ,StructField("REG_DT"                , StringType )
 ,StructField("REG_ID"                , StringType )
 ))
