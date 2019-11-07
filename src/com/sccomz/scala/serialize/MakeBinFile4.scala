@@ -246,17 +246,17 @@ object MakeBinFile4 {
         
         if(cdNm == "LOS") {
         	for (row <- sqlDf2.collect) {
-        	var x_point = row.mkString(",").split(",")(0).toInt;
-        	var y_point = row.mkString(",").split(",")(1).toInt;
-        	var value = row.mkString(",").split(",")(2).toInt;
-        	bin(x_point)(y_point).value = ByteUtil.intToByteArray(value);
+        	  var x_point = row.mkString(",").split(",")(0).toInt;
+        	  var y_point = row.mkString(",").split(",")(1).toInt;
+        	  var value = row.mkString(",").split(",")(2).toInt;
+        	  bin(x_point)(y_point).value = ByteUtil.intToByteArray(value);
         	}
         } else {
           for (row <- sqlDf2.collect) {
-        	var x_point = row.mkString(",").split(",")(0).toInt;
-        	var y_point = row.mkString(",").split(",")(1).toInt;
-        	var pathloss = row.mkString(",").split(",")(2).toFloat;
-        	bin(x_point)(y_point).value = ByteUtil.floatToByteArray(pathloss);
+        	  var x_point = row.mkString(",").split(",")(0).toInt;
+        	  var y_point = row.mkString(",").split(",")(1).toInt;
+        	  var pathloss = row.mkString(",").split(",")(2).toFloat;
+        	  bin(x_point)(y_point).value = ByteUtil.floatToByteArray(pathloss);
         	}
         }
 
@@ -285,4 +285,16 @@ object MakeBinFile4 {
   def makeBdRuResult(scheduleId: String) = {
   }
 
+  // 
+  def test01(scheduleId: String) = {
+    val bin = Array.ofDim[Byte4](2, 3);
+    
+    bin(0)(0) = new Byte4(ByteUtil.intZero());
+    bin(1)(0) = new Byte4(ByteUtil.intZero());
+    bin(2)(0) = new Byte4(ByteUtil.intZero());    
+  }
+  
+        
+  
+  
 }
