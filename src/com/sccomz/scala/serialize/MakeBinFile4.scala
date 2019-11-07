@@ -207,7 +207,7 @@ object MakeBinFile4 {
         //---------------------------------------------------------------------------------------------------------
         var x_bin_cnt = 0; var y_bin_cnt = 0;
         
-        var qry = MakeBinFileSql4.select2dRuBinCnt(ruId._1);
+        var qry = MakeBinFileSql4.select2dRuBinCnt(scheduleId,ruId._1);
 
         println(qry); var sqlDf = spark.sql(qry);
 
