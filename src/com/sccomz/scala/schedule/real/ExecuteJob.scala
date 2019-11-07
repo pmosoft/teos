@@ -19,7 +19,7 @@ import com.sccomz.scala.etl.load.LoadHdfsManager
 import com.amazonaws.services.simpleworkflow.flow.core.TryCatch
 import java.io.File
 import com.sccomz.scala.etl.extract.post.ExtractLoadPostManager
-import com.sccomz.scala.job.spark.Los
+import com.sccomz.scala.job.spark.eng.Los
 
 /*
 
@@ -129,8 +129,15 @@ object ExecuteJob {
   }
   
   def executeSparkEngJob(scheduleId:String): Unit = {
+    var res = Process(s"sh spark2-submit --master yarn --jars /home/icpap/lib/hiveJdbc11.jar --class com.sccomz.scala.serialize.MakeBinFile4 /home/icpap/bin/teos.jar ${scheduleId}").lineStream;
+     
     Los.execute(scheduleId);
   }
+
+  def executeSparkEngJobs(scheduleId:String): Unit = {
+    Los.execute(scheduleId);
+  }
+  
   
   def executeSparkMakeBinFile(scheduleId:String): Unit = {
   }  

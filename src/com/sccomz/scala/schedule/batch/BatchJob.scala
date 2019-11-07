@@ -19,7 +19,7 @@ import com.sccomz.scala.etl.load.LoadHdfsManager
 import com.amazonaws.services.simpleworkflow.flow.core.TryCatch
 import java.io.File
 import com.sccomz.scala.etl.extract.post.ExtractLoadPostManager
-import com.sccomz.scala.job.spark.Los
+import com.sccomz.scala.job.spark.eng.Los
 
 /*
 
