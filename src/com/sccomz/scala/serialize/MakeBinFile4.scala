@@ -39,9 +39,9 @@ object MakeBinFile4 {
     makeEngResult(scheduleId, "LOS");
     makeEngResult(scheduleId, "PATHLOSS");
     makeEngResult(scheduleId, "BEST_SERVER");
-    makeEngResult(scheduleId, "PILOT_EC");     // RSRP
-    makeEngResult(scheduleId, "RSSI");
-    makeEngResult(scheduleId, "C2I");      // SINR
+    //makeEngResult(scheduleId, "PILOT_EC");     // RSRP
+    //makeEngResult(scheduleId, "RSSI");
+    //makeEngResult(scheduleId, "C2I");      // SINR
   }
 
   // 3D Bin
@@ -51,7 +51,7 @@ object MakeBinFile4 {
   // 2D 폴더 생성
   def makeEngResult(scheduleId: String, cdNm: String) = {
     makeEngSectorResult(scheduleId, cdNm, ruInfo.getOrElse("SECTOR_PATH",""));
-    makeEngRuResult(scheduleId, cdNm, ruInfo);
+    //makeEngRuResult(scheduleId, cdNm, ruInfo);
 
     if(cdNm == "LOS" || cdNm == "PATHLOSS") {
     	makeEngRuResult(scheduleId, cdNm, ruInfo);
@@ -204,11 +204,10 @@ object MakeBinFile4 {
     var tabNm = ""; var colNm = "";
          if(cdNm=="LOS"     ) { tabNm = "RESULT_NR_2D_LOS_RU"      ; colNm = "VALUE";}
     else if(cdNm=="PATHLOSS") { tabNm = "RESULT_NR_2D_PATHLOSS_RU" ; colNm = "PATHLOSS";}
-         
+    
     var qry2 = MakeBinFileSql4.selectRuResultAll(scheduleId, tabNm, colNm);
     spark.sql("DROP TABLE IF EXISTS ENG_RU");
-    println(qry2); var tDF = spark.sql(qry2); tDF.cache.createOrReplaceTempView("ENG_RU");tDF.count()
-    
+    println(qry2); var tDF = spark.sql(qry2); tDF.cache.createOrReplaceTempView("ENG_RU"); tDF.count();
     
     for(ruId <- ruInfo) {
       if(ruId._1 != "SECTOR_PATH") {       
