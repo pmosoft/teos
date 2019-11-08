@@ -38,13 +38,13 @@ LOAD DATA INPATH '/disk2/etl/LOS_ENG_RESULT_8460062_1012242284.dat' INTO TABLE I
  * */
 object LoadHdfsLosManager {
 
-  val spark = SparkSession.builder().appName("LoadHdfsLosManager").config("spark.sql.warehouse.dir","/teos/warehouse").enableHiveSupport().getOrCreate();
-
   def main(args: Array[String]): Unit = {
     samToParquetPartition("LOS_ENG_RESULT","8460062","1012242284")
   }
 
   def samToParquetPartition(objNm:String,scheduleId:String,ruId:String) = {
+    val spark = SparkSession.builder().master("local[*]").appName("LoadHdfsLosManager").config("spark.sql.warehouse.dir","/teos/warehouse").enableHiveSupport().getOrCreate()
+    
     //--------------------------------------
         println("samToParquet 시작");
     //--------------------------------------
@@ -108,5 +108,7 @@ object LoadHdfsLosManager {
     //--------------------------------------
         println("samToParquet 종료");
     //--------------------------------------
+    
+    spark.close();    
   }
 }

@@ -132,20 +132,11 @@ object ExecuteJob {
   }
   
   def executeSparkEngJob(scheduleId:String): Unit = {
-    var res = Process(s"sh spark2-submit --master yarn --jars /home/icpap/lib/hiveJdbc11.jar --class com.sccomz.scala.serialize.MakeBinFile4 /home/icpap/bin/teos.jar ${scheduleId}").lineStream;
-     
     Los.executeSql(scheduleId);
   }
-
-  def executeSparkEngJobs(scheduleId:String): Unit = {
-    Los.executeSql(scheduleId);
-  }
-  
   
   def executeSparkMakeBinFile(scheduleId:String): Unit = {
   }  
   
-  
-  //def executePassLoss(scheduleId : String) = { PassLoss.executeReal(scheduleId) }
 
 }

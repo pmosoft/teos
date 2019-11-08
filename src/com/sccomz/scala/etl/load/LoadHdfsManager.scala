@@ -38,7 +38,6 @@ LoadHdfsManager.oracleToHdfs("8463189");
  * */
 object LoadHdfsManager {
 
-
   def main(args: Array[String]): Unit = {
     println("LoadHdfsManager start");
     //toParquetPartition(spark,"local","SCHEDULE","8463189");
