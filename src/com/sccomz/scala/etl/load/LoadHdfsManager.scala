@@ -38,7 +38,6 @@ LoadHdfsManager.oracleToHdfs("8463189");
  * */
 object LoadHdfsManager {
 
-  val spark = SparkSession.builder().master("local[*]").appName("LoadHdfsManager").config("spark.sql.warehouse.dir","/teos/warehouse").enableHiveSupport().getOrCreate()
 
   def main(args: Array[String]): Unit = {
     println("LoadHdfsManager start");
@@ -53,6 +52,7 @@ object LoadHdfsManager {
   }
 
   def oracleToHdfs(scheduleId:String) = {
+    val spark = SparkSession.builder().master("local[*]").appName("LoadHdfsManager").config("spark.sql.warehouse.dir","/teos/warehouse").enableHiveSupport().getOrCreate()
     toParquetPartition(spark,"local","SCHEDULE",scheduleId);
     toParquetPartition(spark,"local","SCENARIO",scheduleId);
     toParquetPartition(spark,"local","DU",scheduleId);
@@ -60,10 +60,13 @@ object LoadHdfsManager {
     toParquetPartition(spark,"local","SITE",scheduleId);
     toParquetPartition(spark,"local","SCENARIO_NR_RU",scheduleId);
     toParquetPartition(spark,"local","SCENARIO_NR_ANTENNA",scheduleId);
+    spark.close();
   }
 
   def oracleToHdfsBatch(workDt:String) = {
+    val spark = SparkSession.builder().master("local[*]").appName("LoadHdfsManager").config("spark.sql.warehouse.dir","/teos/warehouse").enableHiveSupport().getOrCreate()
     toParquetPartitionBatch(spark,"local","FABASE",workDt);
+    spark.close();    
   }
   
   def toParquetPartition(spark: SparkSession,cd:String,objNm:String,scheduleId:String) = {
