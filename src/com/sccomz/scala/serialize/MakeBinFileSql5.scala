@@ -8,7 +8,7 @@ import java.io._
 import java.io.File;
 import com.sccomz.scala.comm.App
 
-object MakeBinFileSql4 {
+object MakeBinFileSql5 {
 
 def main(args: Array[String]): Unit = {
 }
@@ -26,10 +26,10 @@ WHERE  SCHEDULE_ID = ${scheduleId}
 // X,Y RU Bin 갯수
 def select2dRuBinCnt(scheduleId:String, ruId:String) = {
 s"""
-SELECT X_BIN_CNT, Y_BIN_CNT
-FROM   SCENARIO_NR_RU
+SELECT X_BIN_CNT, Y_BIN_CNT 
+FROM   SCENARIO_NR_RU 
 WHERE  SCENARIO_ID = (SELECT SCENARIO_ID FROM I_SCHEDULE WHERE SCHEDULE_ID = ${scheduleId})
-AND    RU_ID = ${ruId}
+AND    RU_ID = ${ruId} 
 LIMIT 1
 """
 }

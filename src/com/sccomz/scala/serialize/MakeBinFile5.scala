@@ -22,15 +22,16 @@ import com.sccomz.scala.serialize.MakeBinFile4
 MakeBinFile4.executeEngResult("8460062");
   
  * */
-object MakeBinFile4 {
+object MakeBinFile5 {
 
   val logger: Logger = Logger.getLogger(this.getClass.getName());
   var spark: SparkSession = null;
-  spark = SparkSession.builder().appName("MakeBinFile4").getOrCreate();
+  spark = SparkSession.builder().appName("MakeBinFile5").getOrCreate();
   var ruInfo = mutable.Map[String,String]();
   
   def main(args: Array[String]): Unit = {
-    executeEngResult("8460062");
+//    executeEngResult("8460062");
+    executeEngResult("8460964");
   }
 
   // 2D Bin
@@ -52,10 +53,6 @@ object MakeBinFile4 {
   def makeEngResult(scheduleId: String, cdNm: String) = {
     makeEngSectorResult(scheduleId, cdNm, ruInfo.getOrElse("SECTOR_PATH",""));
     makeEngRuResult(scheduleId, cdNm, ruInfo);
-
-    if(cdNm == "LOS" || cdNm == "PATHLOSS") {
-    	makeEngRuResult(scheduleId, cdNm, ruInfo);
-    }
   }
   
   // 폴더 생성 메소드
@@ -63,7 +60,7 @@ object MakeBinFile4 {
     Class.forName(App.dbDriverHive);
     var con = DriverManager.getConnection(App.dbUrlHive, App.dbUserHive, App.dbPwHive);
     var stat: Statement = con.createStatement();
-    var qry = MakeBinFileSql4.selectBinFilePath(scheduleId);
+    var qry = MakeBinFileSql5.selectBinFilePath(scheduleId);
     var rs = stat.executeQuery(qry);
     var rowCnt = 1;
 
@@ -83,12 +80,11 @@ object MakeBinFile4 {
       // RU 정보 생성
       ruInfo += (rs.getString("RU_ID") -> rs.getString("RU_PATH"));
 
-//      if (rowCnt <= 150) {
-        // 폴더 생성
-        var dir = new File(App.resultPath, DateUtil.getDate("yyyyMMdd") + "/" + rs.getString("RU_PATH"));
-        if (!dir.exists()) dir.mkdirs();
-        println(dir);
-//      }
+      // 폴더 생성
+      var dir = new File(App.resultPath, DateUtil.getDate("yyyyMMdd") + "/" + rs.getString("RU_PATH"));
+      if (!dir.exists()) dir.mkdirs();
+      println(dir);
+
       rowCnt = rowCnt + 1;
     };
     ruInfo;
@@ -99,7 +95,7 @@ object MakeBinFile4 {
     var x_bin_cnt = 0; var y_bin_cnt = 0;
 
     logger.info("============================= 초기화 ==============================");
-    var qry2= MakeBinFileSql4.selectBinCnt(scheduleId);
+    var qry2= MakeBinFileSql5.selectBinCnt(scheduleId);
     var sqlDf = spark.sql(qry2);
     
     for (row <- sqlDf.collect) {
@@ -128,12 +124,12 @@ object MakeBinFile4 {
     // Value 세팅
     //---------------------------------------------------------------------------------------------------------
     var tabNm = "";  var colNm = "";
-         if(cdNm=="LOS"     ) { tabNm = "RESULT_NR_2D_LOS"      ; colNm = "LOS"     ;}
-    else if(cdNm=="PATHLOSS") { tabNm = "RESULT_NR_2D_PATHLOSS" ; colNm = "PATHLOSS";}
-    else if(cdNm=="BEST_SERVER") { tabNm = "RESULT_NR_2D_BESTSERVER" ; colNm = "RU_SEQ";}
-    else if(cdNm=="PILOT_EC") { tabNm = "RESULT_NR_2D_RSRP" ; colNm = "RSRP";}
-    else if(cdNm=="RSSI") { tabNm = "RESULT_NR_2D_RSSI" ; colNm = "RSSI";}
-    else if(cdNm=="C2I") { tabNm = "RESULT_NR_2D_SINR" ; colNm = "SINR";}
+         if(cdNm=="LOS"        ) { tabNm = "RESULT_NR_2D_LOS_RU_TEMP_8460964"; colNm = "LOS"; }
+    else if(cdNm=="PATHLOSS"   ) { tabNm = "RESULT_NR_2D_PATHLOSS"; colNm = "PATHLOSS";       }
+    else if(cdNm=="BEST_SERVER") { tabNm = "RESULT_NR_2D_BESTSERVER" ; colNm = "RU_SEQ";      }
+    else if(cdNm=="PILOT_EC"   ) { tabNm = "RESULT_NR_2D_RSRP" ; colNm = "RSRP";}
+    else if(cdNm=="RSSI"       ) { tabNm = "RESULT_NR_2D_RSSI" ; colNm = "RSSI";}
+    else if(cdNm=="C2I"        ) { tabNm = "RESULT_NR_2D_SINR" ; colNm = "SINR";}
     qry2= MakeBinFileSql4.selectSectorResult(scheduleId, tabNm, colNm);
     println(qry2);
     sqlDf = spark.sql(qry2);
@@ -197,7 +193,7 @@ object MakeBinFile4 {
     logger.info("=========================== Bin 생성 완료 ===========================");
     if (fos != null) fos.close();
   }
-
+  
   // 2D RU별 결과
   def makeEngRuResult(scheduleId: String, cdNm: String, ruInfo : mutable.Map[String,String]) = {
 
