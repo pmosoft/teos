@@ -32,7 +32,7 @@ object SparkTest {
   
   def test02() = {
     //val spark2 = SparkSession.builder().master("yarn").appName("MakeParquet").getOrCreate()
-    Los.executeSql("8460062");
+    Los.execute("8460062");
     //spark2.stop();
   }
 

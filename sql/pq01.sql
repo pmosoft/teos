@@ -35,4 +35,8 @@ select * from SCHEDULE
 select * FROM SCENARIO
 ;
 
+select * FROM SHP
+;
+
+
 

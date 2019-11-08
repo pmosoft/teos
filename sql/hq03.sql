@@ -1,3 +1,26 @@
+SELECT * FROM i_result_nr_2d_los;
+
+
+ALTER TABLE I_RESULT_NR_2D_LOS DROP IF EXISTS PARTITION (schedule_id=8460062);
+
+ALTER TABLE I_RESULT_NR_2D_LOS ADD PARTITION (SCHEDULE_ID=8460970) LOCATION '/teos/warehouse/RESULT_NR_2D_LOS/SCHEDULE_ID=8460970';
+
+
+DROP TABLE I_RESULT_NR_2D_LOS;
+
+CREATE EXTERNAL TABLE I_RESULT_NR_2D_LOS (
+  SCENARIO_ID                      INT
+, RX_TM_XPOS                       INT
+, RX_TM_YPOS                       INT
+, X_POINT                          INT
+, Y_POINT                          INT
+, LOS                              INT
+)
+PARTITIONED BY (SCHEDULE_ID INT)
+STORED AS PARQUET
+LOCATION '/teos/warehouse/RESULT_NR_2D_LOS';
+
+
 CREATE EXTERNAL TABLE I_RESULT_NR_2D_THROUGHPUT (
   SCENARIO_ID                      INT 
 , RX_TM_XPOS                       INT
