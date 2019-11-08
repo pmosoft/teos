@@ -10,27 +10,30 @@ import org.apache.spark.sql.SparkSession
  * 수정내역 :
  * 2019-02-09 | 피승현 | 최초작성
 
-import com.sccomz.scala.job.spark.Los
-Los.execute("8459967");
+import com.sccomz.scala.job.spark.eng.Los
+Los.executeSql("8460062");
 
  */
 
 object Los {
 
-var spark: SparkSession = null
+  
+def main(args: Array[String]): Unit = {  
+  var scheduleId = if (args.length < 1) "" else args(0);  
+  executeSql(scheduleId);  
+}   
+
+def executeSql(scheduleId:String) = {
+val spark: SparkSession = SparkSession.builder().master("yarn").appName("Los").config("spark.sql.warehouse.dir","/teos/warehouse").enableHiveSupport().getOrCreate();
+  
 var objNm = "RESULT_NR_2D_LOS"
-
-def execute(scheduleId:String) = {
-  //------------------------------------------------------
-  println(objNm + " 시작");
-  //------------------------------------------------------
-  spark = SparkSession.builder().appName("Los").getOrCreate();
-  excuteSql(scheduleId);
-}
-
-def excuteSql(scheduleId:String) = {
-
+//------------------------------------------------------
+println(objNm + " 시작");
+//------------------------------------------------------
+var qry = "";
+  
 //var scheduleId = "8460062"; 
+//var scheduleId = "8460970"; 
   
 //---------------------------------------------------
     println("partiton 파일 삭제 및 drop table partition");
@@ -38,14 +41,15 @@ def excuteSql(scheduleId:String) = {
 val conf = new Configuration()
 val fs = FileSystem.get(conf)
 fs.delete(new Path(s"""/teos/warehouse/${objNm}/schedule_id=${scheduleId}"""),true)
-spark.sql(s"""ALTER TABLE I_${objNm} DROP IF EXISTS PARTITION (SCHEDULE_ID=${scheduleId})""")    
-
+import spark.implicits._
+import spark.sql
+sql(s"""ALTER TABLE I_${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})""")
 
 //---------------------------------------------------
     println("insert partition table");
 //---------------------------------------------------
 
-var qry = ""; qry = s"""
+qry = s"""
 with AREA as
 (
 select a.scenario_id, b.schedule_id,
@@ -84,6 +88,7 @@ println(qry);
 spark.sql(qry).take(100).foreach(println);
 
 
+spark.stop();
 }
 
 }

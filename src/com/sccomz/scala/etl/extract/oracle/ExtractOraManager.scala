@@ -20,6 +20,8 @@ import com.sccomz.scala.etl.extract.oracle.sql.ExtractOraFabaseSql
 
 /*
 import com.sccomz.scala.etl.extract.oracle.ExtractOraManager
+ExtractOraManager.extractOracleToHadoopCsv("8463189")
+
 ExtractOraManager.extractOracleToHadoopCsvBatch("20191107")
 
 
@@ -40,7 +42,8 @@ object ExtractOraManager {
   var tabNm = "";
 
   def main(args: Array[String]): Unit = {
-    extractOracleToHadoopCsv("8460178");
+    extractOracleToHadoopCsv("8463189");
+    //extractOracleToHadoopCsv("8460178");
     //extractOracleToPostgreIns("8459967");
 
     //extractOracleToPostgreIns("8460178");

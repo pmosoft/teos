@@ -14,7 +14,17 @@ import scala.sys.process._
 
 import com.sccomz.scala.comm.App
 
+/*
 
+import com.sccomz.scala.schedule.real.ScheduleDaemon
+ScheduleDaemon.updateBinRuInfo();
+
+ExecuteJob.execute("8460178");
+
+ExecuteJob.delStepLog("8460178");
+
+ExecuteJob.executePostgreShell("8460178")
+*/
 object ScheduleDaemon {
 
   Class.forName(App.dbDriverOra);

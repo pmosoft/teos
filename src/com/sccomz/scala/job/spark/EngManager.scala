@@ -15,7 +15,7 @@ Los.execute("8459967");
 object EngManager {
 
   def execute(scheduleId:String) = {
-    Los.execute(scheduleId);
+    Los.executeSql(scheduleId);
     PathLoss.execute(scheduleId);
   }
   

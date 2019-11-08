@@ -12,21 +12,31 @@ import org.apache.spark.sql.types.StringType
 import org.apache.spark.sql.types.StructField
 import org.apache.spark.sql.types.StructType
 import scala.reflect.runtime.universe
+import com.sccomz.scala.etl.load.LoadHdfsManager
+import com.sccomz.scala.job.spark.eng.Los
 
 
 
 object SparkTest {
 
   def main(args: Array[String]): Unit = {
-    val spark = SparkSession.builder().appName("MakeParquet").getOrCreate()
-    //this.samToParquet(spark)
-    spark.stop();
+    test01();
+    test02();
   }
 
-  def test01(spark: SparkSession) = {
-
-
-
+  def test01() = {
+    //val spark1 = SparkSession.builder().master("local[*]").appName("MakeParquet").getOrCreate()
+    LoadHdfsManager.oracleToHdfs("8463189");
+    //spark1.stop();
   }
+  
+  def test02() = {
+    //val spark2 = SparkSession.builder().master("yarn").appName("MakeParquet").getOrCreate()
+    Los.executeSql("8460062");
+    //spark2.stop();
+  }
+
+  
+  
 }
 

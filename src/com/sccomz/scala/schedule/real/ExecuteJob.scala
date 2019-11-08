@@ -24,13 +24,16 @@ import com.sccomz.scala.job.spark.eng.Los
 /*
 
 import com.sccomz.scala.schedule.real.ExecuteJob
+ExecuteJob.executeEtlOracleToHdfs("8460964","SC001");
+ExecuteJob.executeEtlOracleToHdfs("8460966","SC001");
+ExecuteJob.executeEtlOracleToHdfs("8460968","SC001");
+
 ExecuteJob.execute("8460178");
 
 ExecuteJob.delStepLog("8460178");
 
 ExecuteJob.executePostgreShell("8460178")
-
- */
+*/
 
 object ExecuteJob {
 
@@ -131,11 +134,11 @@ object ExecuteJob {
   def executeSparkEngJob(scheduleId:String): Unit = {
     var res = Process(s"sh spark2-submit --master yarn --jars /home/icpap/lib/hiveJdbc11.jar --class com.sccomz.scala.serialize.MakeBinFile4 /home/icpap/bin/teos.jar ${scheduleId}").lineStream;
      
-    Los.execute(scheduleId);
+    Los.executeSql(scheduleId);
   }
 
   def executeSparkEngJobs(scheduleId:String): Unit = {
-    Los.execute(scheduleId);
+    Los.executeSql(scheduleId);
   }
   
   

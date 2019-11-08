@@ -201,6 +201,15 @@ object MakeBinFile4 {
   // 2D RU별 결과
   def makeEngRuResult(scheduleId: String, cdNm: String, ruInfo : mutable.Map[String,String]) = {
 
+    var tabNm = ""; var colNm = "";
+         if(cdNm=="LOS"     ) { tabNm = "RESULT_NR_2D_LOS_RU"      ; colNm = "VALUE";}
+    else if(cdNm=="PATHLOSS") { tabNm = "RESULT_NR_2D_PATHLOSS_RU" ; colNm = "PATHLOSS";}
+         
+    var qry2 = MakeBinFileSql4.selectRuResultAll(scheduleId, tabNm, colNm);
+    spark.sql("DROP TABLE IF EXISTS ENG_RU");
+    println(qry2); var tDF = spark.sql(qry2); tDF.cache.createOrReplaceTempView("ENG_RU");tDF.count()
+    
+    
     for(ruId <- ruInfo) {
       if(ruId._1 != "SECTOR_PATH") {       
         logger.info("============================== 초기화 ==============================");
@@ -239,10 +248,8 @@ object MakeBinFile4 {
         // Value 세팅
         //---------------------------------------------------------------------------------------------------------
         
-        var tabNm = ""; var colNm = "";
-             if(cdNm=="LOS"     ) { tabNm = "RESULT_NR_2D_LOS_RU"      ; colNm = "VALUE";}
-        else if(cdNm=="PATHLOSS") { tabNm = "RESULT_NR_2D_PATHLOSS_RU" ; colNm = "PATHLOSS";}
-        var qry2 = MakeBinFileSql4.selectRuResult(scheduleId, tabNm, colNm, ruId._1);
+        //var qry2 = MakeBinFileSql4.selectRuResult(scheduleId, tabNm, colNm, ruId._1);
+        var qry2 = MakeBinFileSql4.selectRuResult2(ruId._1);
         println(qry2);
         var sqlDf2 = spark.sql(qry2);
         

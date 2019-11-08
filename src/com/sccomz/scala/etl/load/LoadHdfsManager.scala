@@ -38,7 +38,7 @@ LoadHdfsManager.oracleToHdfs("8463189");
  * */
 object LoadHdfsManager {
 
-  val spark = SparkSession.builder().appName("LoadHdfsManager").config("spark.sql.warehouse.dir","/teos/warehouse").enableHiveSupport().getOrCreate()
+  val spark = SparkSession.builder().master("local[*]").appName("LoadHdfsManager").config("spark.sql.warehouse.dir","/teos/warehouse").enableHiveSupport().getOrCreate()
 
   def main(args: Array[String]): Unit = {
     println("LoadHdfsManager start");
