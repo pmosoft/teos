@@ -1,3 +1,18 @@
+SELECT 
+       NVL(FA_SEQ,0)                           ||'|'||
+       NVL(SYSTEMTYPE,0)                       ||'|'||
+       NVL(CHNO,0)                             ||'|'||
+       NVL(UPLINKFREQ,0)                       ||'|'||
+       NVL(DOWNLINKFREQ,0)                     ||'|'||
+       NVL(ANALY_CHECK,0)                      ||'|'||
+       PASSLOSS_MODEL                          ||'|'||
+       FREQ                                    ||'|'||
+       TO_CHAR(REG_DT,'YYYY-MM-DD HH24:MI:SS') ||'|'||
+       REG_ID                                  ||'|'
+FROM   FABASE
+;
+
+
 INSERT INTO SCHEDULE_STEP_CD VALUES ('SC001','01','시나리오기본정보 Postgre 및 Hdfs 이관','Y',SYSDATE,'ADMIN',SYSDATE,'ADMIN');
 INSERT INTO SCHEDULE_STEP_CD VALUES ('SC001','02','Postgre Shell 수행'             ,'Y',SYSDATE,'ADMIN',SYSDATE,'ADMIN');
 INSERT INTO SCHEDULE_STEP_CD VALUES ('SC001','03','LOS정보 Postgre에서 Hdfs로 이관'    ,'Y',SYSDATE,'ADMIN',SYSDATE,'ADMIN');

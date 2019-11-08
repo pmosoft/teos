@@ -1,3 +1,89 @@
+CREATE EXTERNAL TABLE I_RESULT_NR_2D_THROUGHPUT (
+  SCENARIO_ID                      INT 
+, RX_TM_XPOS                       INT
+, RX_TM_YPOS                       INT 
+, X_POINT                          INT 
+, Y_POINT                          INT 
+, THROUGHPUT                       FLOAT
+)
+PARTITIONED BY (SCHEDULE_ID INT)
+STORED AS PARQUET
+LOCATION '/teos/warehouse/RESULT_NR_2D_THROUGHPUT'
+;
+
+CREATE EXTERNAL TABLE I_RESULT_NR_2D_SINR (
+  SCENARIO_ID                      INT 
+, RX_TM_XPOS                       INT
+, RX_TM_YPOS                       INT 
+, X_POINT                          INT 
+, Y_POINT                          INT 
+, SINR                             FLOAT
+)
+PARTITIONED BY (SCHEDULE_ID INT)
+STORED AS PARQUET
+LOCATION '/teos/warehouse/RESULT_NR_2D_SINR'
+;
+
+
+CREATE EXTERNAL TABLE I_RESULT_NR_2D_SINR_RU (
+  SCENARIO_ID   INT 
+, RU_ID         STRING 
+, ENB_ID        INT 
+, CELL_ID       INT 
+, RX_TM_XPOS    INT 
+, RX_TM_YPOS    INT 
+, LOS           INT 
+, PATHLOSS      FLOAT 
+, ANTENNA_GAIN  FLOAT 
+, PATHLOSSPRIME FLOAT 
+, RSRPPILOT     FLOAT 
+, RSSINONOISE   FLOAT 
+, RSSI          FLOAT 
+, RU_SEQ        INT 
+, SCENRSSI      FLOAT 
+, RSRP          FLOAT 
+, SINR          FLOAT
+)
+PARTITIONED BY (SCHEDULE_ID INT)
+STORED AS PARQUET
+LOCATION '/teos/warehouse/RESULT_NR_2D_SINR_RU'
+;
+
+
+CREATE EXTERNAL TABLE I_RESULT_NR_2D_RSSI (
+  SCENARIO_ID                      INT 
+, RX_TM_XPOS                       INT
+, RX_TM_YPOS                       INT 
+, X_POINT                          INT 
+, Y_POINT                          INT 
+, RSSI                             FLOAT
+)
+PARTITIONED BY (SCHEDULE_ID INT)
+STORED AS PARQUET
+LOCATION '/teos/warehouse/RESULT_NR_2D_RSSI'
+;
+
+
+CREATE EXTERNAL TABLE I_RESULT_NR_2D_RSSI_RU (
+  SCENARIO_ID   INT 
+, RU_ID         STRING 
+, ENB_ID        INT 
+, CELL_ID       INT 
+, RX_TM_XPOS    INT 
+, RX_TM_YPOS    INT 
+, LOS           INT 
+, PATHLOSS      FLOAT 
+, ANTENNA_GAIN  FLOAT 
+, PATHLOSSPRIME FLOAT 
+, RSRPPILOT     FLOAT 
+, RSSINONOISE   FLOAT 
+, RSSI          FLOAT
+)
+PARTITIONED BY (SCHEDULE_ID INT)
+STORED AS PARQUET
+LOCATION '/teos/warehouse/RESULT_NR_2D_RSSI_RU'
+;
+
 DROP TABLE I_RESULT_NR_2D_BESTSERVER;
 
 CREATE EXTERNAL TABLE I_RESULT_NR_2D_BESTSERVER (
