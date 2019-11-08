@@ -5,6 +5,7 @@ import java.sql.DriverManager
 import java.sql.ResultSet
 import java.sql.Statement
 import java.lang.Runtime
+import java.io.File
 import java.io.ByteArrayInputStream
 
 import scala.collection.mutable.Map
@@ -16,10 +17,11 @@ import com.sccomz.scala.comm.App
 import com.sccomz.scala.etl.extract.oracle.ExtractOraManager
 import com.sccomz.scala.etl.load.LoadPostManager
 import com.sccomz.scala.etl.load.LoadHdfsManager
-import com.amazonaws.services.simpleworkflow.flow.core.TryCatch
-import java.io.File
 import com.sccomz.scala.etl.extract.post.ExtractLoadPostManager
-import com.sccomz.scala.job.spark.eng.Los
+import com.sccomz.scala.job.spark.EngManager
+
+import com.amazonaws.services.simpleworkflow.flow.core.TryCatch
+
 
 /*
 
@@ -132,7 +134,7 @@ object ExecuteJob {
   }
   
   def executeSparkEngJob(scheduleId:String): Unit = {
-    Los.executeSql(scheduleId);
+    EngManager.execute(scheduleId);
   }
   
   def executeSparkMakeBinFile(scheduleId:String): Unit = {

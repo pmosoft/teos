@@ -7,33 +7,44 @@ import org.apache.spark.sql.SparkSession
 
 /*
  * 설    명 :
+ * 입    력 : SCENARIO
+           SCHEDULE
+           NRSYSTEM
+           MOBILE_PARAMETER
+           RESULT_NR_2D_RSRPPILOT_RU
+ * 출    력 : RESULT_NR_2D_RSSI_RU
+           RESULT_NR_2D_RSSI
  * 수정내역 :
- * 2019-02-09 | 피승현 | 최초작성
+ * 2019-11-01 | 피승현 | 최초작성
 
-import com.sccomz.scala.job.spark.Los
-Los.execute("8459967");
+import com.sccomz.scala.job.spark.eng.Rssi
+Rssi.execute("8463189");
 
  */
 
 object Rssi {
 
-var spark: SparkSession = null
-var objNm  = "RESULT_NR_2D_RSSI_RU";
-var objNm2 = "RESULT_NR_2D_RSSI";
+
+def main(args: Array[String]): Unit = {  
+  var scheduleId = if (args.length < 1) "" else args(0);
+  execute(scheduleId);
+}     
 
 def execute(scheduleId:String) = {
-  //------------------------------------------------------
-  println(objNm + " 시작");
-  //------------------------------------------------------
-  spark = SparkSession.builder().appName("Los").getOrCreate();
-  excuteSql(scheduleId);
-  excuteSql2(scheduleId);
+  val spark: SparkSession = SparkSession.builder().master("yarn").appName(this.getClass.getName).config("spark.sql.warehouse.dir","/teos/warehouse").enableHiveSupport().getOrCreate();
+  executeSql(spark, scheduleId);
+  executeSql2(spark, scheduleId);
+  spark.close();
 }
 
-def excuteSql(scheduleId:String) = {
-
-var scheduleId = "8463189"; var objNm = "RESULT_NR_2D_RSSI_RU"
-//var scheduleId = "8460062"; 
+def executeSql(spark: SparkSession, scheduleId:String) = {
+//var scheduleId = "8463189"; 
+  
+var objNm = "RESULT_NR_2D_RSSI_RU"
+//------------------------------------------------------
+    println(objNm + " 시작");
+//------------------------------------------------------
+var qry = "";
   
 //---------------------------------------------------
     println("partiton 파일 삭제 및 drop table partition");
@@ -41,13 +52,14 @@ var scheduleId = "8463189"; var objNm = "RESULT_NR_2D_RSSI_RU"
 val conf = new Configuration()
 val fs = FileSystem.get(conf)
 fs.delete(new Path(s"""/teos/warehouse/${objNm}/schedule_id=${scheduleId}"""),true)
-spark.sql(s"""ALTER TABLE I_${objNm} DROP IF EXISTS PARTITION (SCHEDULE_ID=${scheduleId})""")    
+import spark.implicits._
+import spark.sql
+qry = s"""ALTER TABLE I_${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; sql(qry);
 
 //---------------------------------------------------
     println("insert partition table");
 //---------------------------------------------------
-
-var qry = ""; qry = s"""
+qry = s"""
 with NR_PARAMETER as -- 파라미터 정보
 (
 select a.scenario_id, b.schedule_id, c.ant_category,
@@ -84,33 +96,33 @@ select a.scenario_id, a.ru_id, a.enb_id, a.cell_id, a.rx_tm_xpos, a.rx_tm_ypos,
 	   and a.schedule_id = b.schedule_id
 	) a
 """
-//--------------------------------------
-println(qry);
-//--------------------------------------
-spark.sql(qry).take(100).foreach(println);
-
+println(qry); spark.sql(qry).take(100).foreach(println);
 
 }
 
-
-def excuteSql2(scheduleId:String) = {
+def executeSql2(spark: SparkSession, scheduleId:String) = {
+//var scheduleId = "8463189"; 
   
-var scheduleId = "8463189"; var objNm2 = "RESULT_NR_2D_RSSI"
-//var scheduleId = "8460062"; 
+var objNm = "RESULT_NR_2D_RSSI"
+//------------------------------------------------------
+    println(objNm + " 시작");
+//------------------------------------------------------
+var qry = "";
   
 //---------------------------------------------------
     println("partiton 파일 삭제 및 drop table partition");
 //---------------------------------------------------
 val conf = new Configuration()
 val fs = FileSystem.get(conf)
-fs.delete(new Path(s"""/teos/warehouse/${objNm2}/schedule_id=${scheduleId}"""),true)
-spark.sql(s"""ALTER TABLE I_${objNm2} DROP IF EXISTS PARTITION (SCHEDULE_ID=${scheduleId})""")    
+fs.delete(new Path(s"""/teos/warehouse/${objNm}/schedule_id=${scheduleId}"""),true)
+import spark.implicits._
+import spark.sql
+qry = s"""ALTER TABLE I_${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; sql(qry);
 
 //---------------------------------------------------
     println("insert partition table");
 //---------------------------------------------------
-
-var qry = ""; qry = s"""
+qry = s"""
 with AREA as
 (
 select a.scenario_id, b.schedule_id,
@@ -120,29 +132,28 @@ select a.scenario_id, b.schedule_id,
        a.tm_endy div a.resolution * a.resolution as tm_endy,
        a.resolution
   from SCENARIO a, SCHEDULE b
- where b.schedule_id = 8463189
+ where b.schedule_id = ${scheduleId}
    and a.scenario_id = b.scenario_id
 )
-insert into I_${objNm2} partition (schedule_id=${scheduleId})
+insert into I_${objNm} partition (schedule_id=${scheduleId})
 select max(AREA.scenario_id) as scenario_id,
        RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution as rx_tm_xpos,
        RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution as rx_tm_ypos,
        (RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution - AREA.tm_startx) / AREA.resolution as x_point,
-       (RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution - AREA.tm_starty) / AREA.resolution as y_point,
-       if (sum((power(10, (RSSINoNoise)/10.0))) = 0. , -9999, 10. * log10(sum((power(10, (RSSINoNoise)/10.0))))) as RSSI
-  from AREA, RESULT_NR_2D_RSSI_RU RSLT
+       (RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution - AREA.tm_starty) / AREA.resolution as y_point,       
+       max(rsrp) as rsrp
+  from AREA, RESULT_NR_2D_RSRP_RU RSLT
  where RSLT.schedule_id = AREA.schedule_id
    and AREA.tm_startx <= RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution and RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution < AREA.tm_endx
    and AREA.tm_starty <= RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution and RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution < AREA.tm_endy
   group by RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution, RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution,
            (RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution - AREA.tm_startx) / AREA.resolution, (RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution - AREA.tm_starty) / AREA.resolution
 """
-//--------------------------------------
-println(qry);
-//--------------------------------------
-spark.sql(qry).take(100).foreach(println);
-  
-  
+println(qry); spark.sql(qry).take(100).foreach(println);
+
 }
 
 }
+  
+  
+  

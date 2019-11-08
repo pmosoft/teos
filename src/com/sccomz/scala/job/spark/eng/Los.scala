@@ -5,10 +5,16 @@ import org.apache.hadoop.fs.FileSystem
 import org.apache.hadoop.fs.Path
 import org.apache.spark.sql.SparkSession
 
+
+
 /*
  * 설    명 :
+ * 입    력 : SCHEDULE
+           SCENARIO
+           RESULT_NR_2D_LOS_RU
+ * 출    력 : RESULT_NR_2D_LOS
  * 수정내역 :
- * 2019-02-09 | 피승현 | 최초작성
+ * 2019-11-01 | 피승현 | 최초작성
 
 import com.sccomz.scala.job.spark.eng.Los
 Los.executeSql("8460062");
@@ -19,21 +25,26 @@ object Los {
 
   
 def main(args: Array[String]): Unit = {  
-  var scheduleId = if (args.length < 1) "" else args(0);  
-  executeSql(scheduleId);  
+  var scheduleId = if (args.length < 1) "" else args(0);
+  execute(scheduleId);
 }   
 
-def executeSql(scheduleId:String) = {
-val spark: SparkSession = SparkSession.builder().master("yarn").appName("Los").config("spark.sql.warehouse.dir","/teos/warehouse").enableHiveSupport().getOrCreate();
+def execute(scheduleId:String) = {
+  val spark: SparkSession = SparkSession.builder().master("yarn").appName(this.getClass.getName).config("spark.sql.warehouse.dir","/teos/warehouse").enableHiveSupport().getOrCreate();
+  executeSql(spark, scheduleId);
+  spark.close();
+}
+ 
+
+def executeSql(spark: SparkSession, scheduleId:String) = {
+//var scheduleId = "8460062";
   
 var objNm = "RESULT_NR_2D_LOS"
 //------------------------------------------------------
-println(objNm + " 시작");
+    println(objNm + " 시작");
 //------------------------------------------------------
 var qry = "";
-  
-//var scheduleId = "8460062"; 
-//var scheduleId = "8460970"; 
+ 
   
 //---------------------------------------------------
     println("partiton 파일 삭제 및 drop table partition");
@@ -43,7 +54,7 @@ val fs = FileSystem.get(conf)
 fs.delete(new Path(s"""/teos/warehouse/${objNm}/schedule_id=${scheduleId}"""),true)
 import spark.implicits._
 import spark.sql
-sql(s"""ALTER TABLE I_${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})""")
+qry = s"""ALTER TABLE I_${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; sql(qry);
 
 //---------------------------------------------------
     println("insert partition table");
@@ -82,13 +93,8 @@ select max(AREA.scenario_id) as scenario_id,
   group by RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution, RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution,
            (RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution - AREA.tm_startx) / AREA.resolution, (RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution - AREA.tm_starty) / AREA.resolution
 """
-//--------------------------------------
-println(qry);
-//--------------------------------------
-spark.sql(qry).take(100).foreach(println);
+println(qry); spark.sql(qry).take(100).foreach(println);
 
-
-spark.stop();
 }
 
 }
