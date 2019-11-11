@@ -44,3 +44,6 @@ spark2-submit --master yarn --deploy-mode cluster --queue xtractor --executor-co
 
 
 --master yarn --deploy-mode cluster --queue xtractor --executor-cores 4 --jars /home/xtractor/commoc/ojdbc6.jar 
+
+# BatchJob 실행
+spark2-submit --jars /home/icpap/lib/hiveJdbc11.jar,/home/icpap/lib/ojdbc7.jar --class com.sccomz.scala.schedule.batch.BatchJob /home/icpap/bin/teos.jar 20191111
