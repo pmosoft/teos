@@ -71,7 +71,7 @@ object MakeBinFile4 {
     var ruPathList = mutable.MutableList[String]();
 
     while (rs.next()) {
-      // 처음 시작하자마자 폴더 유무 확인 후 있으면 삭제하고 다시 생성
+      // 처음 시작하자마자 폴더 유무 확인 후 있으면 삭제하고 다시 생성.
       if (rowCnt == 1) {
         ruInfo += ("SECTOR_PATH" -> rs.getString("SECTOR_PATH"));
 
@@ -210,7 +210,7 @@ object MakeBinFile4 {
     println(qry2); var tDF = spark.sql(qry2); tDF.cache.createOrReplaceTempView("ENG_RU"); tDF.count();
     
     for(ruId <- ruInfo) {
-      if(ruId._1 != "SECTOR_PATH") {       
+      if(ruId._1 != "SECTOR_PATH") {
         logger.info("============================== 초기화 ==============================");
         //---------------------------------------------------------------------------------------------------------
         // 초기화
