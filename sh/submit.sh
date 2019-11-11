@@ -16,7 +16,7 @@ spark2-submit --jars /home/icpap/lib/ojdbc7.jar,/home/icpap/lib/postgresql4.jar,
 spark2-submit --jars /home/icpap/lib/ojdbc7.jar,/home/icpap/lib/postgresql4.jar,/home/icpap/lib/hiveJdbc11.jar --class com.sccomz.scala.schedule.real.ScheduleDaemon /home/icpap/bin/teos1.jar   
 
 
-com.sccomz.scala.schedule.realScheduleDaemon /home/icpap/bin/teos1.jar
+com.sccomz.scala.schedule.realScheduleDaemon /home/icpap/bin/teos1.jar 
 
 spark2-submit --master local[*] --driver-memory 2g --executor-memory 10g --jars /home/icpap/lib/ojdbc7.jar,/home/icpap/lib/postgresql4.jar,/home/icpap/lib/hiveJdbc11.jar --class com.sccomz.scala.etl.extract.oracle.ExtractOraManager /home/icpap/bin/teos.jar 20191111  
 
