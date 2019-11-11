@@ -22,6 +22,15 @@ WHERE  A.SCHEDULE_ID = ${scheduleId}
 """
 }
 
+def selectScheduleStep(scheduleId:String) = {
+s"""
+SELECT MIN(TYPE_STEP_CD) AS MIN_TYPE_STEP_CD
+     , MAX(TYPE_STEP_CD) AS MAX_TYPE_STEP_CD
+FROM   SCHEDULE_STEP 
+WHERE  SCHEDULE_ID = ${scheduleId}
+"""
+}
+
 def updateScheduleStep(scheduleId:String, typeStepCd:String, processLog:String) = {
 s"""
 UPDATE SCHEDULE_STEP
@@ -34,14 +43,16 @@ AND    TYPE_STEP_CD ='${typeStepCd}'
 """ 
 }
 
-def selectScheduleStep(scheduleId:String) = {
+def updateScheduleProcessCd(scheduleId:String, processCd:String, processLog:String) = {
 s"""
-SELECT MIN(TYPE_STEP_CD) AS MIN_TYPE_STEP_CD
-     , MAX(TYPE_STEP_CD) AS MAX_TYPE_STEP_CD
-FROM   SCHEDULE_STEP 
-WHERE  SCHEDULE_ID = ${scheduleId}
-"""
+UPDATE SCHEDULE
+SET    PROCESS_CD   = '${processCd}'
+     , PROCESS_LOG  ='${processLog}'   
+     , MODIFY_DT    = SYSDATE
+WHERE  SCHEDULE_ID  = ${scheduleId}
+""" 
 }
+
 
 
 def deleteScheduleStep(scheduleId:String, typeStepCd:String) = {

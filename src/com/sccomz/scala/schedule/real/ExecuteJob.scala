@@ -22,19 +22,16 @@ import com.sccomz.scala.job.spark.EngManager
 
 import com.amazonaws.services.simpleworkflow.flow.core.TryCatch
 
-
 /*
 
 import com.sccomz.scala.schedule.real.ExecuteJob
 ExecuteJob.executeEtlOracleToHdfs("8460964","SC001");
 ExecuteJob.executeEtlOracleToHdfs("8460966","SC001");
 ExecuteJob.executeEtlOracleToHdfs("8460968","SC001");
-
 ExecuteJob.execute("8460178");
-
 ExecuteJob.delStepLog("8460178");
-
 ExecuteJob.executePostgreShell("8460178")
+
 */
 
 object ExecuteJob {
@@ -54,9 +51,9 @@ object ExecuteJob {
     //---------------------------------------------------------------------------------------------
     println("ExecuteJob : " + scheduleId);
     //---------------------------------------------------------------------------------------------
-    //execute();
+    execute(scheduleId);
   }
-
+ 
   def delStepLog(scheduleId:String) = { qry = ExecuteJobSql.deleteScheduleStepAll(scheduleId); println(qry); stat.execute(qry); }
   def insStepLog(scheduleId:String,typeStepCd:String) = { 
     var prevTypeStepCd = if(typeStepCd=="01") "00" else if(typeStepCd=="02") "01" else if(typeStepCd=="03") "02" else if(typeStepCd=="04") "03" else if(typeStepCd=="05") "04" else if(typeStepCd=="06") "05" else if(typeStepCd=="07") "06" else if(typeStepCd=="08") "07" else if(typeStepCd=="09") "08" else if(typeStepCd=="10") "09" else "00"
@@ -68,13 +65,18 @@ object ExecuteJob {
     qry = ExecuteJobSql.updateScheduleStep(scheduleId, typeStepCd, "오류"); println(qry); stat.execute(qry);
   }
   
+  def updScheduleProcessCd(scheduleId:String, processCd:String, processMsgCd:String) = { 
+    qry = ExecuteJobSql.updateScheduleProcessCd(scheduleId, processCd, processMsgCd); println(qry); stat.execute(qry);
+  }
   
   def selMaxStep(scheduleId:String) = { 
     qry = ExecuteJobSql.selectScheduleStep(scheduleId); println(qry); rs = stat.executeQuery(qry); rs.next(); rs.getString("MAX_TYPE_STEP_CD");
   }
   
-  
   def execute(scheduleId:String): Unit = {
+    
+    updScheduleProcessCd(scheduleId,"20003","분석중"); 
+    
     var typeStepCd = "01";
     delStepLog(scheduleId);
 
@@ -90,6 +92,7 @@ object ExecuteJob {
       if(typeStepCd=="03") {executeSparkEngJob(scheduleId)     ;insStepLog(scheduleId,"04");}
       if(typeStepCd=="04") {executeSparkMakeBinFile(scheduleId);insStepLog(scheduleId,"05");}
       if(typeStepCd=="05") {isLoof=false;}
+      updScheduleProcessCd(scheduleId,"20004","분석완료"); 
       Thread.sleep(1000*3);
     }
   }

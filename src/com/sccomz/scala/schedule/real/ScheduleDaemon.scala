@@ -34,14 +34,15 @@ object ScheduleDaemon {
   var qry = "";
 
   def main(args: Array[String]): Unit = {
-    //execute();
-    updateBinRuInfo();
+    
+    execute();
+    //updateBinRuInfo();
   }
-
 
   def execute(): Unit = {
     var loofCnt = 0;
     try {
+      //while(true) {
       while(loofCnt<1) {
         loofCnt += 1;
 
@@ -75,10 +76,10 @@ object ScheduleDaemon {
       scheduleId = rs.getString("SCHEDULE_ID");
       println("SCHEDULE_ID="+scheduleId);
       //ExecuteJob.execute();
-      val process = Process(s"""scala -classpath d:/fframe/workspace/teos/bin/teos.jar com.sccomz.scala.schedule.real.ExecuteJob ${scheduleId}""");
+      //var scheduleId = "8462895";
+      //val process = Process(s"""scala -classpath d:/fframe/workspace/teos/bin/teos.jar com.sccomz.scala.schedule.real.ExecuteJob ${scheduleId}""").lineStream;      
+      val process = Process(s"""spark2-submit --jars /home/icpap/lib/ojdbc7.jar,/home/icpap/lib/postgresql4.jar,/home/icpap/lib/hiveJdbc11.jar --class com.sccomz.scala.schedule.real.ExecuteJob /home/icpap/bin/teos.jar ${scheduleId}""").lineStream;
       println("process="+process);
-      var tt = s""""
-      """
     }
   }
 
