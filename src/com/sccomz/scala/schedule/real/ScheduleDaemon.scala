@@ -17,9 +17,8 @@ import com.sccomz.scala.comm.App
 /*
 
 import com.sccomz.scala.schedule.real.ScheduleDaemon
-ScheduleDaemon.updateBinRuInfo();
+ScheduleDaemon.execute();
 
-ExecuteJob.execute("8460178");
 
 ExecuteJob.delStepLog("8460178");
 
@@ -34,6 +33,8 @@ object ScheduleDaemon {
   var qry = "";
 
   def main(args: Array[String]): Unit = {
+    
+    
     
     execute();
     //updateBinRuInfo();

@@ -43,11 +43,11 @@ AND    TYPE_STEP_CD ='${typeStepCd}'
 """ 
 }
 
-def updateScheduleProcessCd(scheduleId:String, processCd:String, processLog:String) = {
+def updateScheduleProcessCd(scheduleId:String, processCd:String, processMsg:String) = {
 s"""
 UPDATE SCHEDULE
-SET    PROCESS_CD   = '${processCd}'
-     , PROCESS_LOG  ='${processLog}'   
+SET    PROCESS_CD   ='${processCd}'
+     , PROCESS_MSG  ='${processMsg}'   
      , MODIFY_DT    = SYSDATE
 WHERE  SCHEDULE_ID  = ${scheduleId}
 """ 

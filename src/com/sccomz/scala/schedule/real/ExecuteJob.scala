@@ -65,8 +65,8 @@ object ExecuteJob {
     qry = ExecuteJobSql.updateScheduleStep(scheduleId, typeStepCd, "오류"); println(qry); stat.execute(qry);
   }
   
-  def updScheduleProcessCd(scheduleId:String, processCd:String, processMsgCd:String) = { 
-    qry = ExecuteJobSql.updateScheduleProcessCd(scheduleId, processCd, processMsgCd); println(qry); stat.execute(qry);
+  def updScheduleProcessCd(scheduleId:String, processCd:String, processMsg:String) = { 
+    qry = ExecuteJobSql.updateScheduleProcessCd(scheduleId, processCd, processMsg); println(qry); stat.execute(qry);
   }
   
   def selMaxStep(scheduleId:String) = { 
@@ -83,10 +83,14 @@ object ExecuteJob {
     typeStepCd="01"; insStepLog(scheduleId,typeStepCd);
     executeEtlOracleToPostgre(scheduleId,typeStepCd); 
     executeEtlOracleToHdfs(scheduleId,typeStepCd);
-    typeStepCd="02"; insStepLog(scheduleId,typeStepCd);   
-    var isLoof = true; 
+    typeStepCd="02"; insStepLog(scheduleId,typeStepCd);
+    println("11111111111111111111111111111111111");
+    var isLoof = true;
+    println("22222222222222222222222222222222222");
     while(isLoof) {
+      println("33333333333333333333333333333333333");
       typeStepCd=selMaxStep(scheduleId); println("typeStepCd="+typeStepCd);
+
       if(typeStepCd=="02") {executePostgreShell(scheduleId);}
       if(typeStepCd=="02") {executeEtlPostgreToHdfs(scheduleId);insStepLog(scheduleId,"03");}
       if(typeStepCd=="03") {executeSparkEngJob(scheduleId)     ;insStepLog(scheduleId,"04");}
@@ -123,10 +127,10 @@ object ExecuteJob {
     //var logFile = new File(s"sh /home/icpap/sh/${scheduleId}_end_log.txt");
     var logFile = new File(s"/home/icpap/sh/${scheduleId}_end_log.txt");
     
-    while(!logFile.exists()){
-      Thread.sleep(1000*1);
-      println("ing...");
-    }
+    //while(!logFile.exists()){
+    //  Thread.sleep(1000*1);
+    //  println("ing...");
+    //}
 
     println("executePostgreShell end");
     
