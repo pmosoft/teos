@@ -50,7 +50,7 @@ object LoadPostManager {
     // DELETE
     qry = s"""DELETE FROM I_SCENARIO         WHERE SCENARIO_ID IN (SELECT SCENARIO_ID FROM I_SCHEDULE WHERE SCHEDULE_ID = ${scheduleId})"""; println(qry); stat.execute(qry);
     qry = s"""DELETE FROM I_MOBILE_PARAMETER WHERE SCENARIO_ID IN (SELECT SCENARIO_ID FROM I_SCHEDULE WHERE SCHEDULE_ID = ${scheduleId})"""; println(qry); stat.execute(qry);
-    qry = s"""DELETE FROM I_SCENARIO_NR_RU   WHERE SCENARIO_ID IN (SELECT SCENARIO_ID FROM I_SCHEDULE WHERE SCHEDULE_ID = ${scheduleId})"""; println(qry); stat.execute(qry);
+    //qry = s"""DELETE FROM I_SCENARIO_NR_RU   WHERE SCENARIO_ID IN (SELECT SCENARIO_ID FROM I_SCHEDULE WHERE SCHEDULE_ID = ${scheduleId})"""; println(qry); stat.execute(qry);
     qry = s"""DELETE FROM I_SCHEDULE         WHERE SCHEDULE_ID=${scheduleId}"""                                                            ; println(qry); stat.execute(qry);
 
     // INSERT    
@@ -58,7 +58,7 @@ object LoadPostManager {
         filePathNm = App.extJavaPath+"/SCHEDULE_"        +scheduleId+".sql"; println(filePathNm); for(qry <- Source.fromFile(filePathNm).getLines()){stat.execute(qry);}
         filePathNm = App.extJavaPath+"/SCENARIO_"        +scheduleId+".sql"; println(filePathNm); for(qry <- Source.fromFile(filePathNm).getLines()){stat.execute(qry);}
         filePathNm = App.extJavaPath+"/MOBILE_PARAMETER_"+scheduleId+".sql"; println(filePathNm); for(qry <- Source.fromFile(filePathNm).getLines()){stat.execute(qry);}
-        filePathNm = App.extJavaPath+"/SCENARIO_NR_RU_"  +scheduleId+".sql"; println(filePathNm); for(qry <- Source.fromFile(filePathNm).getLines()){stat.execute(qry);}
+        //filePathNm = App.extJavaPath+"/SCENARIO_NR_RU_"  +scheduleId+".sql"; println(filePathNm); for(qry <- Source.fromFile(filePathNm).getLines()){stat.execute(qry);}
     } catch {
         case e: Exception => println(e)
     }

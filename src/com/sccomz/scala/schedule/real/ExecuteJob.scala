@@ -22,6 +22,7 @@ import com.sccomz.scala.job.spark.EngManager
 
 import com.amazonaws.services.simpleworkflow.flow.core.TryCatch
 import com.sccomz.scala.serialize.MakeBinFile
+import com.sccomz.scala.etl.cache.LosResultCache
 
 /*
 
@@ -84,6 +85,7 @@ object ExecuteJob {
     typeStepCd="01"; insStepLog(scheduleId,typeStepCd);
     executeEtlOracleToHdfs(scheduleId,typeStepCd);
     executeEtlOracleToPostgre(scheduleId,typeStepCd); 
+    executeEtlHdfsToPostgre(scheduleId,typeStepCd); 
     typeStepCd="02"; insStepLog(scheduleId,typeStepCd);
     var isLoof = true;
     while(isLoof) {
@@ -116,7 +118,14 @@ object ExecuteJob {
       case _:Throwable=>updStepErrLog(scheduleId,typeStepCd);
     }    
   }
-
+  def executeEtlHdfsToPostgre(scheduleId:String, typeStepCd:String): Unit = {
+    try {
+      LosResultCache.execute(scheduleId);
+    } catch {
+      case _:Throwable=>updStepErrLog(scheduleId,typeStepCd);
+    }    
+  }
+  
   def executePostgreShell(scheduleId:String): Unit = {
     println("executePostgreShell start");
     //var scheduleId = "8460062";
@@ -137,8 +146,10 @@ object ExecuteJob {
   }
 
   def executeEtlPostgreToHdfs(scheduleId:String): Unit = {
-    //ExtractLoadPostManager.monitorJobDis(scheduleId);  
+    ExtractLoadPostManager.monitorJobDis(scheduleId);  
   }
+  
+  
   
   def executeSparkEngJob(scheduleId:String): Unit = {
     EngManager.execute(scheduleId);
