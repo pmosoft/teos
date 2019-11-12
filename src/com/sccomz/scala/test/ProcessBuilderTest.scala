@@ -39,6 +39,20 @@ object ProcessBuilderTest {
                 p.exitValue()
               }
   }
+
+  def test05(): Unit = {
+    val p = "sh /home/icpap/sh/execPostgre.sh 8460062".run()               // start asynchronously
+    val f = Future(blocking(p.exitValue())) // wrap in Future
+    val res = try {
+                Await.result(f, duration.Duration(2, "sec"))
+              } catch {
+                case _: TimeoutException => 
+                println("TIMEOUT!")
+                p.destroy()
+                p.exitValue()
+              }
+  }
+  
   
   def test04(): Unit = {
     val contents = Process("ls").lineStream

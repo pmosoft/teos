@@ -21,6 +21,7 @@ import com.sccomz.scala.etl.extract.post.ExtractLoadPostManager
 import com.sccomz.scala.job.spark.EngManager
 
 import com.amazonaws.services.simpleworkflow.flow.core.TryCatch
+import com.sccomz.scala.serialize.MakeBinFile
 
 /*
 
@@ -81,14 +82,11 @@ object ExecuteJob {
     delStepLog(scheduleId);
 
     typeStepCd="01"; insStepLog(scheduleId,typeStepCd);
-    executeEtlOracleToPostgre(scheduleId,typeStepCd); 
     executeEtlOracleToHdfs(scheduleId,typeStepCd);
+    executeEtlOracleToPostgre(scheduleId,typeStepCd); 
     typeStepCd="02"; insStepLog(scheduleId,typeStepCd);
-    println("11111111111111111111111111111111111");
     var isLoof = true;
-    println("22222222222222222222222222222222222");
     while(isLoof) {
-      println("33333333333333333333333333333333333");
       typeStepCd=selMaxStep(scheduleId); println("typeStepCd="+typeStepCd);
 
       if(typeStepCd=="02") {executePostgreShell(scheduleId);}
@@ -122,10 +120,12 @@ object ExecuteJob {
   def executePostgreShell(scheduleId:String): Unit = {
     println("executePostgreShell start");
     //var scheduleId = "8460062";
-    var res = Process(s"sh /home/icpap/sh/execPostgre.sh ${scheduleId}").lineStream;
-    
+    //var res = Process(s"sh /home/icpap/sh/execPostgre.sh ${scheduleId}").lineStream;
+    var res = Process(s"ssh icpap@teos-cluster-dn1 /home/icpap/sh/execPostgre.sh ${scheduleId}").lineStream;
+    //var res = Process(s"ssh icpap@teos-cluster-dn1 /home/icpap/sh//execPostgre.sh 111").lineStream;
+    // res.waitFor()
     //var logFile = new File(s"sh /home/icpap/sh/${scheduleId}_end_log.txt");
-    var logFile = new File(s"/home/icpap/sh/${scheduleId}_end_log.txt");
+    var logFile = new File(s"/home/icpap/log/${scheduleId}_end_log.txt");
     
     //while(!logFile.exists()){
     //  Thread.sleep(1000*1);
@@ -145,7 +145,7 @@ object ExecuteJob {
   }
   
   def executeSparkMakeBinFile(scheduleId:String): Unit = {
-  }  
-  
+     MakeBinFile.executeEngResult(scheduleId);
+  }
 
 }

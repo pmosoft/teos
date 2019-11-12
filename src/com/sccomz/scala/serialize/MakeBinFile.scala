@@ -18,23 +18,26 @@ import com.sccomz.java.serialize.Byte4
 import com.sccomz.java.serialize.ByteUtil
 /*
 
-import com.sccomz.scala.serialize.MakeBinFile4
-MakeBinFile4.executeEngResult("8460062");
+import com.sccomz.scala.serialize.MakeBinFile
+MakeBinFile.executeEngResult("8460062");
   
  * */
-object MakeBinFile4 {
+object MakeBinFile {
 
   val logger: Logger = Logger.getLogger(this.getClass.getName());
-  var spark: SparkSession = null;
-  spark = SparkSession.builder().appName("MakeBinFile4").getOrCreate();
+  val spark: SparkSession = SparkSession.builder().master("yarn").appName(this.getClass.getName).getOrCreate();
+  
   var ruInfo = mutable.Map[String,String]();
   
   def main(args: Array[String]): Unit = {
-    executeEngResult("8460062");
+    var scheduleId = if (args.length < 1) "" else args(0);
+    executeEngResult(scheduleId);
+    //executeEngResult("8460062");
   }
 
   // 2D Bin
   def executeEngResult(scheduleId: String) = {
+    
     makeResultPath(scheduleId);
     makeEngResult(scheduleId, "LOS");
     makeEngResult(scheduleId, "PATHLOSS");
@@ -42,6 +45,8 @@ object MakeBinFile4 {
     //makeEngResult(scheduleId, "PILOT_EC");     // RSRP
     //makeEngResult(scheduleId, "RSSI");
     //makeEngResult(scheduleId, "C2I");      // SINR
+    
+    spark.stop();
   }
 
   // 3D Bin

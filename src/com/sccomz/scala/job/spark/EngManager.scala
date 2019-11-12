@@ -23,13 +23,13 @@ object EngManager {
 
   def execute(scheduleId:String) = {
     Los.execute(scheduleId);
-    PathLoss.execute(scheduleId);
-    RsrpPilot.execute(scheduleId);
-    Rsrp.execute(scheduleId);
-    BestServer.execute(scheduleId);
-    Rssi.execute(scheduleId);
-    Sinr.execute(scheduleId);
-    Throughput.execute(scheduleId);
+    //PathLoss.execute(scheduleId);
+    //RsrpPilot.execute(scheduleId);
+    //Rsrp.execute(scheduleId);
+    //BestServer.execute(scheduleId);
+    //Rssi.execute(scheduleId);
+    //Sinr.execute(scheduleId);
+    //Throughput.execute(scheduleId);
   }
   
   
