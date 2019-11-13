@@ -1,3 +1,102 @@
+;
+
+
+with temp01 as
+(
+select a.scenario_id, a.ru_id, a.xposition, a.yposition, a.height, a.resolution, b.mobile_height
+from   i_scenario_nr_ru a,
+      (select scenario_id, max(height) as mobile_height
+       from i_mobile_parameter
+       where scenario_id = 5105173
+       group by scenario_id
+       ) b
+where  a.scenario_id = b.scenario_id
+and    a.scenario_id = 5105173
+) , temp02 as (
+select * 
+from   temp01 a,
+       I_NR_RU_CACHE b
+where  a.ru_id
+and, a.xposition
+and, a.yposition
+and, a.height
+and, a.resolution
+and               , b.mobile_height  
+
+
+
+)
+select * from temp01
+;
+
+DROP TABLE PUBLIC.I_SCENARIO_NR_RU_CACHE;                                                                                                                 
+                                                                                                                                                       
+CREATE TABLE PUBLIC.I_SCENARIO_NR_RU_CACHE(                                                                                                                                                                                                                                                                                                             
+  SCENARIO_ID                   NUMERIC     NOT NULL                                                                                                                        
+, RU_ID                         VARCHAR(48) NOT NULL                                                                                                                      
+, XPOSITION                     VARCHAR(40) NOT NULL                                                                                                               
+, YPOSITION                     VARCHAR(40) NOT NULL                                                                                                               
+, HEIGHT                        NUMERIC     NOT NULL                                                                                                           
+, RESOLUTION                    NUMERIC     NOT NULL                                                                                                           
+, MOBILE_HEIGHT                 NUMERIC     NOT NULL
+, CACHE_YN                      VARCHAR(1)      NULL
+, REG_DT                        DATE            NULL
+, MODIFY_DT                     DATE            NULL
+);
+
+CREATE INDEX I_SCENARIO_NR_RU_CACHE_IDX ON PUBLIC.I_SCENARIO_NR_RU_CACHE USING BTREE (SCENARIO_ID,RU_ID,XPOSITION,YPOSITION,HEIGHT,RESOLUTION,MOBILE_HEIGHT);
+ALTER TABLE PUBLIC.I_SCENARIO_NR_RU_CACHE OWNER TO POSTGRES;
+GRANT ALL ON TABLE PUBLIC.I_SCENARIO_NR_RU_CACHE TO POSTGRES;
+
+-----------------------------------------
+-- I_SCENARIO_NR_RU_CACHE
+-----------------------------------------
+DROP TABLE PUBLIC.I_NR_RU_CACHE;                                                                                                                 
+                                                                                                                                                       
+CREATE TABLE PUBLIC.I_NR_RU_CACHE(                                                                                                                                                                                                                                                                                                             
+  RU_ID                         VARCHAR(48) NOT NULL                                                                                                                      
+, XPOSITION                     VARCHAR(40) NOT NULL                                                                                                                        
+, YPOSITION                     VARCHAR(40) NOT NULL                                                                                                                        
+, HEIGHT                        NUMERIC     NOT NULL                                                                                                                   
+, RESOLUTION                    NUMERIC     NOT NULL                                                                                                                     
+, MOBILE_HEIGHT                 NUMERIC     NOT NULL
+, REG_DT                        DATE            NULL
+, MODIFY_DT                     DATE            NULL
+);
+
+CREATE INDEX I_NR_RU_CACHE_IDX ON PUBLIC.I_NR_RU_CACHE USING BTREE (RU_ID,XPOSITION,YPOSITION,HEIGHT,RESOLUTION,MOBILE_HEIGHT);
+ALTER TABLE PUBLIC.I_NR_RU_CACHE OWNER TO POSTGRES;
+GRANT ALL ON TABLE PUBLIC.I_NR_RU_CACHE TO POSTGRES;
+
+
+select scenario_id, xposition, yposition, height, resolution
+from   i_scenario_nr_ru a
+;
+
+
+CREATE TABLE PUBLIC.I_NR_RU_CACHE(                                                                                                                                                                                                                                                                                                             
+  RU_ID                         VARCHAR(48) NOT NULL                                                                                                                      
+, XPOSITION                     VARCHAR(40)                                                                                                                        
+, YPOSITION                     VARCHAR(40)                                                                                                                        
+, HEIGHT                        NUMERIC                                                                                                                        
+, RESOLUTION                    NUMERIC                                                                                                                        
+, MOBILE_HEIGHT                 NUMERIC
+, REG_DT                        DATE NULL
+, MODIFY_DT                     DATE NULL
+);
+
+CREATE INDEX I_NR_RU_CACHE_IDX ON PUBLIC.I_NR_RU_CACHE USING BTREE (RU_ID,XPOSITION,YPOSITION,HEIGHT,RESOLUTION,MOBILE_HEIGHT);
+ALTER TABLE PUBLIC.I_NR_RU_CACHE OWNER TO POSTGRES;
+GRANT ALL ON TABLE PUBLIC.I_NR_RU_CACHE TO POSTGRES;
+
+
+
+
+select scenario_id, max(height) as mobile_height
+from i_mobile_parameter
+group by scenario_id
+;
+
 select scenario_id
      , COUNT(*)
 from job_dis

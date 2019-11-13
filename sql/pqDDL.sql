@@ -181,6 +181,49 @@ CREATE INDEX I_SCENARIO_NR_RU_IDX ON PUBLIC.I_SCENARIO_NR_RU USING BTREE (SCENAR
 ALTER TABLE PUBLIC.I_SCENARIO_NR_RU OWNER TO POSTGRES;
 GRANT ALL ON TABLE PUBLIC.I_SCENARIO_NR_RU TO POSTGRES;
 
+-----------------------------------------
+-- I_SCENARIO_NR_RU
+-----------------------------------------
+-- DROP TABLE PUBLIC.I_SCENARIO_NR_RU;                                                                                                                 
+                                                                                                                                                       
+CREATE TABLE PUBLIC.I_SCENARIO_NR_RU_CACHE(                                                                                                                                                                                                                                                                                                             
+  SCENARIO_ID                   NUMERIC     NOT NULL                                                                                                                        
+, RU_ID                         VARCHAR(48) NOT NULL                                                                                                                      
+, XPOSITION                     VARCHAR(40) NOT NULL                                                                                                               
+, YPOSITION                     VARCHAR(40) NOT NULL                                                                                                               
+, HEIGHT                        NUMERIC     NOT NULL                                                                                                           
+, RESOLUTION                    NUMERIC     NOT NULL                                                                                                           
+, MOBILE_HEIGHT                 NUMERIC     NOT NULL
+, CACHE_YN                      VARCHAR(1)      NULL
+, REG_DT                        DATE            NULL
+, MODIFY_DT                     DATE            NULL
+);
+
+CREATE INDEX I_SCENARIO_NR_RU_CACHE_IDX ON PUBLIC.I_SCENARIO_NR_RU_CACHE USING BTREE (SCENARIO_ID,RU_ID,XPOSITION,YPOSITION,HEIGHT,RESOLUTION,MOBILE_HEIGHT);
+ALTER TABLE PUBLIC.I_SCENARIO_NR_RU_CACHE OWNER TO POSTGRES;
+GRANT ALL ON TABLE PUBLIC.I_SCENARIO_NR_RU_CACHE TO POSTGRES;
+
+-----------------------------------------
+-- I_SCENARIO_NR_RU_CACHE
+-----------------------------------------
+-- DROP TABLE PUBLIC.I_NR_RU_CACHE;                                                                                                                 
+                                                                                                                                                       
+CREATE TABLE PUBLIC.I_NR_RU_CACHE (                                                                                                                                                                                                                                                                                                             
+  RU_ID                         VARCHAR(48) NOT NULL                                                                                                                      
+, XPOSITION                     VARCHAR(40) NOT NULL                                                                                                                        
+, YPOSITION                     VARCHAR(40) NOT NULL                                                                                                                        
+, HEIGHT                        NUMERIC     NOT NULL                                                                                                                   
+, RESOLUTION                    NUMERIC     NOT NULL                                                                                                                     
+, MOBILE_HEIGHT                 NUMERIC     NOT NULL
+, REG_DT                        DATE            NULL
+, MODIFY_DT                     DATE            NULL
+);
+
+CREATE INDEX I_NR_RU_CACHE_IDX ON PUBLIC.I_NR_RU_CACHE USING BTREE (RU_ID,XPOSITION,YPOSITION,HEIGHT,RESOLUTION,MOBILE_HEIGHT);
+ALTER TABLE PUBLIC.I_NR_RU_CACHE OWNER TO POSTGRES;
+GRANT ALL ON TABLE PUBLIC.I_NR_RU_CACHE TO POSTGRES;
+
+
 --------------------------------------------------------------------------------------------------------------------------
 
 
