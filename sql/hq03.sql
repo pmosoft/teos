@@ -1,5 +1,44 @@
 SELECT * FROM i_result_nr_2d_los;
 
+<<<<<<< HEAD
+SELECT * FROM RESULT_NR_2D_LOS_RU;
+
+SELECT * FROM RESULT_NR_2D_LOS_RU;
+
+SELECT * FROM SCHEDULE;
+
+SELECT * FROM SCHEDULE WHERE SCHEDULE_ID = 8460964;
+
+
+SELECT * FROM I_SCENARIO WHERE SCHEDULE_ID = 8460964;
+
+
+LOAD DATA INPATH '/teos/samfile/aa.dat' INTO TABLE SCHEDULE PARTITION (SCHEDULE_ID=8460964)
+;
+
+SELECT * FROM SCENARIO;
+
+SELECT * FROM I_DU WHERE SCHEDULE_ID = 8460964;
+
+SELECT * FROM SCENARIO WHERE SCENARIO_ID = 5108171;
+
+ALTER TABLE SCHEDULE RENAME TO SCHEDULE_B;
+
+ALTER TABLE I_SCHEDULE RENAME TO SCHEDULE;
+
+ALTER TABLE SCHEDULE RENAME TO I_SCHEDULE;
+
+ALTER TABLE SCHEDULE_B RENAME TO SCHEDULE;
+
+SELECT * FROM SCHEDULE;
+
+INSERT INTO SCHEDULE SELECT * FROM SCHEDULE_B WHERE SCHEDULE_ID = 8460198
+;
+
+SELECT * FROM SCHEDULE_B;
+
+=======
+>>>>>>> branch 'master' of https://github.com/pmosoft/teos.git
 
 ALTER TABLE I_RESULT_NR_2D_LOS DROP IF EXISTS PARTITION (schedule_id=8460062);
 
@@ -140,6 +179,8 @@ PARTITIONED BY (SCHEDULE_ID INT)
 STORED AS PARQUET
 LOCATION '/teos/warehouse/RESULT_NR_2D_RSRP'
 ;
+
+insert into schedule_t1 partition (schedule_id=8459967) select * from schedule;
 
 
 with AREA as
@@ -404,3 +445,59 @@ CREATE EXTERNAL TABLE I_LOS_ENG_RESULT (
 PARTITIONED BY (SCHEDULE_ID INT, RU_ID STRING)
 STORED AS PARQUET
 LOCATION '/teos/warehouse/LOS_ENG_RESULT';
+
+
+set hive.exec.dynamic.partition.mode=nonstrict;
+ 
+insert overwrite table schedule_t1 select * from schedule
+;
+
+
+select distinct schedule_id from schedule
+;
+
+select * from schedule;
+
+
+CREATE EXTERNAL TABLE `default.schedule_t1`(
+  `type_cd` string, 
+  `scenario_id` int, 
+  `user_id` string, 
+  `prioritize` string, 
+  `process_cd` string, 
+  `process_msg` string, 
+  `scenario_path` string, 
+  `reg_dt` string, 
+  `modify_dt` string, 
+  `retry_cnt` int, 
+  `server_id` string, 
+  `bin_x_cnt` int, 
+  `bin_y_cnt` int, 
+  `ru_cnt` int, 
+  `analysis_weight` int, 
+  `phone_no` string, 
+  `result_time` float, 
+  `tilt_process_type` int, 
+  `geometryquery_schedule_id` int, 
+  `result_bit` string, 
+  `interworking_info` string)
+PARTITIONED BY ( 
+  `schedule_id` int)
+ROW FORMAT SERDE 
+  'org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe' 
+WITH SERDEPROPERTIES ( 
+  'field.delim'='|', 
+  'line.delim'='\n', 
+  'serialization.format'='|') 
+STORED AS INPUTFORMAT 
+  'org.apache.hadoop.mapred.TextInputFormat' 
+OUTPUTFORMAT 
+  'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'
+LOCATION
+  'hdfs://nameservice1/TEOS/warehouse/SCHEDULE_T1'
+TBLPROPERTIES (
+  'transient_lastDdlTime'='1573609940')
+;  
+
+
+INSERT INTO SCHEDULE_T2 PARTITION (SCHEDULE_ID) SELECT * FROM SCHEDULE_T1;

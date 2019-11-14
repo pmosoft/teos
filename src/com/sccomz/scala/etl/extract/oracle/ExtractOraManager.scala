@@ -42,14 +42,16 @@ object ExtractOraManager {
   var tabNm = "";
 
   def main(args: Array[String]): Unit = {
-    extractOracleToHadoopCsv("8463189");
+    extractOracleToPostgreIns("8463233");
+    //extractOracleToHadoopCsv("8460064");
     //extractOracleToHadoopCsv("8460178");
-    //extractOracleToPostgreIns("8459967");
 
     //extractOracleToPostgreIns("8460178");
     //extractOracleToPostgreIns("8460179");
     //extractOracleToPostgreIns("8460062");
     //extractOracleToPostgreIns("8460063");
+    
+    //8463233	5113566
     
   }
 

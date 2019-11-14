@@ -144,6 +144,7 @@ select PLPRIME_temp.scenario_id
   from PLPRIME_temp left outer join ANTGAIN
 --  from PLPRIME_temp join ANTGAIN
     on (PLPRIME_temp.rx_tm_xpos = ANTGAIN.rx_tm_xpos and PLPRIME_temp.rx_tm_ypos = ANTGAIN.rx_tm_ypos and PLPRIME_temp.ru_id = ANTGAIN.ru_id)
+
 """
 println(qry); spark.sql(qry).take(100).foreach(println);
 

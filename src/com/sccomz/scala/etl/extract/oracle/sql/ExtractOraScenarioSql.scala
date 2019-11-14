@@ -68,7 +68,7 @@ WHERE  SCENARIO_ID IN (SELECT SCENARIO_ID FROM SCHEDULE WHERE SCHEDULE_ID = ${sc
 def selectScenarioIns(scheduleId:String) = {
 s"""
 SELECT 
-'INSERT INTO I_SCENARIO VALUES ('
+'INSERT INTO SCENARIO VALUES ('
 ||' '  ||NVL(SCENARIO_ID,0)                         
 ||','''||SCENARIO_NM                                ||''''
 ||','''||USER_ID                                    ||''''
@@ -123,6 +123,7 @@ SELECT
 ||','  ||NVL(AREA_ID,0)                             
 ||','''||BUILDINGANALYSIS3D_RELATED_YN              ||''''
 ||','  ||NVL(RELATED_ANALYSIS_COVLIMITRSRP,0)       
+||','  ||ROUND(PRECISION)       
 ||');'
 FROM   SCENARIO
 WHERE  SCENARIO_ID IN (SELECT SCENARIO_ID FROM SCHEDULE WHERE SCHEDULE_ID = ${scheduleId})

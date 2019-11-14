@@ -54,9 +54,9 @@ object LoadHdfsManager {
     val spark = SparkSession.builder().master("local[*]").appName("LoadHdfsManager").config("spark.sql.warehouse.dir","/teos/warehouse").enableHiveSupport().getOrCreate()
     toParquetPartition(spark,"local","SCHEDULE",scheduleId);
     toParquetPartition(spark,"local","SCENARIO",scheduleId);
-    toParquetPartition(spark,"local","DU",scheduleId);
-    toParquetPartition(spark,"local","RU",scheduleId);
-    toParquetPartition(spark,"local","SITE",scheduleId);
+    //toParquetPartition(spark,"local","DU",scheduleId);
+    //toParquetPartition(spark,"local","RU",scheduleId);
+    //toParquetPartition(spark,"local","SITE",scheduleId);
     toParquetPartition(spark,"local","SCENARIO_NR_RU",scheduleId);
     toParquetPartition(spark,"local","SCENARIO_NR_ANTENNA",scheduleId);
     spark.close();

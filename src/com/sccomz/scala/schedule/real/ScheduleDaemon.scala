@@ -17,6 +17,10 @@ import com.sccomz.scala.comm.App
 /*
 
 import com.sccomz.scala.schedule.real.ScheduleDaemon
+ScheduleDaemon.updateBinRuInfo();
+
+
+
 ScheduleDaemon.execute();
 
 

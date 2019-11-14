@@ -27,10 +27,14 @@ import com.sccomz.scala.etl.cache.LosResultCache
 /*
 
 import com.sccomz.scala.schedule.real.ExecuteJob
+ExecuteJob.executePostgreShell("8460064");
+
+ExecuteJob.execute("8460064");
+
+
 ExecuteJob.executeEtlOracleToHdfs("8460964","SC001");
 ExecuteJob.executeEtlOracleToHdfs("8460966","SC001");
 ExecuteJob.executeEtlOracleToHdfs("8460968","SC001");
-ExecuteJob.execute("8460178");
 ExecuteJob.delStepLog("8460178");
 ExecuteJob.executePostgreShell("8460178")
 
@@ -128,13 +132,18 @@ object ExecuteJob {
   
   def executePostgreShell(scheduleId:String): Unit = {
     println("executePostgreShell start");
-    //var scheduleId = "8460062";
     //var res = Process(s"sh /home/icpap/sh/execPostgre.sh ${scheduleId}").lineStream;
-    var res = Process(s"ssh icpap@teos-cluster-dn1 /home/icpap/sh/execPostgre.sh ${scheduleId}").lineStream;
+    //var scheduleId = "8460064";
+    //var scenarioId = "5104574";
+    //var res = Process(s"ssh postgres@teos-cluster-dn1 /gis01/bin/anal_los_job_dis.sh ${scenarioId}").lineStream;
+    //var res = Process(s"ssh icpap@teos-cluster-dn1 /gis01/bin/anal_los_job_dis.sh ${scheduleId}").lineStream;
     //var res = Process(s"ssh icpap@teos-cluster-dn1 /home/icpap/sh//execPostgre.sh 111").lineStream;
     // res.waitFor()
+    //ssh postgres@teos-cluster-dn1 /gis01/bin/anal_los_job_dis.sh 5113566
     //var logFile = new File(s"sh /home/icpap/sh/${scheduleId}_end_log.txt");
     var logFile = new File(s"/home/icpap/log/${scheduleId}_end_log.txt");
+    
+    //8463233	5113566
     
     //while(!logFile.exists()){
     //  Thread.sleep(1000*1);

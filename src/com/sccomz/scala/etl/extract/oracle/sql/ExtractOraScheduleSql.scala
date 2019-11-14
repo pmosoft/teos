@@ -35,7 +35,7 @@ WHERE  SCHEDULE_ID = ${scheduleId}
 def selectScheduleIns(scheduleId:String) = {
 s"""
 SELECT 
-'INSERT INTO I_SCHEDULE VALUES ('
+'INSERT INTO SCHEDULE VALUES ('
 ||' '  ||NVL(SCHEDULE_ID,0)                         
 ||','''||TYPE_CD                                    ||''''
 ||','  ||NVL(SCENARIO_ID,0)                         

@@ -127,7 +127,7 @@ ORDER BY T_RU.ENB_ID, T_RU.PCI, T_RU.PCI_PORT, T_RU.RU_ID
 def selectScenarioNrRuIns(scheduleId:String) = {
 s"""
 SELECT
-'INSERT INTO I_SCENARIO_NR_RU VALUES ('
+'INSERT INTO SCENARIO_NR_RU VALUES ('
 ||' '  ||NVL(SCENARIO_ID,0)
 ||','''||ENB_ID                                ||''''
 ||','  ||NVL(PCI,0)

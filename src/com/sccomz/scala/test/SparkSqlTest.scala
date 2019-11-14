@@ -60,6 +60,48 @@ spark.sql(s"""
 SELECT SCENARIO_ID, COUNT(*) FROM SCENARIO_NR_RU GROUP BY SCENARIO_ID
 """).take(100).foreach(println);
 
+
+spark.sql(s"""
+SELECT SCENARIO_ID, COUNT(*) FROM SCENARIO_NR_RU GROUP BY SCENARIO_ID
+""").take(100).foreach(println);
+
+
+spark.sql(s"""
+SELECT DISTINCT SCENARIO_ID FROM SCENARIO
+""").take(100).foreach(println);
+
+
+
+
+spark.sql(s"""
+INSERT INTO SCHEDULE PARTITION (SCHEDULE_ID=8460062) 
+SELECT 
+  TYPE_CD                  
+, SCENARIO_ID              
+, USER_ID                  
+, PRIORITIZE               
+, PROCESS_CD               
+, PROCESS_MSG              
+, SCENARIO_PATH            
+, REG_DT                   
+, MODIFY_DT                
+, RETRY_CNT                
+, SERVER_ID                
+, BIN_X_CNT                
+, BIN_Y_CNT                
+, RU_CNT                   
+, ANALYSIS_WEIGHT          
+, PHONE_NO                 
+, RESULT_TIME              
+, TILT_PROCESS_TYPE        
+, GEOMETRYQUERY_SCHEDULE_ID
+, RESULT_BIT               
+, INTERWORKING_INFO        
+FROM SCHEDULE_B
+""").take(100).foreach(println);
+
+
+
 }  
 
 
