@@ -5,7 +5,6 @@ object ExtractOraScenarioNrRuSql {
 def selectScenarioNrRuCsv(scheduleId:String) = {
 s"""
 SELECT
-       NVL(SCENARIO_ID,0)                          ||'|'||
        ENB_ID                                      ||'|'||
        NVL(PCI,0)                                  ||'|'||
        NVL(PCI_PORT,0)                             ||'|'||
@@ -43,7 +42,7 @@ SELECT
        NVL(SITE_ENDY,0)                            ||'|'||
        NVL(X_BIN_CNT,0)                            ||'|'||
        NVL(Y_BIN_CNT,0)                            ||'|'||
-       ${scheduleId}                               ||'|'
+       SCENARIO_ID                                 ||'|'
 FROM
 (
 SELECT T_DU.SCENARIO_ID                 AS SCENARIO_ID
