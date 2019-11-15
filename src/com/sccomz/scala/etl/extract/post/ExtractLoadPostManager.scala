@@ -42,7 +42,7 @@ object ExtractLoadPostManager {
     
     //extractPostToHadoopCsv("8460062","1012242284","gis01");
 
-    monitorJobDis("8460062","");
+    monitorJobDis("8460062","5113566");
     
     println("ExtractLoadPostManager end");
   }
