@@ -41,7 +41,7 @@ object LoadHdfsLosManager {
   val spark = SparkSession.builder().master("local[*]").appName("LoadHdfsLosManager").config("spark.sql.warehouse.dir","/teos/warehouse").enableHiveSupport().getOrCreate()
 
   def main(args: Array[String]): Unit = {
-    samToParquetPartition("LOS_ENG_RESULT","8460062","1012242284")
+    samToParquetPartition("RESULT_NR_2D_LOS_RU","8460062","1012242284")
   }
 
   def samToParquetPartition(objNm:String,scheduleId:String,ruId:String) = {
@@ -101,8 +101,8 @@ object LoadHdfsLosManager {
     //println(s"""ALTER TABLE ${objNm} ADD PARTITION (SCHEDULE_ID=${scheduleId}) LOCATION '/teos/warehouse/${objNm}/SCHEDULE_ID=${scheduleId}'""");
     import spark.implicits._
     import spark.sql
-    qry = s"""ALTER TABLE I_${objNm} DROP IF EXISTS PARTITION (SCHEDULE_ID=${scheduleId},RU_ID=${ruId})"""; println(qry); sql(qry)
-    qry = s"""ALTER TABLE I_${objNm} ADD PARTITION (SCHEDULE_ID=${scheduleId},RU_ID=${ruId}) LOCATION '/teos/warehouse/${objNm}/SCHEDULE_ID=${scheduleId}/RU_ID=${ruId}'"""; println(qry); sql(qry)
+    qry = s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (SCHEDULE_ID=${scheduleId},RU_ID=${ruId})"""; println(qry); sql(qry)
+    qry = s"""ALTER TABLE ${objNm} ADD PARTITION (SCHEDULE_ID=${scheduleId},RU_ID=${ruId}) LOCATION '/TEOS/warehouse/${objNm}/SCHEDULE_ID=${scheduleId}/RU_ID=${ruId}'"""; println(qry); sql(qry)
 
     //sql(s"""ALTER TABLE ${objNm} ADD PARTITION (SCHEDULE_ID=${scheduleId})""")
 

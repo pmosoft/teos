@@ -28,7 +28,7 @@ object App {
 
   // linux output path
   //val hdfsParquetEntityPath = "/teos/warehouse";
-  val hdfsWarehousePath = "/teos/warehouse";
+  val hdfsWarehousePath = "/TEOS/warehouse";
 
   // hdfs output path
   val resultPath =

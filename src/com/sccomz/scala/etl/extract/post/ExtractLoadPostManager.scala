@@ -20,7 +20,7 @@ import com.sccomz.scala.etl.load.LoadHdfsLosManager
 
 /*
 import com.sccomz.scala.etl.extract.post.ExtractLoadPostManager
-ExtractLoadPostManager.monitorJobDis("8460062","5113566");
+ExtractLoadPostManager.monitorJobDis("8463233","5113566");
 
 ExtractJobDisSql.selectRuCnt("8463233");
 ExtractLoadPostManager.extractPostToHadoopCsv("8460062","1012242284","gis01");
@@ -42,7 +42,7 @@ object ExtractLoadPostManager {
     
     //extractPostToHadoopCsv("8460062","1012242284","gis01");
 
-    monitorJobDis("8460062","5113566");
+    monitorJobDis("8463233","5113566");
     
     println("ExtractLoadPostManager end");
   }
@@ -59,7 +59,7 @@ object ExtractLoadPostManager {
 
     var loofCnt = 0;
     try {
-      while(ruCnt>extDoneCnt) {
+      //while(ruCnt>extDoneCnt) {
         loofCnt += 1;
 
         qry = ExtractJobDisSql.selectRuCnt(scheduleId); println(qry);
@@ -67,13 +67,15 @@ object ExtractLoadPostManager {
         ruCnt  = rs.getInt("RU_CNT");
         extDoneCnt = rs.getInt("EXT_DONE_CNT");
         extCnt = rs.getInt("EXT_CNT");
+        
+        println("extCnt="+extCnt);
 
         if(extCnt>0) executeExtractLoad(scheduleId);
 
         println("loofCnt="+loofCnt);
         Thread.sleep(1000*3);
 
-      }
+      //}
 
       println("execute end");
 
@@ -96,7 +98,7 @@ object ExtractLoadPostManager {
     var qry = "";
     var ruId = ""; var clusterName = "";
 
-    qry = ExtractJobDisSql.selectExtRu(scheduleId);
+    qry = ExtractJobDisSql.selectExtRu(scheduleId); println(qry);
     rs = stat.executeQuery(qry);
 
     var extList = mutable.Map[String,String]();
@@ -133,7 +135,7 @@ object ExtractLoadPostManager {
     var tabNm = ""; var qry = "";
 
     //---------------------------------------
-         tabNm = "LOS_ENG_RESULT";
+         tabNm = "RESULT_NR_2D_LOS_RU";
     //---------------------------------------
     qry = ExtractPostLosEngResultSql.selectLosEngResultCsv(scheduleId,ruId); println(qry);
     rs = stat.executeQuery(qry); 
