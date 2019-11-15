@@ -27,6 +27,10 @@ ExtractLoadPostManager.extractPostToHadoopCsv("8460062","1012242284","gis01");
 
 8463233	5113566
 
+spark.sql("SELECT COUNT(*) FROM (SELECT DISTINCT SCHEDULE_ID,RU_ID FROM RESULT_NR_2D_LOS_RU)").take(100).foreach(println);
+
+
+
  * */
 object ExtractLoadPostManager {
 
@@ -59,7 +63,7 @@ object ExtractLoadPostManager {
 
     var loofCnt = 0;
     try {
-      //while(ruCnt>extDoneCnt) {
+      while(ruCnt>extDoneCnt) {
         loofCnt += 1;
 
         qry = ExtractJobDisSql.selectRuCnt(scheduleId); println(qry);
@@ -75,7 +79,7 @@ object ExtractLoadPostManager {
         println("loofCnt="+loofCnt);
         Thread.sleep(1000*3);
 
-      //}
+      }
 
       println("execute end");
 
@@ -104,8 +108,8 @@ object ExtractLoadPostManager {
     var extList = mutable.Map[String,String]();
 
     
-    //while(rs.next()) {
-    if(rs.next()) {
+    while(rs.next()) {
+    //if(rs.next()) {
         extList += (rs.getString("RU_ID") -> rs.getString("CLUSTER_NAME"));
         ruId  = rs.getString("RU_ID");
         clusterName = rs.getString("CLUSTER_NAME");

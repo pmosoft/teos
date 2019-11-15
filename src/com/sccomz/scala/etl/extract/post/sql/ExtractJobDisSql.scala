@@ -35,9 +35,8 @@ def updateJobDisExt(scheduleId:String, ruId:String, stat:String) = {
 s"""
 UPDATE JOB_DIS_ETL
 SET    STAT = ${stat}
---WHERE  SCHEDULE_ID = ${scheduleId}
-WHERE  SCENARIO_ID IN (SELECT CAST(SCENARIO_ID AS TEXT) FROM SCHEDULE WHERE SCHEDULE_ID = ${scheduleId})
-AND    RU_ID = ${ruId}
+WHERE  SCHEDULE_ID = '${scheduleId}'
+AND    RU_ID = '${ruId}'
 """
 }
 
