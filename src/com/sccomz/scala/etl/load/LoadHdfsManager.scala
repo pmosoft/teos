@@ -131,8 +131,8 @@ object LoadHdfsManager {
       sql(s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (SCHEDULE_ID=${scheduleId})""")
       sql(s"""ALTER TABLE ${objNm} ADD PARTITION (SCHEDULE_ID=${scheduleId}) LOCATION '/teos/warehouse/${objNm}/SCHEDULE_ID=${scheduleId}'""");
     } else {
-      sql(s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION SCENARIO_ID""")
-      sql(s"""ALTER TABLE ${objNm} ADD PARTITION SCENARIO_ID LOCATION '/teos/warehouse/${objNm}/SCENARIO_ID'""");
+      sql(s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (SCENARIO_ID=SCENARIO_ID)""")
+      sql(s"""ALTER TABLE ${objNm} ADD PARTITION (SCENARIO_ID=SCENARIO_ID) LOCATION '/teos/warehouse/${objNm}/SCHEDULE_ID=${scheduleId}'""");
     }
 
     //sql(s"""ALTER TABLE ${objNm} ADD PARTITION (SCHEDULE_ID=${scheduleId})""")
