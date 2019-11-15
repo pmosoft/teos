@@ -25,17 +25,18 @@ import com.sccomz.scala.comm.App
 import com.sccomz.scala.schema.SCENARIO
 
 /*
-import com.sccomz.scala.etl.load.LoadHdfsManager
-LoadHdfsManager.oracleToHdfsBatch("20191107");
 
 import com.sccomz.scala.etl.load.LoadHdfsManager
-LoadHdfsManager.oracleToHdfs("8460064", "5104573");
+LoadHdfsManager.oracleToHdfs("8460064", "5104574");
 
 LoadHdfsManager.oracleToHdfs("8460178");
 LoadHdfsManager.oracleToHdfs("8460179");
 LoadHdfsManager.oracleToHdfs("8460062");
 LoadHdfsManager.oracleToHdfs("8460063");
 LoadHdfsManager.oracleToHdfs("8463189");
+
+LoadHdfsManager.oracleToHdfsBatch("20191107");
+
 
  * */
 object LoadHdfsManager {
@@ -46,7 +47,7 @@ object LoadHdfsManager {
     //toParquetPartition(spark,"local","DU","8463189");
     //toParquetPartition(spark,"local","RU","8463189");
     //toParquetPartition(spark,"local","SITE","8463189");
-    oracleToHdfs("8460064", "5104573");
+    oracleToHdfs("8460064", "5104574");
     //oracleToHdfs("8463189");
     
     println("LoadHdfsManager end");
@@ -76,6 +77,7 @@ object LoadHdfsManager {
     //--------------------------------------
     var srcEntityPath = if (cd=="local") App.hdfsLinuxEtlPath else if(cd=="hdfs") App.hdfsEtlPath;
     var isPartion = if(scheduleId=="all") false else true;
+    var qry = "";
 /*
     var objNm = "SCENARIO"
     var scheduleId = "8459967"
@@ -86,8 +88,9 @@ object LoadHdfsManager {
     //--------------------------------------
         println("입출력 변수 세팅");
     //--------------------------------------
-    var source = if(isPartion) srcEntityPath+"/"+objNm+"_"+scheduleId+".dat" else srcEntityPath+"/"+objNm+".dat"
-    var target = if(isPartion) App.hdfsWarehousePath+"/"+objNm+"/SCHEDULE_ID="+scheduleId else App.hdfsWarehousePath+"/"+objNm+"/"+objNm
+    var source = srcEntityPath+"/"+objNm+"_"+scheduleId+".dat";
+    var target = if(objNm == "SCHEDULE") App.hdfsWarehousePath+"/"+objNm+"/SCHEDULE_ID="+scheduleId 
+                 else                    App.hdfsWarehousePath+"/"+objNm+"/SCENARIO_ID="+scenarioId;
 
     //--------------------------------------
         println("스키마 세팅");
@@ -128,11 +131,11 @@ object LoadHdfsManager {
     import spark.sql
 
     if (objNm == "SCHEDULE") {
-      sql(s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (SCHEDULE_ID=${scheduleId})""")
-      sql(s"""ALTER TABLE ${objNm} ADD PARTITION (SCHEDULE_ID=${scheduleId}) LOCATION '/teos/warehouse/${objNm}/SCHEDULE_ID=${scheduleId}'""");
+      qry = s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (SCHEDULE_ID=${scheduleId})"""; println(qry); sql(qry)
+      qry = s"""ALTER TABLE ${objNm} ADD PARTITION (SCHEDULE_ID=${scheduleId}) LOCATION '/TEOS/warehouse/${objNm}/SCHEDULE_ID=${scheduleId}'"""; println(qry); sql(qry)
     } else {
-      sql(s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (SCENARIO_ID=${scenarioId})""")
-      sql(s"""ALTER TABLE ${objNm} ADD PARTITION (SCENARIO_ID=${scenarioId}) LOCATION '/teos/warehouse/${objNm}/SCENARIO_ID=${scenarioId}'""");
+      qry = s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (SCENARIO_ID=${scenarioId})"""; println(qry); sql(qry)
+      qry = s"""ALTER TABLE ${objNm} ADD PARTITION (SCENARIO_ID=${scenarioId}) LOCATION '/TEOS/warehouse/${objNm}/SCENARIO_ID=${scenarioId}'"""; println(qry); sql(qry)
     }
 
     //sql(s"""ALTER TABLE ${objNm} ADD PARTITION (SCHEDULE_ID=${scheduleId})""")

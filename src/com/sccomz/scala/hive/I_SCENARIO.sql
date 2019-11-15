@@ -317,10 +317,10 @@ spark.sql(s"""SELECT DISTINCT SCENARIO_ID FROM SCENARIO""").take(100).foreach(pr
 
 spark.sql(s"""SELECT DISTINCT SCHEDULE_ID FROM SCHEDULE""").take(100).foreach(println);
 
-hadoop fs -chown -R icpap:hadoop /TEOS/warehouse/SCHEDULE
+hadoop fs -chown -R icpap:hadoop /TEOS/warehouse/
 
 hadoop fs -chown -R icpap:hadoop /TEOS/warehouse/SCENARIO
-hadoop fs -chmod 777 /TEOS/warehouse/
+hadoop fs -chmod -R 777 /TEOS/warehouse/
 
 
 
