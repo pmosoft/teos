@@ -40,10 +40,6 @@ object LoadPostManager {
     //oracleToPostgreAll("8460062");
     //oracleToPostgreAll("8460063");
     
-  
-    
-    
-    
     println("LoadPostManager end");    
     
   }

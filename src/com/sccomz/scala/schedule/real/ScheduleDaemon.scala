@@ -38,8 +38,6 @@ object ScheduleDaemon {
 
   def main(args: Array[String]): Unit = {
     
-    
-    
     execute();
     //updateBinRuInfo();
   }
@@ -75,16 +73,18 @@ object ScheduleDaemon {
    */
   def excuteJob(): Unit = {
     var scheduleId = "";
+    var scenarioId = "";
     qry = ScheduleDaemonSql.selectSchedule10001(); println(qry);
     rs = stat.executeQuery(qry);
     while(rs.next()){
       scheduleId = rs.getString("SCHEDULE_ID");
-      println("SCHEDULE_ID="+scheduleId);
+      scenarioId = rs.getString("SCENARIO_ID");
+      println("SCHEDULE_ID="+scheduleId+" : "+"SCENARIO_ID="+scenarioId);
       //ExecuteJob.execute();
       //var scheduleId = "8462895";
       //val process = Process(s"""scala -classpath d:/fframe/workspace/teos/bin/teos.jar com.sccomz.scala.schedule.real.ExecuteJob ${scheduleId}""").lineStream;      
-      val process = Process(s"""spark2-submit --jars /home/icpap/lib/ojdbc7.jar,/home/icpap/lib/postgresql4.jar,/home/icpap/lib/hiveJdbc11.jar --class com.sccomz.scala.schedule.real.ExecuteJob /home/icpap/bin/teos.jar ${scheduleId}""").lineStream;
-      println("process="+process);
+      val process = Process(s"""spark2-submit --jars /home/icpap/lib/ojdbc7.jar,/home/icpap/lib/postgresql4.jar,/home/icpap/lib/hiveJdbc11.jar --class com.sccomz.scala.schedule.real.ExecuteJob /home/icpap/bin/teos.jar ${scheduleId} ${scenarioId}""").lineStream;
+      //println("process="+process);
     }
   }
 

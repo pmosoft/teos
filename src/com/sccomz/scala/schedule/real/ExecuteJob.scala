@@ -44,6 +44,7 @@ object ExecuteJob {
 
   //val logger = LoggerFactory.getLogger("StatDailyBatch")
   var scheduleId = "";
+  var scenarioId = "";
 
   Class.forName(App.dbDriverOra);
   var con:Connection = DriverManager.getConnection(App.dbUrlOra,App.dbUserOra,App.dbPwOra);
@@ -53,11 +54,12 @@ object ExecuteJob {
   
   def main(args: Array[String]): Unit = {
 
-    scheduleId = if (args.length < 1) "" else args(0);
+    scheduleId = if (args.length < 2) "" else args(0);
+    scenarioId = if (args.length < 2) "" else args(1);
     //---------------------------------------------------------------------------------------------
-    println("ExecuteJob : " + scheduleId);
+    println("ExecuteJob : scheduleId = " + scheduleId + " : scenarioId : " + scenarioId);
     //---------------------------------------------------------------------------------------------
-    execute(scheduleId);
+    execute(scheduleId,scenarioId);
   }
  
   def delStepLog(scheduleId:String) = { qry = ExecuteJobSql.deleteScheduleStepAll(scheduleId); println(qry); stat.execute(qry); }
@@ -79,7 +81,7 @@ object ExecuteJob {
     qry = ExecuteJobSql.selectScheduleStep(scheduleId); println(qry); rs = stat.executeQuery(qry); rs.next(); rs.getString("MAX_TYPE_STEP_CD");
   }
   
-  def execute(scheduleId:String): Unit = {
+  def execute(scheduleId:String, scenarioId:String): Unit = {
     
     updScheduleProcessCd(scheduleId,"20003","분석중"); 
     
@@ -95,8 +97,8 @@ object ExecuteJob {
     while(isLoof) {
       typeStepCd=selMaxStep(scheduleId); println("typeStepCd="+typeStepCd);
 
-      if(typeStepCd=="02") {executePostgreShell(scheduleId);}
-      if(typeStepCd=="02") {executeEtlPostgreToHdfs(scheduleId);insStepLog(scheduleId,"03");}
+      if(typeStepCd=="02") {executePostgreShell(scenarioId);}
+      if(typeStepCd=="02") {executeEtlPostgreToHdfs(scenarioId);insStepLog(scheduleId,"03");}
       if(typeStepCd=="03") {executeSparkEngJob(scheduleId)     ;insStepLog(scheduleId,"04");}
       if(typeStepCd=="04") {executeSparkMakeBinFile(scheduleId);insStepLog(scheduleId,"05");}
       if(typeStepCd=="05") {isLoof=false;}
@@ -130,11 +132,15 @@ object ExecuteJob {
     }    
   }
   
-  def executePostgreShell(scheduleId:String): Unit = {
+
+  def executePostgreShell(scenarioId:String): Unit = {
     println("executePostgreShell start");
     //var res = Process(s"sh /home/icpap/sh/execPostgre.sh ${scheduleId}").lineStream;
     //var scheduleId = "8460064";
     //var scenarioId = "5104574";
+
+    var res = Process(s"sshpass -pteos ssh -o StrictHostKeyChecking=no postgres@teos-cluster-dn1 /gis01/bin/anal_los_job_dis.sh ${scenarioId}").lineStream;    
+    
     //var res = Process(s"ssh postgres@teos-cluster-dn1 /gis01/bin/anal_los_job_dis.sh ${scenarioId}").lineStream;
     //var res = Process(s"ssh icpap@teos-cluster-dn1 /gis01/bin/anal_los_job_dis.sh ${scheduleId}").lineStream;
     //var res = Process(s"ssh icpap@teos-cluster-dn1 /home/icpap/sh//execPostgre.sh 111").lineStream;
@@ -145,6 +151,14 @@ object ExecuteJob {
     
     //8463233	5113566
     
+    //chmod 777 /gis01/bin/anal_los_job_dis.sh
+    //var res = Process(s"sshpass postgres@teos-cluster-dn1 /gis01/bin/alos_job_dis.sh 11").lineStream;
+    //sshpass postgres@teos-cluster-dn1 /gis01/bin/alos_job_dis.sh 11
+    //sshpass -pteos ssh -o StrictHostKeyChecking=no postgres@teos-cluster-dn1 ls -al
+    //sshpass -pteos ssh -o StrictHostKeyChecking=no postgres@teos-cluster-dn1 sh /gis01/bin/alos_job_dis.sh 11
+    //sshpass -pteos ssh -o StrictHostKeyChecking=no postgres@teos-cluster-dn1 cat /gis01/bin/alos_job_dis.sh
+    //var res = Process(s"sshpass postgres@teos-cluster-dn1 /gis01/bin/alos_job_dis.sh 11").lineStream;
+    
     //while(!logFile.exists()){
     //  Thread.sleep(1000*1);
     //  println("ing...");
@@ -152,8 +166,8 @@ object ExecuteJob {
 
     println("executePostgreShell end");
     
-  }
-
+  }  
+  
   def executeEtlPostgreToHdfs(scheduleId:String): Unit = {
     ExtractLoadPostManager.monitorJobDis(scheduleId);  
   }

@@ -20,7 +20,11 @@ import com.sccomz.scala.etl.extract.oracle.sql.ExtractOraFabaseSql
 
 /*
 import com.sccomz.scala.etl.extract.oracle.ExtractOraManager
+ExtractOraManager.extractOracleToHadoopCsv("8460064")
+
 ExtractOraManager.extractOracleToHadoopCsv("8463189")
+
+
 
 ExtractOraManager.extractOracleToHadoopCsvBatch("20191107")
 
