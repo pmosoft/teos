@@ -37,22 +37,5 @@ select * FROM   MOBILE_PARAMETER where SCENARIO_ID = 5104574;
 
 select COUNT(*) FROM   SCENARIO_NR_RU where SCENARIO_ID = '5113566';
 
-
-
-     , SCENARIO B
-WHERE  A.SCENARIO_ID = B.SCENARIO_ID
---AND    A.PROCESS_CD = '20001'
---AND    TYPE_CD IN ('SC001','SC051')
-AND    A.SCENARIO_ID = 5104574
-
-
-
-select * from SCHEDULE
+select * from JOB_DIS
 ;
-
-select * FROM SCENARIO
-;
-
-select * FROM SHP
-;
-

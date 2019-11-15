@@ -1,112 +1,102 @@
+SELECT A.RU_CNT , A.POST_DONE_CNT, A.POST_DONE_CNT - B.EXT_DONE_CNT EXT_CNT, B.EXT_ING_CNT, B.EXT_DONE_CNT
+FROM  (
+		   SELECT COUNT(A.RU_ID)                              AS RU_CNT
+		        , COUNT(CASE WHEN A.STAT=3 THEN 1 ELSE NULL END) AS POST_DONE_CNT
+		   FROM   JOB_DIS A
+		   WHERE  A.SCENARIO_ID IN (SELECT CAST(SCENARIO_ID AS TEXT) FROM SCHEDULE WHERE SCHEDULE_ID = 8463233)
+       ) A,
+      (
+		   SELECT COUNT(CASE WHEN B.STAT=4 THEN 1 ELSE 0 END) AS EXT_ING_CNT
+		        , COUNT(CASE WHEN B.STAT=5 THEN 1 ELSE 0 END) AS EXT_DONE_CNT
+		   FROM   JOB_DIS_ETL B
+		   WHERE  B.SCHEDULE_ID = '8463233'
+	     ) B
 ;
 
 
-with temp01 as
-(
-select a.scenario_id, a.ru_id, a.xposition, a.yposition, a.height, a.resolution, b.mobile_height
-from   i_scenario_nr_ru a,
-      (select scenario_id, max(height) as mobile_height
-       from i_mobile_parameter
-       where scenario_id = 5105173
-       group by scenario_id
-       ) b
-where  a.scenario_id = b.scenario_id
-and    a.scenario_id = 5105173
-) , temp02 as (
-select * 
-from   temp01 a,
-       I_NR_RU_CACHE b
-where  a.ru_id
-and, a.xposition
-and, a.yposition
-and, a.height
-and, a.resolution
-and               , b.mobile_height  
-
-
-
-)
-select * from temp01
-;
-
-DROP TABLE PUBLIC.I_SCENARIO_NR_RU_CACHE;                                                                                                                 
-                                                                                                                                                       
-CREATE TABLE PUBLIC.I_SCENARIO_NR_RU_CACHE(                                                                                                                                                                                                                                                                                                             
-  SCENARIO_ID                   NUMERIC     NOT NULL                                                                                                                        
-, RU_ID                         VARCHAR(48) NOT NULL                                                                                                                      
-, XPOSITION                     VARCHAR(40) NOT NULL                                                                                                               
-, YPOSITION                     VARCHAR(40) NOT NULL                                                                                                               
-, HEIGHT                        NUMERIC     NOT NULL                                                                                                           
-, RESOLUTION                    NUMERIC     NOT NULL                                                                                                           
-, MOBILE_HEIGHT                 NUMERIC     NOT NULL
-, CACHE_YN                      VARCHAR(1)      NULL
-, REG_DT                        DATE            NULL
-, MODIFY_DT                     DATE            NULL
-);
-
-CREATE INDEX I_SCENARIO_NR_RU_CACHE_IDX ON PUBLIC.I_SCENARIO_NR_RU_CACHE USING BTREE (SCENARIO_ID,RU_ID,XPOSITION,YPOSITION,HEIGHT,RESOLUTION,MOBILE_HEIGHT);
-ALTER TABLE PUBLIC.I_SCENARIO_NR_RU_CACHE OWNER TO POSTGRES;
-GRANT ALL ON TABLE PUBLIC.I_SCENARIO_NR_RU_CACHE TO POSTGRES;
-
------------------------------------------
--- I_SCENARIO_NR_RU_CACHE
------------------------------------------
-DROP TABLE PUBLIC.I_NR_RU_CACHE;                                                                                                                 
-                                                                                                                                                       
-CREATE TABLE PUBLIC.I_NR_RU_CACHE(                                                                                                                                                                                                                                                                                                             
-  RU_ID                         VARCHAR(48) NOT NULL                                                                                                                      
-, XPOSITION                     VARCHAR(40) NOT NULL                                                                                                                        
-, YPOSITION                     VARCHAR(40) NOT NULL                                                                                                                        
-, HEIGHT                        NUMERIC     NOT NULL                                                                                                                   
-, RESOLUTION                    NUMERIC     NOT NULL                                                                                                                     
-, MOBILE_HEIGHT                 NUMERIC     NOT NULL
-, REG_DT                        DATE            NULL
-, MODIFY_DT                     DATE            NULL
-);
-
-CREATE INDEX I_NR_RU_CACHE_IDX ON PUBLIC.I_NR_RU_CACHE USING BTREE (RU_ID,XPOSITION,YPOSITION,HEIGHT,RESOLUTION,MOBILE_HEIGHT);
-ALTER TABLE PUBLIC.I_NR_RU_CACHE OWNER TO POSTGRES;
-GRANT ALL ON TABLE PUBLIC.I_NR_RU_CACHE TO POSTGRES;
-
-
-select scenario_id, xposition, yposition, height, resolution
-from   i_scenario_nr_ru a
+select COUNT(*)
+from (
+SELECT A.RU_ID
+     , A.CLUSTER_NAME	     
+FROM  (select * 
+       from JOB_DIS
+       where SCENARIO_ID IN (SELECT CAST(SCENARIO_ID AS TEXT) FROM SCHEDULE WHERE SCHEDULE_ID = 8463233)
+       and STAT = 3) A
+       left outer join (
+       select distinct SCHEDULE_ID, RU_ID 
+       from   JOB_DIS_ETL 
+       where  SCHEDULE_ID = '8463233'
+       and    STAT in (4,5)   
+       ) B
+       on   A.RU_ID       = B.RU_ID
+where B.RU_ID is NULL       
+) A
 ;
 
 
-CREATE TABLE PUBLIC.I_NR_RU_CACHE(                                                                                                                                                                                                                                                                                                             
-  RU_ID                         VARCHAR(48) NOT NULL                                                                                                                      
-, XPOSITION                     VARCHAR(40)                                                                                                                        
-, YPOSITION                     VARCHAR(40)                                                                                                                        
-, HEIGHT                        NUMERIC                                                                                                                        
-, RESOLUTION                    NUMERIC                                                                                                                        
-, MOBILE_HEIGHT                 NUMERIC
-, REG_DT                        DATE NULL
-, MODIFY_DT                     DATE NULL
-);
-
-CREATE INDEX I_NR_RU_CACHE_IDX ON PUBLIC.I_NR_RU_CACHE USING BTREE (RU_ID,XPOSITION,YPOSITION,HEIGHT,RESOLUTION,MOBILE_HEIGHT);
-ALTER TABLE PUBLIC.I_NR_RU_CACHE OWNER TO POSTGRES;
-GRANT ALL ON TABLE PUBLIC.I_NR_RU_CACHE TO POSTGRES;
-
-
-
-
-select scenario_id, max(height) as mobile_height
-from i_mobile_parameter
-group by scenario_id
-;
-
-select scenario_id
-     , COUNT(*)
+select stat, count(*)
 from job_dis
-group by scenario_id
+group by stat
+;
+
+select * from job_dis;
+
+
+SELECT A.RU_CNT , A.EXT_CNT, B.EXT_ING_CNT, B.EXT_DONE_CNT
+FROM  (
+		   SELECT COUNT(A.RU_ID)                              AS RU_CNT
+		        , COUNT(CASE WHEN A.STAT=3 THEN 1 ELSE 0 END) AS EXT_CNT
+		   FROM   JOB_DIS A
+		   WHERE  A.SCENARIO_ID IN (SELECT CAST(SCENARIO_ID AS TEXT) FROM SCHEDULE WHERE SCHEDULE_ID = 8460062)
+       ) A,
+      (		
+		   SELECT COUNT(CASE WHEN B.STAT=4 THEN 1 ELSE 0 END) AS EXT_ING_CNT
+		        , COUNT(CASE WHEN B.STAT=5 THEN 1 ELSE 0 END) AS EXT_DONE_CNT
+		   FROM   JOB_DIS_ETL B
+		   WHERE  B.SCHEDULE_ID = '8460062'
+	     ) B
 ;
 
 
-select *
-from job_dis
+SELECT COUNT(A.RU_ID)                              AS RU_CNT
+     , COUNT(CASE WHEN A.STAT=3 THEN 1 ELSE NULL END) AS EXT_CNT
+FROM   JOB_DIS A
+WHERE  A.SCENARIO_ID IN (SELECT CAST(SCENARIO_ID AS TEXT) FROM SCHEDULE WHERE SCHEDULE_ID = 8463233)
 ;
+
+
+SELECT
+       BIN_X                      ||'|'||
+       BIN_Y                      ||'|'||
+       BIN_Z                      ||'|'||
+       LOS                        ||'|'||
+       THETA_DEG                  ||'|'||
+       PHI_DEG                    ||'|'||
+       IN_BLD                     ||'|'
+FROM   LOS_ENG_RESULT
+WHERE  SCHEDULE_ID = 8460178
+--WHERE  SCENARIO_ID IN (SELECT SCENARIO_ID FROM SCHEDULE WHERE SCHEDULE_ID = 8460178)
+--AND    RU_ID   = '1011760654'
+limit 100
+;
+
+
+SELECT
+       BIN_X         
+     , BIN_Y         
+     , BIN_Z         
+     , case when LOS is true then 1 else 0 END           
+     , THETA_DEG     
+     , PHI_DEG       
+     , case when IN_BLD is true then 'T' else 'F' END
+FROM   LOS_ENG_RESULT
+--WHERE  SCHEDULE_ID = 8460178
+--WHERE  SCENARIO_ID IN (SELECT SCENARIO_ID FROM SCHEDULE WHERE SCHEDULE_ID = 8460178)
+--AND    RU_ID   = '1011760654'
+limit 100
+;
+
+
 
 
 select scenario_id,sector_id

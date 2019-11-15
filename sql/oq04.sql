@@ -1,38 +1,3 @@
-UPDATE SCHEDULE SET PROCESS_CD = '20001' WHERE PROCESS_CD IN ('20003','20004','20009')
-;
-
-
-SELECT * FROM SCHEDULE_STEP
-;
-
-
-DELETE FROM SCHEDULE_STEP
-;
-
-
-SELECT SCENARIO_ID, COUNT(*) CNT
-FROM MOBILE_PARAMETER
-GROUP BY SCENARIO_ID
-HAVING COUNT(*) > 1
-;
-
-COMMIT;
-
-SELECT A.SCHEDULE_ID, A.SCENARIO_ID, A.TYPE_CD, B.BD_YN
-     --, A.BIN_X_CNT, A.BIN_Y_CNT
-FROM   SCHEDULE A
-     , SCHEDULE_TYPE_CD B
-WHERE  1=1
-AND    A.TYPE_CD = B.TYPE_CD
-AND    A.PROCESS_CD IN ('20001','20003','20004','20009')
--- 테스트를 위하여 아래 주석처리. 운영시 주석해제요.
---AND    A.PROCESS_CD = '20001'
---AND   (NVL(A.RU_CNT,0) = 0 OR NVL(A.BIN_X_CNT,0) = 0 OR NVL(A.BIN_Y_CNT,0) = 0)
-AND    B.USE_YN = 'Y'
-;
-
-
-
 WITH TEMP01 AS (
 -------------------
 -- 스케줄 수행대상건 조회
@@ -40,38 +5,38 @@ WITH TEMP01 AS (
 ---------------------------------------------------------
 -- orgin
 ---------------------------------------------------------
-SELECT A.SCHEDULE_ID, A.SCENARIO_ID, A.TYPE_CD, B.BD_YN
-     --, A.BIN_X_CNT, A.BIN_Y_CNT
-FROM   SCHEDULE A
-     , SCHEDULE_TYPE_CD B
-WHERE  1=1
-AND    A.TYPE_CD = B.TYPE_CD
-AND    A.PROCESS_CD = '20001'
---AND   (NVL(A.RU_CNT,0) = 0 OR NVL(A.BIN_X_CNT,0) = 0 OR NVL(A.BIN_Y_CNT,0) = 0)
-AND    B.USE_YN = 'Y'
-UNION
-SELECT A.SCHEDULE_ID, A.SCENARIO_ID, A.TYPE_CD, A.BD_YN
-FROM  (SELECT A.SCHEDULE_ID, A.SCENARIO_ID, A.TYPE_CD, B.BD_YN
-            --, A.BIN_X_CNT, A.BIN_Y_CNT
-       FROM   SCHEDULE A
-            , SCHEDULE_TYPE_CD B
-       WHERE  1=1
-       AND    A.TYPE_CD = B.TYPE_CD
-       AND    A.PROCESS_CD = '20001'
-       AND    B.USE_YN = 'Y'
-       ) A
-       LEFT JOIN SCHEDULE_EXT B
-           ON A.SCHEDULE_ID = B.SCHEDULE_ID
-WHERE  1=1
-AND    B.SCHEDULE_ID IS NULL
------------------------------------------------
 --SELECT A.SCHEDULE_ID, A.SCENARIO_ID, A.TYPE_CD, B.BD_YN
 --     --, A.BIN_X_CNT, A.BIN_Y_CNT
 --FROM   SCHEDULE A
 --     , SCHEDULE_TYPE_CD B
 --WHERE  1=1
 --AND    A.TYPE_CD = B.TYPE_CD
---AND    A.SCHEDULE_ID IN (8460964,8460966,8460968)
+--AND    A.PROCESS_CD IN ('20001','20003','20004','20009')
+---- 테스트를 위하여 아래 주석처리. 운영시 주석해제요.
+----AND    A.PROCESS_CD = '20001'
+----AND   (NVL(A.RU_CNT,0) = 0 OR NVL(A.BIN_X_CNT,0) = 0 OR NVL(A.BIN_Y_CNT,0) = 0)
+--AND    B.USE_YN = 'Y'
+--UNION
+--SELECT A.SCHEDULE_ID, A.SCENARIO_ID, A.TYPE_CD, A.BD_YN
+--FROM  (SELECT A.SCHEDULE_ID, A.SCENARIO_ID, A.TYPE_CD, B.BD_YN
+--            --, A.BIN_X_CNT, A.BIN_Y_CNT
+--       FROM   SCHEDULE A
+--            , SCHEDULE_TYPE_CD B
+--       WHERE  1=1
+--       AND    A.TYPE_CD = B.TYPE_CD
+--       AND    A.PROCESS_CD = '20001'
+--       AND    B.USE_YN = 'Y'
+--       ) A
+--       LEFT JOIN SCHEDULE_EXT B
+--           ON A.SCHEDULE_ID = B.SCHEDULE_ID
+--WHERE  1=1
+--AND    B.SCHEDULE_ID IS NULL
+-----------------------------------------------
+SELECT A.SCHEDULE_ID, A.SCENARIO_ID, A.TYPE_CD, 'N' BD_YN
+     --, A.BIN_X_CNT, A.BIN_Y_CNT
+FROM   SCHEDULE A
+WHERE  1=1
+AND    A.SCHEDULE_ID IN (8460064)
 ), TEMP02 AS (
 -------------------
 -- 시나리오 정보 조회
@@ -187,6 +152,7 @@ GROUP BY A.SCHEDULE_ID
 -------------------
 SELECT
        A.SCHEDULE_ID
+     , A.SCENARIO_ID
      , A.TYPE_CD
      , A.BIN_X_CNT
      , A.BIN_Y_CNT
@@ -217,3 +183,77 @@ FROM   TEMP09 A
      ,(SELECT JOB_H_THRESHOLD, JOB_M_THRESHOLD, JOB_L_THRESHOLD
        FROM   SCHEDULE_WEIGHT
        WHERE  BASE_DT = (SELECT MAX(BASE_DT) FROM SCHEDULE_WEIGHT)) B
+
+
+UPDATE SCHEDULE
+   SET BIN_X_CNT   = 75
+     , BIN_Y_CNT   = 52
+     , RU_CNT      = 9
+WHERE  SCHEDULE_ID = 8460064
+
+
+DELETE SCHEDULE_EXT WHERE SCHEDULE_ID = 8460064
+
+
+INSERT INTO SCHEDULE_EXT
+SELECT
+       8460064     AS SCHEDULE_ID           -- 스케줄ID
+     , 2      AS JOB_WEIGHT            -- 잡가중치(3:상, 2:중, 1:하)
+     , 35100   AS JOB_THRESHOLD         -- 임계치
+     , SYSDATE           AS REG_DT                -- 등록일시
+     , 'ADMIN'           AS REG_USER_ID           -- 등록자
+     , SYSDATE           AS MOD_DT                -- 수정일시
+     , 'ADMIN'           AS MOD_USER_ID           -- 수정자
+FROM   DUAL
+
+
+WITH TEMP01 AS (
+-------------------
+-- 스케줄 수행대상건 조회
+-------------------
+SELECT B.JOB_WEIGHT, A.SCHEDULE_ID
+     , ROW_NUMBER() OVER (PARTITION BY B.JOB_WEIGHT ORDER BY B.JOB_WEIGHT, A.SCHEDULE_ID) AS GNUM
+FROM   SCHEDULE A
+     , SCHEDULE_EXT B
+WHERE  A.SCHEDULE_ID = B.SCHEDULE_ID
+--AND    A.PROCESS_CD = '20001'
+--AND    A.TYPE_CD IN (SELECT TYPE_CD FROM SCHEDULE_TYPE_CD WHERE USE_YN = 'Y')
+AND    A.SCHEDULE_ID IN (8460064)
+ORDER BY B.JOB_WEIGHT, A.SCHEDULE_ID
+), TEMP02 AS (
+-------------------
+-- 스케줄 수행중인건 조회
+-------------------
+SELECT COUNT(CASE WHEN B.JOB_WEIGHT = 3 THEN 1 ELSE 0 END) AS H_JOB 
+     , COUNT(CASE WHEN B.JOB_WEIGHT = 2 THEN 1 ELSE 0 END) AS M_JOB
+     , COUNT(CASE WHEN B.JOB_WEIGHT = 1 THEN 1 ELSE 0 END) AS L_JOB
+FROM   SCHEDULE A
+     , SCHEDULE_EXT B
+WHERE  A.SCHEDULE_ID = B.SCHEDULE_ID
+AND    A.PROCESS_CD IN ('20002','20003')
+AND    A.TYPE_CD IN (SELECT TYPE_CD FROM SCHEDULE_TYPE_CD WHERE USE_YN = 'Y')
+), TEMP03 AS (
+-------------------
+-- 스케줄 수행 가능건 조회
+-------------------
+SELECT JOB_H_MAX_CNT - H_JOB AS H_EXE_CNT
+     , JOB_M_MAX_CNT - M_JOB AS M_EXE_CNT
+     , JOB_L_MAX_CNT - L_JOB AS L_EXE_CNT
+FROM   TEMP02 A
+     ,(SELECT JOB_H_MAX_CNT, JOB_M_MAX_CNT, JOB_L_MAX_CNT
+       FROM   SCHEDULE_WEIGHT
+       WHERE  BASE_DT = (SELECT MAX(BASE_DT) FROM SCHEDULE_WEIGHT)) B
+), TEMP04 AS (
+-------------------
+-- 스케줄 수행 가능건 조회
+-------------------
+SELECT A.*
+     , B.*
+     , CASE WHEN A.JOB_WEIGHT = 3 AND GNUM <= H_EXE_CNT THEN 'Y' 
+            WHEN A.JOB_WEIGHT = 2 AND GNUM <= M_EXE_CNT THEN 'Y'
+            WHEN A.JOB_WEIGHT = 1 AND GNUM <= L_EXE_CNT THEN 'Y'
+            ELSE 'N' 
+       END AS EXE_YN  
+FROM   TEMP01 A, TEMP03 B
+)
+SELECT * FROM TEMP04 WHERE EXE_YN = 'Y'

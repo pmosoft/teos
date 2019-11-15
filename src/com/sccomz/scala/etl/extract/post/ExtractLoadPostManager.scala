@@ -29,8 +29,6 @@ ExtractLoadPostManager.extractPostToHadoopCsv("8460062","1012242284","gis01");
 
 spark.sql("SELECT COUNT(*) FROM (SELECT DISTINCT SCHEDULE_ID,RU_ID FROM RESULT_NR_2D_LOS_RU)").take(100).foreach(println);
 
-
-
  * */
 object ExtractLoadPostManager {
 

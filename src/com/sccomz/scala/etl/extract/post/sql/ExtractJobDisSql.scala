@@ -22,12 +22,20 @@ FROM  (
 
 def selectExtRu(scheduleId:String) = {
 s"""
-SELECT RU_ID
-     , CLUSTER_NAME
-FROM   JOB_DIS
---WHERE  SCHEDULE_ID = ${scheduleId}
-WHERE  SCENARIO_ID IN (SELECT CAST(SCENARIO_ID AS TEXT) FROM SCHEDULE WHERE SCHEDULE_ID = ${scheduleId})
-AND    STAT = 3
+SELECT A.RU_ID
+     , A.CLUSTER_NAME	     
+FROM  (SELECT * 
+       FROM   JOB_DIS
+       WHERE  SCENARIO_ID IN (SELECT CAST(SCENARIO_ID AS TEXT) FROM SCHEDULE WHERE SCHEDULE_ID = ${scheduleId})
+       AND    STAT = 3) A
+       LEFT OUTER JOIN (
+       SELECT DISTINCT SCHEDULE_ID, RU_ID 
+       FROM   JOB_DIS_ETL 
+       WHERE  SCHEDULE_ID = '${scheduleId}'
+       AND    STAT IN (4,5)   
+       ) B
+       ON   A.RU_ID       = B.RU_ID
+WHERE  B.RU_ID IS NULL
 """
 }  
 
