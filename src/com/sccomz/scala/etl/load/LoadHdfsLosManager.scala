@@ -23,6 +23,7 @@ import org.apache.spark.sql.types.StructType
 
 import com.sccomz.scala.comm.App
 import com.sccomz.scala.schema.SCENARIO
+import com.sccomz.java.comm.util.FileUtil
 
 /*
 import com.sccomz.scala.etl.load.LoadHdfsLosManager
@@ -105,6 +106,11 @@ object LoadHdfsLosManager {
     qry = s"""ALTER TABLE ${objNm} ADD PARTITION (SCHEDULE_ID=${scheduleId},RU_ID=${ruId}) LOCATION '/TEOS/warehouse/${objNm}/SCHEDULE_ID=${scheduleId}/RU_ID=${ruId}'"""; println(qry); sql(qry)
 
     //sql(s"""ALTER TABLE ${objNm} ADD PARTITION (SCHEDULE_ID=${scheduleId})""")
+    
+    //--------------------------------------
+        println("Source 파일 삭제");
+    //--------------------------------------
+    new File(App.linuxEtlPath+"/"+objNm+"_"+scheduleId+"_"+ruId+".dat").delete();
 
     //--------------------------------------
         println("samToParquet 종료");

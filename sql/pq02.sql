@@ -65,6 +65,14 @@ WHERE  A.SCENARIO_ID IN (SELECT CAST(SCENARIO_ID AS TEXT) FROM SCHEDULE WHERE SC
 ;
 
 
+select COUNT(*) from scenario_nr_ru_dem
+where  SCENARIO_ID = '5113566'
+;
+
+select * from scenario_nr_ru_dem
+where  SCENARIO_ID = '5113566'
+;
+
 SELECT
        BIN_X                      ||'|'||
        BIN_Y                      ||'|'||

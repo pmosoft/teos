@@ -5,7 +5,6 @@ object ExtractOraMobileParameterSql {
 def selectMobileParameterCsv(scheduleId:String) = {
 s"""
 SELECT 
-       NVL(SCENARIO_ID,0)   ||'|'||
        NVL(MOBILE_ID,0)     ||'|'||
        NVL(TYPE,0)          ||'|'||
        MOBILENAME           ||'|'||
@@ -23,8 +22,8 @@ SELECT
        NVL(DIVERSITYGAIN,0) ||'|'||
        NVL(ANTENNAGAIN,0)   ||'|'||
        NVL(RX_LAYER,0)      ||'|'||
-       ${scheduleId}        ||'|'
-FROM   DU
+       NVL(SCENARIO_ID,0)   ||'|'
+FROM   MOBILE_PARAMETER
 WHERE  SCENARIO_ID IN (SELECT SCENARIO_ID FROM SCHEDULE WHERE SCHEDULE_ID = ${scheduleId})
 """
 }

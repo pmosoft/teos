@@ -27,6 +27,11 @@ import com.sccomz.scala.schema.SCENARIO
 /*
 
 import com.sccomz.scala.etl.load.LoadHdfsManager
+LoadHdfsManager.oracleToHdfs("8463233", "5113566");
+
+ExtractOraManager.extractOracleToHadoopCsv("8463233")
+
+
 LoadHdfsManager.oracleToHdfs("8460064", "5104574");
 
 LoadHdfsManager.oracleToHdfs("8460178");
@@ -55,16 +60,26 @@ object LoadHdfsManager {
 
   def oracleToHdfs(scheduleId:String, scenarioId:String) = {
     val spark = SparkSession.builder().master("local[*]").appName("LoadHdfsManager").config("spark.sql.warehouse.dir","/teos/warehouse").enableHiveSupport().getOrCreate()
-    toParquetPartition(spark,"local","SCHEDULE",scheduleId, scenarioId);
-    toParquetPartition(spark,"local","SCENARIO",scheduleId, scenarioId);
-    //toParquetPartition(spark,"local","DU",scheduleId);
-    //toParquetPartition(spark,"local","RU",scheduleId);
-    //toParquetPartition(spark,"local","SITE",scheduleId);
-    toParquetPartition(spark,"local","SCENARIO_NR_RU",scheduleId, scenarioId);
-    toParquetPartition(spark,"local","SCENARIO_NR_ANTENNA",scheduleId, scenarioId);
+    //toParquetPartition(spark,"local","SCHEDULE",scheduleId, scenarioId);
+    //toParquetPartition(spark,"local","SCENARIO",scheduleId, scenarioId);
+    ////toParquetPartition(spark,"local","DU",scheduleId);
+    ////toParquetPartition(spark,"local","RU",scheduleId);
+    ////toParquetPartition(spark,"local","SITE",scheduleId);
+    //toParquetPartition(spark,"local","SCENARIO_NR_RU",scheduleId, scenarioId);
+    //toParquetPartition(spark,"local","SCENARIO_NR_ANTENNA",scheduleId, scenarioId);
+    toParquetPartition(spark,"local","MOBILE_PARAMETER",scheduleId, scenarioId);
+    toParquetPartition(spark,"local","NRUETRAFFIC",scheduleId, scenarioId);
+
     spark.close();
   }
 
+  def postAvgToHdfs(scheduleId:String, scenarioId:String) = {
+    val spark = SparkSession.builder().master("local[*]").appName("LoadHdfsManager").config("spark.sql.warehouse.dir","/teos/warehouse").enableHiveSupport().getOrCreate()
+    toParquetPartition(spark,"local","SCENARIO_NR_RU_AVG_HEIGHT",scheduleId, scenarioId);
+    spark.close();
+  }
+  
+  
   def oracleToHdfsBatch(workDt:String) = {
     val spark = SparkSession.builder().master("local[*]").appName("LoadHdfsManager").config("spark.sql.warehouse.dir","/teos/warehouse").enableHiveSupport().getOrCreate()
     toParquetPartitionBatch(spark,"local","FABASE",workDt);

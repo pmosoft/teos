@@ -17,10 +17,16 @@ import com.sccomz.scala.etl.extract.post.sql.ExtractPostLosBldResultDis1Sql
 import com.sccomz.scala.etl.extract.post.sql.ExtractJobDisSql
 import com.sccomz.scala.etl.extract.post.sql.ExtractPostLosEngResultSql
 import com.sccomz.scala.etl.load.LoadHdfsLosManager
+import com.sccomz.scala.etl.extract.post.sql.ExtractPostScenarioNrRuDemSql
+import com.sccomz.scala.etl.load.LoadHdfsManager
 
 /*
 import com.sccomz.scala.etl.extract.post.ExtractLoadPostManager
+ExtractLoadPostManager.executeExtractLoadAvg("8463233","5113566");
+
 ExtractLoadPostManager.monitorJobDis("8463233","5113566");
+
+
 
 ExtractJobDisSql.selectRuCnt("8463233");
 ExtractLoadPostManager.extractPostToHadoopCsv("8460062","1012242284","gis01");
@@ -58,6 +64,7 @@ object ExtractLoadPostManager {
     var qry = "";
 
     var ruCnt = 0; var extCnt = 0; var extDoneCnt = -1;
+    var avgCnt = 1; 
 
     var loofCnt = 0;
     try {
@@ -72,7 +79,10 @@ object ExtractLoadPostManager {
         
         println("extCnt="+extCnt);
 
-        if(extCnt>0) executeExtractLoad(scheduleId);
+        if(extCnt>0) {
+          //if(avgCnt==1) {executeExtractLoadAvg(scheduleId,scenarioId);avgCnt=2;}
+          executeExtractLoad(scheduleId);
+        }
 
         println("loofCnt="+loofCnt);
         Thread.sleep(1000*3);
@@ -122,7 +132,7 @@ object ExtractLoadPostManager {
         updateJobDisExt(scheduleId,ruId,"5")
     }
 
-    LoadHdfsLosManager.sparkClose;    
+    LoadHdfsLosManager.sparkClose();    
   }
 
 
@@ -155,6 +165,31 @@ object ExtractLoadPostManager {
     //
   }
 
+  def executeExtractLoadAvg(scheduleId:String,scenarioId:String): Unit = {
+    Class.forName(App.dbDriverPost);
+    var dbUrl = App.dbUrlPost;
+    var con = DriverManager.getConnection(dbUrl,App.dbUserPost,App.dbPwPost);
+    var stat:Statement=con.createStatement();
+    var rs:ResultSet = null;
+
+    var tabNm = ""; var qry = "";
+
+    //---------------------------------------
+         tabNm = "SCENARIO_NR_RU_AVG_HEIGHT";
+    //---------------------------------------
+    qry = ExtractPostScenarioNrRuDemSql.selectScenarioNrRuDemCsv(scheduleId); println(qry);
+    rs = stat.executeQuery(qry); 
+    var filePathNm = App.extJavaPath+"/"+tabNm+"_"+scheduleId+".dat"; println(filePathNm);
+    var pw = new PrintWriter(new File(filePathNm),"UTF-8");
+    while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
+    
+    //---------------------------------------
+      println("LoadHdfs SCENARIO_NR_RU_AVG_HEIGHT")
+    //---------------------------------------
+    LoadHdfsManager.postAvgToHdfs(scheduleId, scenarioId);
+    
+  }  
+  
   def insertJobDisExt(scheduleId:String,ruId:String,stat2:String) : Unit = {
     Class.forName(App.dbDriverPost);
     var con = DriverManager.getConnection(App.dbUrlPost,App.dbUserPost,App.dbPwPost);

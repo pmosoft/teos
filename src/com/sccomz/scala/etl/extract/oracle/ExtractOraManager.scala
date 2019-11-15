@@ -17,10 +17,16 @@ import com.sccomz.scala.etl.extract.oracle.sql.ExtractOraScenarioSql
 import com.sccomz.scala.etl.extract.oracle.sql.ExtractOraScheduleSql
 import com.sccomz.scala.etl.extract.oracle.sql.ExtractOraSiteSql
 import com.sccomz.scala.etl.extract.oracle.sql.ExtractOraFabaseSql
+import com.sccomz.scala.etl.extract.oracle.sql.ExtractOraNruetrafficSql
 
 /*
 import com.sccomz.scala.etl.extract.oracle.ExtractOraManager
+ExtractOraManager.extractOracleToHadoopCsv("8463233")
+
+8463233	5113566
+
 ExtractOraManager.extractOracleToHadoopCsv("8460064")
+
 
 ExtractOraManager.extractOracleToHadoopCsv("8463189")
 
@@ -154,6 +160,22 @@ object ExtractOraManager {
      rs = stat.executeQuery(qry);
      pw = new PrintWriter(new File(App.extJavaPath+"/"+tabNm+"_"+scheduleId+".dat" ),"UTF-8");
      while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
+
+     //--------------------------------------
+         tabNm = "MOBILE_PARAMETER"
+     //--------------------------------------
+     qry = ExtractOraMobileParameterSql.selectMobileParameterCsv(scheduleId); println(qry);
+     rs = stat.executeQuery(qry);
+     pw = new PrintWriter(new File(App.extJavaPath+"/"+tabNm+"_"+scheduleId+".dat" ),"UTF-8");
+     while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
+
+     //--------------------------------------
+         tabNm = "NRUETRAFFIC"
+     //--------------------------------------
+     qry = ExtractOraNruetrafficSql.selectNruetrafficCsv(scheduleId); println(qry);
+     rs = stat.executeQuery(qry);
+     pw = new PrintWriter(new File(App.extJavaPath+"/"+tabNm+"_"+scheduleId+".dat" ),"UTF-8");
+     while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
      
   }
 
@@ -162,7 +184,7 @@ object ExtractOraManager {
     var tabNm = ""; var qry = "";
 
     //--------------------------------------
-        tabNm = "FABASE";
+        tabNm = "MOBILE_PARAMETER";
     //--------------------------------------
     qry = ExtractOraFabaseSql.selectFabaseCsv(); println(qry);
     rs = stat.executeQuery(qry);
