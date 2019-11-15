@@ -54,7 +54,6 @@ WHERE  SCHEDULE_ID  = ${scheduleId}
 }
 
 
-
 def deleteScheduleStep(scheduleId:String, typeStepCd:String) = {
 s"""
 DELETE FROM SCHEDULE_STEP

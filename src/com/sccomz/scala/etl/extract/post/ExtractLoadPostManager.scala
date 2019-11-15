@@ -22,6 +22,10 @@ import com.sccomz.scala.etl.load.LoadHdfsLosManager
 import com.sccomz.scala.etl.extract.post.ExtractLoadPostManager
 ExtractLoadPostManager.extractPostToHadoopCsv("8460062","1012242284","gis01");
 
+ExtractLoadPostManager.ExtractJobDisSql("8463233");
+
+8463233	5113566
+
  * */
 object ExtractLoadPostManager {
 
@@ -37,12 +41,12 @@ object ExtractLoadPostManager {
     
     //extractPostToHadoopCsv("8460062","1012242284","gis01");
 
-    monitorJobDis("8460062");
+    monitorJobDis("8460062","");
     
     println("ExtractLoadPostManager end");
   }
 
-  def monitorJobDis(scheduleId:String): Unit = {
+  def monitorJobDis(scheduleId:String,scenarioId:String): Unit = {
 
     Class.forName(App.dbDriverPost);
     var con:Connection = DriverManager.getConnection(App.dbUrlPost,App.dbUserPost,App.dbPwPost);

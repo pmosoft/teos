@@ -30,7 +30,7 @@ import com.sccomz.scala.schedule.real.ExecuteJob
 ExecuteJob.executePostgreShell("8460064");
 
 ExecuteJob.execute("8460064");
-
+ExecuteJob.execute("8460178");
 
 ExecuteJob.executeEtlOracleToHdfs("8460964","SC001");
 ExecuteJob.executeEtlOracleToHdfs("8460966","SC001");
@@ -98,7 +98,7 @@ object ExecuteJob {
       typeStepCd=selMaxStep(scheduleId); println("typeStepCd="+typeStepCd);
 
       if(typeStepCd=="02") {executePostgreShell(scenarioId);}
-      if(typeStepCd=="02") {executeEtlPostgreToHdfs(scenarioId);insStepLog(scheduleId,"03");}
+      if(typeStepCd=="02") {executeEtlPostgreToHdfs(scheduleId,scenarioId);insStepLog(scheduleId,"03");}
       if(typeStepCd=="03") {executeSparkEngJob(scheduleId)     ;insStepLog(scheduleId,"04");}
       if(typeStepCd=="04") {executeSparkMakeBinFile(scheduleId);insStepLog(scheduleId,"05");}
       if(typeStepCd=="05") {isLoof=false;}
@@ -168,8 +168,8 @@ object ExecuteJob {
     
   }  
   
-  def executeEtlPostgreToHdfs(scheduleId:String): Unit = {
-    ExtractLoadPostManager.monitorJobDis(scheduleId);  
+  def executeEtlPostgreToHdfs(scheduleId:String,scenarioId:String): Unit = {
+    ExtractLoadPostManager.monitorJobDis(scheduleId,scenarioId);  
   }
   
   

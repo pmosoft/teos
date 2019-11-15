@@ -44,7 +44,6 @@ object LoadHdfsManager {
     //toParquetPartition(spark,"local","DU","8463189");
     //toParquetPartition(spark,"local","RU","8463189");
     //toParquetPartition(spark,"local","SITE","8463189");
-    8460064
     oracleToHdfs("8460064");
     //oracleToHdfs("8463189");
     
