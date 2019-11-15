@@ -5,24 +5,18 @@ object ExtractPostLosEngResultSql {
 def selectLosEngResultCsv(scheduleId:String, ruId:String) = {
 s"""
 SELECT
-       COALESCE(BIN_ID,'')        ||'|'||
-       BIN_X                      ||'|'||
-       BIN_Y                      ||'|'||
-       BIN_Z                      ||'|'||
-       COALESCE(BLD_ID,0)         ||'|'||
-       LOS                        ||'|'||
-       IN_BLD                     ||'|'||
-       THETA_DEG                  ||'|'||
-       PHI_DEG                    ||'|'||
-       SECTOR_X                   ||'|'||
-       SECTOR_Y                   ||'|'||
-       SECTOR_Z                   ||'|'||
-       '${scheduleId}'            ||'|'||
-       '${ruId}'                  ||'|'
+       BIN_X                                          ||'|'||
+       BIN_Y                                          ||'|'||
+       BIN_Z                                          ||'|'||
+       CASE WHEN LOS IS TRUE THEN 1 ELSE 0 END        ||'|'||
+       THETA_DEG                                      ||'|'||
+       PHI_DEG                                        ||'|'||
+       CASE WHEN IN_BLD IS TRUE THEN 'T' ELSE 'F' END ||'|'||
+       '${scheduleId}'                                ||'|'||
+       '${ruId}'                                      ||'|'
 FROM   LOS_ENG_RESULT
---WHERE  SCHEDULE_ID = ${scheduleId}
-WHERE  SCENARIO_ID IN (SELECT SCENARIO_ID FROM I_SCHEDULE WHERE SCHEDULE_ID = ${scheduleId})
-AND    SECTOR_ID   = '${ruId}'
+WHERE  SCHEDULE_ID = ${scheduleId}
+AND    RU_ID  = '${ruId}'
 """
 }
 

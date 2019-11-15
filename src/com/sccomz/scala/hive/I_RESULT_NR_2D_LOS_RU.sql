@@ -1,25 +1,3 @@
-DROP TABLE I_RESULT_NR_2D_LOS_RU;
-
-CREATE EXTERNAL TABLE I_RESULT_NR_2D_LOS_RU (
-  SCENARIO_ID                      INT
-, BIN_ID                           STRING
-, RX_TM_XPOS                       INT
-, RX_TM_YPOS                       INT
-, RZ                               FLOAT
-, RESOLUTION                       INT
-, VALUE                            INT
-, THETA                            FLOAT
-, PHI                              FLOAT
-, RU_ID                            STRING
-, TX_TM_XPOS                       FLOAT
-, TX_TM_YPOS                       FLOAT
-, TZ                               FLOAT
-, SCHEDULE_ID                      INT
-)
-
-SELECT * FROM I_RESULT_NR_2D_LOS_RU;
-
-
 DROP TABLE RESULT_NR_2D_LOS_RU;
 
 CREATE EXTERNAL TABLE RESULT_NR_2D_LOS_RU
@@ -55,27 +33,6 @@ LOCATION '/TEOS/warehouse/RESULT_NR_2D_LOS_RU'
 
 hadoop fs -ls /TEOS/warehouse/RESULT_NR_2D_LOS_RU;
 hadoop fs -chmod -R 777 /TEOS/warehouse/RESULT_NR_2D_LOS_RU;
-
-DROP TABLE I_LOS_ENG_RESULT;
-
-CREATE EXTERNAL TABLE I_LOS_ENG_RESULT (
-  BIN_ID                            STRING
-, BIN_X                             FLOAT
-, BIN_Y                             FLOAT
-, BIN_Z                             FLOAT
-, BLD_ID                            STRING
-, BIN_SIZE                          INT
-, LOS                               BOOLEAN
-, IN_BLD                            BOOLEAN
-, THETA_DEG                         INT
-, PHI_DEG                           INT
-, SECTOR_X                          FLOAT
-, SECTOR_Y                          FLOAT
-, SECTOR_Z                          FLOAT
-)
-PARTITIONED BY (SCHEDULE_ID INT, RU_ID STRING)
-STORED AS PARQUET
-LOCATION '/TEOS/warehouse/LOS_ENG_RESULT';
 
 
 CREATE EXTERNAL TABLE RESULT_NR_2D_LOS_RU_BAK(

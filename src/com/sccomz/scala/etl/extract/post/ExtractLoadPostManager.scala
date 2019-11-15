@@ -20,9 +20,10 @@ import com.sccomz.scala.etl.load.LoadHdfsLosManager
 
 /*
 import com.sccomz.scala.etl.extract.post.ExtractLoadPostManager
-ExtractLoadPostManager.extractPostToHadoopCsv("8460062","1012242284","gis01");
+ExtractLoadPostManager.monitorJobDis("8460062","5113566");
 
-ExtractLoadPostManager.ExtractJobDisSql("8463233");
+ExtractJobDisSql.selectRuCnt("8463233");
+ExtractLoadPostManager.extractPostToHadoopCsv("8460062","1012242284","gis01");
 
 8463233	5113566
 
@@ -100,7 +101,9 @@ object ExtractLoadPostManager {
 
     var extList = mutable.Map[String,String]();
 
-    while(rs.next()) {
+    
+    //while(rs.next()) {
+    if(rs.next()) {
         extList += (rs.getString("RU_ID") -> rs.getString("CLUSTER_NAME"));
         ruId  = rs.getString("RU_ID");
         clusterName = rs.getString("CLUSTER_NAME");
@@ -111,10 +114,11 @@ object ExtractLoadPostManager {
         ruId  = ext._1; clusterName = ext._2;
         insertJobDisExt(scheduleId,ruId,"4")
         extractPostToHadoopCsv(scheduleId,ruId,clusterName);
-        LoadHdfsLosManager.samToParquetPartition("LOS_ENG_RESULT", scheduleId, ruId);
+        LoadHdfsLosManager.samToParquetPartition("RESULT_NR_2D_LOS_RU", scheduleId, ruId);
         updateJobDisExt(scheduleId,ruId,"5")
     }
 
+    LoadHdfsLosManager.sparkClose;    
   }
 
 
