@@ -5,7 +5,6 @@ object ExtractOraScenarioNrAntennaSql {
 def selectScenarioNrAntennaCsv(scheduleId:String) = {
 s"""
 SELECT
-       SCENARIO_ID                     ||'|'||
        ANTENA_SEQ                      ||'|'||
        RU_ID                           ||'|'||
        ANTENA_NM                       ||'|'||
@@ -14,7 +13,7 @@ SELECT
        ANTENA_ORD                      ||'|'||
        LIMIT_TILTING                   ||'|'||
        RU_SEQ                          ||'|'||
-       ${scheduleId}                   ||'|'
+       SCENARIO_ID                     ||'|'
 FROM
 (
 SELECT ANTENA.SCENARIO_ID         AS SCENARIO_ID

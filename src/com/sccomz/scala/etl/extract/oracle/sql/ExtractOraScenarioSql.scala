@@ -51,7 +51,7 @@ SELECT
        REAL_COMP                                   ||'|'||
        REAL_CATT                                   ||'|'||
        REAL_CATY                                   ||'|'||
-       REPLACE(BLD_TYPE,'|','#')                   ||'|'||
+       REPLACE(BLD_TYPE,'|','^')                   ||'|'||
        NVL(RET_PERIOD,0)                           ||'|'||
        RET_END_DATETIME                            ||'|'||
        BUILDINGANALYSIS3D_YN                       ||'|'||
@@ -59,7 +59,7 @@ SELECT
        NVL(AREA_ID,0)                              ||'|'||
        BUILDINGANALYSIS3D_RELATED_YN               ||'|'||
        NVL(RELATED_ANALYSIS_COVLIMITRSRP,0)        ||'|'||
-       ${scheduleId}                               ||'|'
+       SCENARIO_ID                                 ||'|'
 FROM   SCENARIO
 WHERE  SCENARIO_ID IN (SELECT SCENARIO_ID FROM SCHEDULE WHERE SCHEDULE_ID = ${scheduleId})
 """

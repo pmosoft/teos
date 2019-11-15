@@ -9,8 +9,7 @@ import org.apache.spark.sql.types.DoubleType
 
 object SCENARIO {
 final val schema : StructType= StructType( Array(
- StructField("SCENARIO_ID"                    , IntegerType)
-,StructField("SCENARIO_NM"                    , StringType )
+ StructField("SCENARIO_NM"                    , StringType )
 ,StructField("USER_ID"                        , StringType )
 ,StructField("SYSTEM_ID"                      , IntegerType)
 ,StructField("NETWORK_TYPE"                   , IntegerType)
@@ -63,7 +62,7 @@ final val schema : StructType= StructType( Array(
 ,StructField("AREA_ID"                        , IntegerType)
 ,StructField("BUILDINGANALYSIS3D_RELATED_YN"  , StringType )
 ,StructField("RELATED_ANALYSIS_COVLIMITRSRP"  , IntegerType)
-,StructField("SCHEDULE_ID"                    , IntegerType)
+,StructField("SCENARIO_ID"                    , IntegerType)
 ))
 }
 

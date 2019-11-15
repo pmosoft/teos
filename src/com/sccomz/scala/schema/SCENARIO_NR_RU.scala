@@ -8,8 +8,7 @@ import org.apache.spark.sql.types.FloatType
 
 object SCENARIO_NR_RU {
 final val schema : StructType= StructType(Array(
- StructField("SCENARIO_ID"                   ,IntegerType)
-,StructField("ENB_ID"                        ,StringType)
+ StructField("ENB_ID"                        ,StringType)
 ,StructField("PCI"                           ,IntegerType)
 ,StructField("PCI_PORT"                      ,IntegerType)
 ,StructField("RU_ID"                         ,StringType)
@@ -46,5 +45,6 @@ final val schema : StructType= StructType(Array(
 ,StructField("SITE_ENDY"                     ,FloatType)                                                                                                                        
 ,StructField("X_BIN_CNT"                     ,IntegerType)                                                                                                                        
 ,StructField("Y_BIN_CNT"                     ,IntegerType)
+,StructField("SCENARIO_ID"                   ,IntegerType)
 ))
 }

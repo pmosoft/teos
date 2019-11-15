@@ -28,6 +28,8 @@ import com.sccomz.scala.schema.SCENARIO
 import com.sccomz.scala.etl.load.LoadHdfsManager
 LoadHdfsManager.oracleToHdfsBatch("20191107");
 
+import com.sccomz.scala.etl.load.LoadHdfsManager
+LoadHdfsManager.oracleToHdfs("8460064");
 
 LoadHdfsManager.oracleToHdfs("8460178");
 LoadHdfsManager.oracleToHdfs("8460179");
@@ -124,8 +126,14 @@ object LoadHdfsManager {
     //println(s"""ALTER TABLE ${objNm} ADD PARTITION (SCHEDULE_ID=${scheduleId}) LOCATION '/teos/warehouse/${objNm}/SCHEDULE_ID=${scheduleId}'""");
     import spark.implicits._
     import spark.sql
-    sql(s"""ALTER TABLE I_${objNm} DROP IF EXISTS PARTITION (SCHEDULE_ID=${scheduleId})""")
-    sql(s"""ALTER TABLE I_${objNm} ADD PARTITION (SCHEDULE_ID=${scheduleId}) LOCATION '/teos/warehouse/${objNm}/SCHEDULE_ID=${scheduleId}'""");
+
+    if (objNm == "SCHEDULE") {
+      sql(s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (SCHEDULE_ID=${scheduleId})""")
+      sql(s"""ALTER TABLE ${objNm} ADD PARTITION (SCHEDULE_ID=${scheduleId}) LOCATION '/teos/warehouse/${objNm}/SCHEDULE_ID=${scheduleId}'""");
+    } else {
+      sql(s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (SCENARIO_ID=SCENARIO_ID)""")
+      sql(s"""ALTER TABLE ${objNm} ADD PARTITION (SCENARIO_ID=SCENARIO_ID) LOCATION '/teos/warehouse/${objNm}/SCHEDULE_ID=${scheduleId}'""");
+    }
 
     //sql(s"""ALTER TABLE ${objNm} ADD PARTITION (SCHEDULE_ID=${scheduleId})""")
 
