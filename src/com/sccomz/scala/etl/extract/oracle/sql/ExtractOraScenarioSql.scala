@@ -5,7 +5,6 @@ object ExtractOraScenarioSql {
 def selectScenarioCsv(scheduleId:String) = {
 s"""
 SELECT
-       NVL(SCENARIO_ID,0)                          ||'|'||
        SCENARIO_NM                                 ||'|'||
        USER_ID                                     ||'|'||
        NVL(SYSTEM_ID,0)                            ||'|'||

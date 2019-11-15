@@ -26,7 +26,7 @@ object SparkTest {
 
   def test01() = {
     //val spark1 = SparkSession.builder().master("local[*]").appName("MakeParquet").getOrCreate()
-    LoadHdfsManager.oracleToHdfs("8463189");
+    //LoadHdfsManager.oracleToHdfs("8463189");
     //spark1.stop();
   }
   

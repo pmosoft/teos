@@ -119,7 +119,7 @@ object ExecuteJob {
 
     try {
       ExtractOraManager.extractOracleToHadoopCsv(scheduleId);
-      LoadHdfsManager.oracleToHdfs(scheduleId);
+      LoadHdfsManager.oracleToHdfs(scheduleId, scenarioId);
     } catch {
       case _:Throwable=>updStepErrLog(scheduleId,typeStepCd);
     }    

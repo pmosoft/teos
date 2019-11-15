@@ -29,7 +29,7 @@ import com.sccomz.scala.etl.load.LoadHdfsManager
 LoadHdfsManager.oracleToHdfsBatch("20191107");
 
 import com.sccomz.scala.etl.load.LoadHdfsManager
-LoadHdfsManager.oracleToHdfs("8460064");
+LoadHdfsManager.oracleToHdfs("8460064", "5104573");
 
 LoadHdfsManager.oracleToHdfs("8460178");
 LoadHdfsManager.oracleToHdfs("8460179");
@@ -46,21 +46,21 @@ object LoadHdfsManager {
     //toParquetPartition(spark,"local","DU","8463189");
     //toParquetPartition(spark,"local","RU","8463189");
     //toParquetPartition(spark,"local","SITE","8463189");
-    oracleToHdfs("8460064");
+    oracleToHdfs("8460064", "5104573");
     //oracleToHdfs("8463189");
     
     println("LoadHdfsManager end");
   }
 
-  def oracleToHdfs(scheduleId:String) = {
+  def oracleToHdfs(scheduleId:String, scenarioId:String) = {
     val spark = SparkSession.builder().master("local[*]").appName("LoadHdfsManager").config("spark.sql.warehouse.dir","/teos/warehouse").enableHiveSupport().getOrCreate()
-    toParquetPartition(spark,"local","SCHEDULE",scheduleId);
-    toParquetPartition(spark,"local","SCENARIO",scheduleId);
+    toParquetPartition(spark,"local","SCHEDULE",scheduleId, scenarioId);
+    toParquetPartition(spark,"local","SCENARIO",scheduleId, scenarioId);
     //toParquetPartition(spark,"local","DU",scheduleId);
     //toParquetPartition(spark,"local","RU",scheduleId);
     //toParquetPartition(spark,"local","SITE",scheduleId);
-    toParquetPartition(spark,"local","SCENARIO_NR_RU",scheduleId);
-    toParquetPartition(spark,"local","SCENARIO_NR_ANTENNA",scheduleId);
+    toParquetPartition(spark,"local","SCENARIO_NR_RU",scheduleId, scenarioId);
+    toParquetPartition(spark,"local","SCENARIO_NR_ANTENNA",scheduleId, scenarioId);
     spark.close();
   }
 
@@ -70,7 +70,7 @@ object LoadHdfsManager {
     spark.close();    
   }
   
-  def toParquetPartition(spark: SparkSession,cd:String,objNm:String,scheduleId:String) = {
+  def toParquetPartition(spark: SparkSession,cd:String,objNm:String,scheduleId:String, scenarioId:String) = {
     //--------------------------------------
         println("samToParquet 시작");
     //--------------------------------------
@@ -131,8 +131,8 @@ object LoadHdfsManager {
       sql(s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (SCHEDULE_ID=${scheduleId})""")
       sql(s"""ALTER TABLE ${objNm} ADD PARTITION (SCHEDULE_ID=${scheduleId}) LOCATION '/teos/warehouse/${objNm}/SCHEDULE_ID=${scheduleId}'""");
     } else {
-      sql(s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (SCENARIO_ID=SCENARIO_ID)""")
-      sql(s"""ALTER TABLE ${objNm} ADD PARTITION (SCENARIO_ID=SCENARIO_ID) LOCATION '/teos/warehouse/${objNm}/SCHEDULE_ID=${scheduleId}'""");
+      sql(s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (SCENARIO_ID=${scenarioId})""")
+      sql(s"""ALTER TABLE ${objNm} ADD PARTITION (SCENARIO_ID=${scenarioId}) LOCATION '/teos/warehouse/${objNm}/SCENARIO_ID=${scenarioId}'""");
     }
 
     //sql(s"""ALTER TABLE ${objNm} ADD PARTITION (SCHEDULE_ID=${scheduleId})""")
