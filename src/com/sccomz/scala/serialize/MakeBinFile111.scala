@@ -232,6 +232,7 @@ object MakeBinFile111 {
         }
 
         val bin = Array.ofDim[Byte4](x_bin_cnt, y_bin_cnt);
+        val newBin = Array(bin.length * bin(0).length);
 
         if (cdNm == "LOS") {
           for (y <- 0 until y_bin_cnt by 1) {
@@ -256,14 +257,20 @@ object MakeBinFile111 {
         var qry2 = MakeBinFileSql.selectRuResult2(ruId._1);
         println(qry2);
         var sqlDf2 = spark.sql(qry2);
-        
+        var x_point = 0; var y_point = 0;
         if(cdNm == "LOS") {
         	for (row <- sqlDf2.collect) {
-        	  var x_point = row.mkString(",").split(",")(0).toInt;
-        	  var y_point = row.mkString(",").split(",")(1).toInt;
+        	  x_point = row.mkString(",").split(",")(0).toInt;
+        	  y_point = row.mkString(",").split(",")(1).toInt;
         	  var value = row.mkString(",").split(",")(2).toInt;
         	  bin(x_point)(y_point).value = ByteUtil.intToByteArray(value);
         	}
+
+//          for (y <- 0 until y_bin_cnt by 1) {
+//            for (x <- 0 until x_bin_cnt by 1) {              
+//            	newBin((y * bin(y).length) + x) = bin(x_point)(y_point).value;
+//            }
+//          }
         } else {
           for (row <- sqlDf2.collect) {
         	  var x_point = row.mkString(",").split(",")(0).toInt;
@@ -284,6 +291,7 @@ object MakeBinFile111 {
             fos.write(bin(x)(y).value);
           }
         }
+        
         logger.info("=========================== RU별 Bin 생성 완료 ===========================");
         if (fos != null) fos.close();
       }
