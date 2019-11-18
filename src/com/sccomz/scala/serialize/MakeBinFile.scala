@@ -19,8 +19,10 @@ import com.sccomz.java.serialize.ByteUtil
 /*
 
 import com.sccomz.scala.serialize.MakeBinFile
+MakeBinFile.makeEngResult("8463233", "LOS");
+
 MakeBinFile.executeEngResult("8463233");
-  
+
  * */
 object MakeBinFile {
 
@@ -38,7 +40,7 @@ object MakeBinFile {
   // 2D Bin
   def executeEngResult(scheduleId: String) = {
     
-    makeResultPath(scheduleId);
+    //makeResultPath(scheduleId);
     makeEngResult(scheduleId, "LOS");
     //makeEngResult(scheduleId, "PATHLOSS");
     //makeEngResult(scheduleId, "BEST_SERVER");
@@ -53,14 +55,14 @@ object MakeBinFile {
   def executeBdResult(scheduleId: String) = {
   }
   
-  // 2D 폴더 생성
+  // 2D Bin 생성
   def makeEngResult(scheduleId: String, cdNm: String) = {
     makeEngSectorResult(scheduleId, cdNm, ruInfo.getOrElse("SECTOR_PATH",""));
     //makeEngRuResult(scheduleId, cdNm, ruInfo);
-
-    if(cdNm == "LOS" || cdNm == "PATHLOSS") {
-    	makeEngRuResult(scheduleId, cdNm, ruInfo);
-    }
+    
+    //if(cdNm == "LOS" || cdNm == "PATHLOSS") {
+    //	makeEngRuResult(scheduleId, cdNm, ruInfo);
+    //}
   }
   
   // 폴더 생성 메소드
@@ -191,7 +193,8 @@ object MakeBinFile {
     //---------------------------------------------------------------------------------------------------------
     // 파일 Write
     //---------------------------------------------------------------------------------------------------------
-    var file = new File(App.resultPath, DateUtil.getDate("yyyyMMdd") + "/" +sectorPath+ "/" + cdNm+".bin");
+    //var file = new File(App.resultPath, DateUtil.getDate("yyyyMMdd") + "/" +sectorPath+ "/" + cdNm+".bin");
+    var file = new File(App.resultPath, DateUtil.getDate("yyyyMMdd") + "/SYS/5113566/" + cdNm+".bin");
     var fos = new FileOutputStream(file);
     for (y <- 0 until y_bin_cnt by 1) {
       for (x <- 0 until x_bin_cnt by 1) {
