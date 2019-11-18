@@ -26,7 +26,7 @@ FROM  (select *
        select distinct SCHEDULE_ID, RU_ID 
        from   JOB_DIS_ETL 
        where  SCHEDULE_ID = '8463233'
-       and    STAT in (4,5)   
+       and    STAT in (5)   
        ) B
        on   A.RU_ID       = B.RU_ID
 where B.RU_ID is NULL       
@@ -34,6 +34,44 @@ where B.RU_ID is NULL
 ;
 
 
+SELECT
+	     ENB_ID         ||'|'||
+	     PCI            ||'|'||
+	     PCI_PORT       ||'|'||
+	     RU_ID          ||'|'||
+	     ROUND(CAST(DEM_HEGHT AS NUMERIC),2)      ||'|'||
+	     ROUND(CAST(BLD_AVG_HEIGHT AS NUMERIC),2) ||'|'||
+	     SCENARIO_ID    ||'|'
+FROM   SCENARIO_NR_RU_DEM
+WHERE  SCENARIO_ID IN (SELECT CAST(SCENARIO_ID AS TEXT) FROM SCHEDULE WHERE SCHEDULE_ID = 8463233)
+;
+
+
+select RU_ID 
+from SCENARIO_NR_RU_DEM
+group by RU_ID
+order by RU_ID
+;
+
+select COUNT(*) 
+from SCENARIO_NR_RU_DEM
+where RU_ID < '1011760123'
+;
+
+
+SELECT
+	     ROUND( CAST(DEM_HEGHT AS NUMERIC),2)
+FROM   SCENARIO_NR_RU_DEM
+WHERE  SCENARIO_ID IN (SELECT CAST(SCENARIO_ID AS TEXT) FROM SCHEDULE WHERE SCHEDULE_ID = 8463233)
+;
+
+select distinct SCHEDULE_ID, RU_ID 
+from   JOB_DIS_ETL 
+where  SCHEDULE_ID = '8463233'
+and    STAT in (4)   
+;
+   
+   
 select stat, count(*)
 from job_dis
 group by stat

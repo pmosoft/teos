@@ -32,7 +32,7 @@ FROM  (SELECT *
        SELECT DISTINCT SCHEDULE_ID, RU_ID 
        FROM   JOB_DIS_ETL 
        WHERE  SCHEDULE_ID = '${scheduleId}'
-       AND    STAT IN (4,5)   
+       AND    STAT IN (5)   
        ) B
        ON   A.RU_ID       = B.RU_ID
 WHERE  B.RU_ID IS NULL

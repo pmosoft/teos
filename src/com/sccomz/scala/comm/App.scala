@@ -23,7 +23,8 @@ object App {
   val hdfsLinuxEtlPath      = "file:///"+linuxEtlPath;
   val hdfsEtlPath           = "/teos/text";
 
-  val linuxResultPath       = "/disk2/result";
+  //val linuxResultPath       = "/disk2/result";
+  val linuxResultPath       = "/var/result";
 
 
   // linux output path

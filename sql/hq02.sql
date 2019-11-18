@@ -348,6 +348,42 @@ DROP TABLE RESULT_NR_2D_LOS_RU;
 
 
 
+SELECT * FROM TEST02;
+
+
+DROP TABLE TEST02;
+
+CREATE EXTERNAL TABLE TEST02 (
+  BIN_ID                            STRING
+, BIN_X                             FLOAT
+)
+PARTITIONED BY (SCHEDULE_ID INT)
+STORED AS PARQUET
+LOCATION '/teos/warehouse/TEST02';
+
+
+set hive.exec.dynamic.partition.mode=nonstrict;
+
+
+insert into TEST02 partition (schedule_id)
+select '111'
+     , 111
+     , 111
+;     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 CREATE EXTERNAL TABLE RESULT_NR_2D_LOS_RU_BAK(
   SCENARIO_ID INT, 
   BIN_ID STRING, 

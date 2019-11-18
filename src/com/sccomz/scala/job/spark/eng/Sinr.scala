@@ -31,7 +31,7 @@ def main(args: Array[String]): Unit = {
 }     
 
 def execute(scheduleId:String) = {
-  val spark: SparkSession = SparkSession.builder().master("yarn").appName(this.getClass.getName).config("spark.sql.warehouse.dir","/teos/warehouse").enableHiveSupport().getOrCreate();
+  val spark: SparkSession = SparkSession.builder().master("yarn").appName(this.getClass.getName).config("spark.sql.warehouse.dir","/TEOS/warehouse").enableHiveSupport().getOrCreate();
   executeSql(spark, scheduleId);
   executeSql2(spark, scheduleId);
   spark.close();
@@ -51,7 +51,7 @@ var qry = "";
 //---------------------------------------------------
 val conf = new Configuration()
 val fs = FileSystem.get(conf)
-fs.delete(new Path(s"""/teos/warehouse/${objNm}/schedule_id=${scheduleId}"""),true)
+fs.delete(new Path(s"""/TEOS/warehouse/${objNm}/schedule_id=${scheduleId}"""),true)
 import spark.implicits._
 import spark.sql
 qry = s"""ALTER TABLE I_${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; sql(qry);
@@ -182,7 +182,7 @@ var qry = "";
 //---------------------------------------------------
 val conf = new Configuration()
 val fs = FileSystem.get(conf)
-fs.delete(new Path(s"""/teos/warehouse/${objNm}/schedule_id=${scheduleId}"""),true)
+fs.delete(new Path(s"""/TEOS/warehouse/${objNm}/schedule_id=${scheduleId}"""),true)
 import spark.implicits._
 import spark.sql
 qry = s"""ALTER TABLE I_${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; sql(qry);

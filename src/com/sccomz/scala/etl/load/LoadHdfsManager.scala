@@ -1,28 +1,17 @@
 package com.sccomz.scala.etl.load
 
-import java.sql.Connection
 import java.sql.DriverManager
-import java.sql.ResultSet
 import java.sql.Statement
-import java.io._
-import java.net.InetAddress
 
-import scala.collection.mutable.Map
-import scala.collection.mutable.HashMap
-import scala.collection._
 import scala.reflect.runtime.universe
 
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.FileSystem
 import org.apache.hadoop.fs.Path
-import org.apache.hadoop.fs.permission.FsAction
-import org.apache.hadoop.fs.permission.FsPermission
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.types.StructType
 
-
 import com.sccomz.scala.comm.App
-import com.sccomz.scala.schema.SCENARIO
 
 /*
 
@@ -67,9 +56,13 @@ object LoadHdfsManager {
     ////toParquetPartition(spark,"local","SITE",scheduleId);
     //toParquetPartition(spark,"local","SCENARIO_NR_RU",scheduleId, scenarioId);
     //toParquetPartition(spark,"local","SCENARIO_NR_ANTENNA",scheduleId, scenarioId);
-    toParquetPartition(spark,"local","MOBILE_PARAMETER",scheduleId, scenarioId);
-    toParquetPartition(spark,"local","NRUETRAFFIC",scheduleId, scenarioId);
+    //toParquetPartition(spark,"local","MOBILE_PARAMETER",scheduleId, scenarioId);
+    //toParquetPartition(spark,"local","NRUETRAFFIC",scheduleId, scenarioId);
 
+    toParquetPartition(spark,"local","NRSECTORPARAMETER",scheduleId, scenarioId);
+    toParquetPartition(spark,"local","NRSYSTEM",scheduleId, scenarioId);
+    
+    
     spark.close();
   }
 
@@ -141,8 +134,6 @@ object LoadHdfsManager {
         println("Hive partition 생성");
     //--------------------------------------
     //println(s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (SCHEDULE_ID=${scheduleId})""");
-    //println(s"""ALTER TABLE ${objNm} ADD PARTITION (SCHEDULE_ID=${scheduleId}) LOCATION '/teos/warehouse/${objNm}/SCHEDULE_ID=${scheduleId}'""");
-    import spark.implicits._
     import spark.sql
 
     if (objNm == "SCHEDULE") {
@@ -214,8 +205,6 @@ object LoadHdfsManager {
     if(isPartion) {
       //--------------------------------------
           println("Hive partition 생성");
-      //--------------------------------------
-      import spark.implicits._
       import spark.sql
       sql(s"""ALTER TABLE I_${objNm} DROP IF EXISTS PARTITION (WORK_DT=${workDt})""")
       sql(s"""ALTER TABLE I_${objNm} ADD PARTITION (WORK_DT=${workDt}) LOCATION '/teos/warehouse/${objNm}/WORK_DT=${workDt}'""");

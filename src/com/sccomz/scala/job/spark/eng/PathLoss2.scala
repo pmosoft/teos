@@ -4,9 +4,6 @@ import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.FileSystem
 import org.apache.hadoop.fs.Path
 import org.apache.spark.sql.SparkSession
-import java.sql.DriverManager
-import com.sccomz.scala.comm.App
-import java.sql.Statement
 
 /*
  * 설    명 :
@@ -27,7 +24,7 @@ PathLoss.execute("8463189");
 
  */
 
-object PathLoss {
+object PathLoss2 {
   
 def main(args: Array[String]): Unit = {  
   var scheduleId = if (args.length < 1) "" else args(0);
@@ -35,39 +32,35 @@ def main(args: Array[String]): Unit = {
 }     
 
 def execute(scheduleId:String) = {
-  //val spark: SparkSession = SparkSession.builder().master("yarn").appName(this.getClass.getName).config("spark.sql.warehouse.dir","/TEOS/warehouse").enableHiveSupport().getOrCreate();
-  //executeSql(spark, scheduleId);
-  //spark.close();
-  executeSql(scheduleId);
+  val spark: SparkSession = SparkSession.builder().master("yarn").appName(this.getClass.getName).config("spark.sql.warehouse.dir","/TEOS/warehouse").enableHiveSupport().getOrCreate();
+  executeSql(spark, scheduleId);
+  executeSql2(spark, scheduleId);
+  spark.close();
+
 }
 
- 
-def executeSql(scheduleId:String) = {
-Class.forName(App.dbDriverHive);
-var con = DriverManager.getConnection(App.dbUrlHive,App.dbUserHive,App.dbPwHive);
-var stat:Statement=con.createStatement();
-  
-//var scheduleId = "8463233";
+def executeSql(spark: SparkSession, scheduleId:String) = {
+//var scheduleId = "8463189"; 
   
 var objNm = "RESULT_NR_2D_PATHLOSS_RU"
 //------------------------------------------------------
     println(objNm + " 시작");
 //------------------------------------------------------
-
-var qry=s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; println(qry);stat.execute(qry);
-
+var qry = "";
+  
 //---------------------------------------------------
     println("partiton 파일 삭제 및 drop table partition");
 //---------------------------------------------------
 val conf = new Configuration()
 val fs = FileSystem.get(conf)
 fs.delete(new Path(s"""/TEOS/warehouse/${objNm}/schedule_id=${scheduleId}"""),true)
-qry=s"""set hive.exec.dynamic.partition.mode=nonstrict"""; println(qry);stat.execute(qry);
+import spark.implicits._
+import spark.sql
+qry = s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; sql(qry);
 
 //---------------------------------------------------
     println("insert partition table");
 //---------------------------------------------------
-   
 qry = s"""
 with RU as
 (
@@ -285,7 +278,7 @@ select NLOS_temp.scenario_id, NLOS_temp.schedule_id, NLOS_temp.ru_id,
        ) b
        on  NLOS_temp.scenario_id = b.scenario_id
 )
-insert into ${objNm} partition (schedule_id)
+insert into ${objNm} partition (schedule_id=${scheduleId})
 select NLOS.scenario_id, NLOS.ru_id,
        NLOS.rx_tm_xpos, NLOS.rx_tm_ypos, NLOS.rz, NLOS.value,
        (case when NLOS.value = 1 then PL_LOS
@@ -293,41 +286,35 @@ select NLOS.scenario_id, NLOS.ru_id,
         end + PLB) as PATHLOSS,
        NLOS.is_umi_model,
        NLOS.dist2d, NLOS.dist3d, NLOS.distBP,
-       NLOS.hBS, NLOS.hUT,
-       NLOS.schedule_id
+       NLOS.hBS, NLOS.hUT
   from NLOS
 """
-println(qry); stat.execute(qry);
+println(qry); spark.sql(qry).take(100).foreach(println);
 
-con.close();
 }
 
-
-def executeSql2(scheduleId:String) = {
-Class.forName(App.dbDriverHive);
-var con = DriverManager.getConnection(App.dbUrlHive,App.dbUserHive,App.dbPwHive);
-var stat:Statement=con.createStatement();
-
+def executeSql2(spark: SparkSession, scheduleId:String) = {
+//var scheduleId = "8463189"; 
   
 var objNm = "RESULT_NR_2D_PATHLOSS"
 //------------------------------------------------------
     println(objNm + " 시작");
 //------------------------------------------------------
-
-var qry=s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; println(qry);stat.execute(qry);
-
+var qry = "";
+  
 //---------------------------------------------------
     println("partiton 파일 삭제 및 drop table partition");
 //---------------------------------------------------
 val conf = new Configuration()
 val fs = FileSystem.get(conf)
 fs.delete(new Path(s"""/TEOS/warehouse/${objNm}/schedule_id=${scheduleId}"""),true)
-qry=s"""set hive.exec.dynamic.partition.mode=nonstrict"""; println(qry);stat.execute(qry);
+import spark.implicits._
+import spark.sql
+qry = s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; sql(qry);
 
 //---------------------------------------------------
     println("insert partition table");
 //---------------------------------------------------
-
 qry = s"""
 with AREA as
 (
@@ -341,24 +328,23 @@ select a.scenario_id, b.schedule_id,
  where b.schedule_id = ${scheduleId}
    and a.scenario_id = b.scenario_id
 )
-insert into ${objNm} partition (schedule_id)
+insert into ${objNm} partition (schedule_id=${scheduleId})
 select max(AREA.scenario_id) as scenario_id,
        RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution as rx_tm_xpos,
        RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution as rx_tm_ypos,
        (RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution - AREA.tm_startx) / AREA.resolution as x_point,
        (RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution - AREA.tm_starty) / AREA.resolution as y_point,
-       min(pathloss) as pathloss, -- Min Value is Pathloss value in Scenario.
-       max(AREA.schedule_id) as schedule_id
+       min(pathloss) as pathloss
   from AREA, RESULT_NR_2D_PATHLOSS_RU RSLT
  where RSLT.schedule_id = AREA.schedule_id
    and AREA.tm_startx <= RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution and RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution < AREA.tm_endx
    and AREA.tm_starty <= RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution and RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution < AREA.tm_endy
   group by RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution, RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution,
            (RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution - AREA.tm_startx) / AREA.resolution, (RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution - AREA.tm_starty) / AREA.resolution
-"""
-println(qry); stat.execute(qry);
 
-con.close();
+"""
+println(qry); spark.sql(qry).take(100).foreach(println);
+
 }
 
 }

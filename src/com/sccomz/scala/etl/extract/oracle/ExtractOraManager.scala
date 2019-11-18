@@ -18,6 +18,8 @@ import com.sccomz.scala.etl.extract.oracle.sql.ExtractOraScheduleSql
 import com.sccomz.scala.etl.extract.oracle.sql.ExtractOraSiteSql
 import com.sccomz.scala.etl.extract.oracle.sql.ExtractOraFabaseSql
 import com.sccomz.scala.etl.extract.oracle.sql.ExtractOraNruetrafficSql
+import com.sccomz.scala.etl.extract.oracle.sql.ExtractOraNrsectorparameterSql
+import com.sccomz.scala.etl.extract.oracle.sql.ExtractOraNrsystemSql
 
 /*
 import com.sccomz.scala.etl.extract.oracle.ExtractOraManager
@@ -27,19 +29,12 @@ ExtractOraManager.extractOracleToHadoopCsv("8463233")
 
 ExtractOraManager.extractOracleToHadoopCsv("8460064")
 
-
 ExtractOraManager.extractOracleToHadoopCsv("8463189")
-
-
-
 ExtractOraManager.extractOracleToHadoopCsvBatch("20191107")
-
-
 ExtractOraManager.extractOracleToHadoopCsv("8460178")
 ExtractOraManager.extractOracleToHadoopCsv("8460179")
 ExtractOraManager.extractOracleToHadoopCsv("8460062")
 ExtractOraManager.extractOracleToHadoopCsv("8460063")
-
 
 
  * */
@@ -173,6 +168,22 @@ object ExtractOraManager {
          tabNm = "NRUETRAFFIC"
      //--------------------------------------
      qry = ExtractOraNruetrafficSql.selectNruetrafficCsv(scheduleId); println(qry);
+     rs = stat.executeQuery(qry);
+     pw = new PrintWriter(new File(App.extJavaPath+"/"+tabNm+"_"+scheduleId+".dat" ),"UTF-8");
+     while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
+
+     //--------------------------------------
+         tabNm = "NRSECTORPARAMETER" 
+     //--------------------------------------
+     qry = ExtractOraNrsectorparameterSql.selectNrsectorparameterCsv(scheduleId); println(qry);
+     rs = stat.executeQuery(qry);
+     pw = new PrintWriter(new File(App.extJavaPath+"/"+tabNm+"_"+scheduleId+".dat" ),"UTF-8");
+     while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
+
+     //--------------------------------------
+         tabNm = "NRSYSTEM" 
+     //--------------------------------------
+     qry = ExtractOraNrsystemSql.selectNrsystemCsv(scheduleId); println(qry);
      rs = stat.executeQuery(qry);
      pw = new PrintWriter(new File(App.extJavaPath+"/"+tabNm+"_"+scheduleId+".dat" ),"UTF-8");
      while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;

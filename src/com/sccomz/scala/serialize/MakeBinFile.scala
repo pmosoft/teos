@@ -19,7 +19,7 @@ import com.sccomz.java.serialize.ByteUtil
 /*
 
 import com.sccomz.scala.serialize.MakeBinFile
-MakeBinFile.executeEngResult("8460062");
+MakeBinFile.executeEngResult("8463233");
   
  * */
 object MakeBinFile {
@@ -40,8 +40,8 @@ object MakeBinFile {
     
     makeResultPath(scheduleId);
     makeEngResult(scheduleId, "LOS");
-    makeEngResult(scheduleId, "PATHLOSS");
-    makeEngResult(scheduleId, "BEST_SERVER");
+    //makeEngResult(scheduleId, "PATHLOSS");
+    //makeEngResult(scheduleId, "BEST_SERVER");
     //makeEngResult(scheduleId, "PILOT_EC");     // RSRP
     //makeEngResult(scheduleId, "RSSI");
     //makeEngResult(scheduleId, "C2I");      // SINR
@@ -68,7 +68,7 @@ object MakeBinFile {
     Class.forName(App.dbDriverHive);
     var con = DriverManager.getConnection(App.dbUrlHive, App.dbUserHive, App.dbPwHive);
     var stat: Statement = con.createStatement();
-    var qry = MakeBinFileSql4.selectBinFilePath(scheduleId);
+    var qry = MakeBinFileSql.selectBinFilePath(scheduleId);
     var rs = stat.executeQuery(qry);
     var rowCnt = 1;
 
@@ -104,7 +104,7 @@ object MakeBinFile {
     var x_bin_cnt = 0; var y_bin_cnt = 0;
 
     logger.info("============================= 초기화 ==============================");
-    var qry2= MakeBinFileSql4.selectBinCnt(scheduleId);
+    var qry2= MakeBinFileSql.selectBinCnt(scheduleId);
     var sqlDf = spark.sql(qry2);
     
     for (row <- sqlDf.collect) {
@@ -118,7 +118,7 @@ object MakeBinFile {
     	for (y <- 0 until y_bin_cnt by 1) {
     		for (x <- 0 until x_bin_cnt by 1) {
     			bin(x)(y) = new Byte4(ByteUtil.floatMax());
-    		}
+    		} 
     	}
     } else {
       for (y <- 0 until y_bin_cnt by 1) {
@@ -139,7 +139,7 @@ object MakeBinFile {
     else if(cdNm=="PILOT_EC") { tabNm = "RESULT_NR_2D_RSRP" ; colNm = "RSRP";}
     else if(cdNm=="RSSI") { tabNm = "RESULT_NR_2D_RSSI" ; colNm = "RSSI";}
     else if(cdNm=="C2I") { tabNm = "RESULT_NR_2D_SINR" ; colNm = "SINR";}
-    qry2= MakeBinFileSql4.selectSectorResult(scheduleId, tabNm, colNm);
+    qry2= MakeBinFileSql.selectSectorResult(scheduleId, tabNm, colNm);
     println(qry2);
     sqlDf = spark.sql(qry2);
     
@@ -210,7 +210,7 @@ object MakeBinFile {
          if(cdNm=="LOS"     ) { tabNm = "RESULT_NR_2D_LOS_RU"      ; colNm = "VALUE";}
     else if(cdNm=="PATHLOSS") { tabNm = "RESULT_NR_2D_PATHLOSS_RU" ; colNm = "PATHLOSS";}
     
-    var qry2 = MakeBinFileSql4.selectRuResultAll(scheduleId, tabNm, colNm);
+    var qry2 = MakeBinFileSql.selectRuResultAll(scheduleId, tabNm, colNm);
     spark.sql("DROP TABLE IF EXISTS ENG_RU");
     println(qry2); var tDF = spark.sql(qry2); tDF.cache.createOrReplaceTempView("ENG_RU"); tDF.count();
     
@@ -222,7 +222,7 @@ object MakeBinFile {
         //---------------------------------------------------------------------------------------------------------
         var x_bin_cnt = 0; var y_bin_cnt = 0;
         
-        var qry = MakeBinFileSql4.select2dRuBinCnt(scheduleId,ruId._1);
+        var qry = MakeBinFileSql.select2dRuBinCnt(scheduleId,ruId._1);
 
         println(qry); var sqlDf = spark.sql(qry);
 
@@ -253,7 +253,7 @@ object MakeBinFile {
         //---------------------------------------------------------------------------------------------------------
         
         //var qry2 = MakeBinFileSql4.selectRuResult(scheduleId, tabNm, colNm, ruId._1);
-        var qry2 = MakeBinFileSql4.selectRuResult2(ruId._1);
+        var qry2 = MakeBinFileSql.selectRuResult2(ruId._1);
         println(qry2);
         var sqlDf2 = spark.sql(qry2);
         

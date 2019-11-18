@@ -24,8 +24,8 @@ import com.sccomz.scala.etl.load.LoadHdfsManager
 import com.sccomz.scala.etl.extract.post.ExtractLoadPostManager
 ExtractLoadPostManager.executeExtractLoadAvg("8463233","5113566");
 
-ExtractLoadPostManager.monitorJobDis("8463233","5113566");
 
+ExtractLoadPostManager.monitorJobDis("8463233","5113566");
 
 
 ExtractJobDisSql.selectRuCnt("8463233");
@@ -33,7 +33,14 @@ ExtractLoadPostManager.extractPostToHadoopCsv("8460062","1012242284","gis01");
 
 8463233	5113566
 
+spark.sql("SELECT COUNT(*) FROM SCENARIO_NR_RU_AVG_HEIGHT WHERE SCENARIO_ID = 5113566;)").take(100).foreach(println);
+
 spark.sql("SELECT COUNT(*) FROM (SELECT DISTINCT SCHEDULE_ID,RU_ID FROM RESULT_NR_2D_LOS_RU)").take(100).foreach(println);
+
+spark.sql("SELECT DISTINCT 'INSERT INTO TEMP001 VALUE ('''||RU_ID||''')' FROM RESULT_NR_2D_LOS_RU WHERE SCHEDULE_ID = 8460062").take(100).foreach(println);
+
+SELECT DISTINCT SCHEDULE_ID,RU_ID 
+FROM RESULT_NR_2D_LOS_RU
 
  * */
 object ExtractLoadPostManager {
