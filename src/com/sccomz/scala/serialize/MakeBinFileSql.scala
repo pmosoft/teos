@@ -62,7 +62,6 @@ SELECT DISTINCT
      , ${colNm}
 FROM   ${tabNm}
 WHERE  SCHEDULE_ID = ${scheduleId}
-AND    SCENARIO_ID = 5104573
 ORDER BY X_POINT, Y_POINT
 """
 }
@@ -111,8 +110,6 @@ FROM   ENG_RU
 WHERE  RU_ID = ${ruId}
 """
 }
-
-
 
 def selectRuResult(scheduleId:String, tabNm:String, colNm:String, ruId:String) = {
 s"""

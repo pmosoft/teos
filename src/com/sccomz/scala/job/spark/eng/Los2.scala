@@ -19,8 +19,8 @@ import java.sql.Statement
  * 수정내역 :
  * 2019-11-01 | 박준용 | 최초작성
 
-import com.sccomz.scala.job.spark.eng.Los
-Los.execute("8463233");
+import com.sccomz.scala.job.spark.eng.Los2
+Los2.execute("8463233");
 
 
 
@@ -51,10 +51,11 @@ def main(args: Array[String]): Unit = {
 }   
 
 def execute(scheduleId:String) = {
-  //val spark: SparkSession = SparkSession.builder().master("yarn").appName(this.getClass.getName).config("spark.sql.warehouse.dir","/TEOS/warehouse").enableHiveSupport().getOrCreate();
-  //executeSql(spark, scheduleId);
-  //spark.close();
-  executeSql(scheduleId);
+  
+  val spark: SparkSession = SparkSession.builder().master("yarn").appName(this.getClass.getName).config("spark.sql.warehouse.dir","/TEOS/warehouse").enableHiveSupport().getOrCreate();
+  executeSqlSpark(spark, scheduleId);
+  spark.close();
+  //executeSql(scheduleId);
 }
  
 def executeSql(scheduleId:String) = {

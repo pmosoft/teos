@@ -17,6 +17,7 @@ import com.sccomz.scala.comm.App
 
 import com.sccomz.scala.etl.load.LoadHdfsManager
 LoadHdfsManager.oracleToHdfs("8463233", "5113566");
+LoadHdfsManager.toParquetPartition(spark,"local","SCHEDULE","8463233", "5113566");
 
 ExtractOraManager.extractOracleToHadoopCsv("8463233")
 
@@ -49,19 +50,17 @@ object LoadHdfsManager {
 
   def oracleToHdfs(scheduleId:String, scenarioId:String) = {
     val spark = SparkSession.builder().master("local[*]").appName("LoadHdfsManager").config("spark.sql.warehouse.dir","/teos/warehouse").enableHiveSupport().getOrCreate()
-    //toParquetPartition(spark,"local","SCHEDULE",scheduleId, scenarioId);
-    //toParquetPartition(spark,"local","SCENARIO",scheduleId, scenarioId);
-    ////toParquetPartition(spark,"local","DU",scheduleId);
-    ////toParquetPartition(spark,"local","RU",scheduleId);
-    ////toParquetPartition(spark,"local","SITE",scheduleId);
-    //toParquetPartition(spark,"local","SCENARIO_NR_RU",scheduleId, scenarioId);
-    //toParquetPartition(spark,"local","SCENARIO_NR_ANTENNA",scheduleId, scenarioId);
-    //toParquetPartition(spark,"local","MOBILE_PARAMETER",scheduleId, scenarioId);
-    //toParquetPartition(spark,"local","NRUETRAFFIC",scheduleId, scenarioId);
-
+    toParquetPartition(spark,"local","SCHEDULE",scheduleId, scenarioId);
+    toParquetPartition(spark,"local","SCENARIO",scheduleId, scenarioId);
+    //toParquetPartition(spark,"local","DU",scheduleId);
+    //toParquetPartition(spark,"local","RU",scheduleId);
+    //toParquetPartition(spark,"local","SITE",scheduleId);
+    toParquetPartition(spark,"local","SCENARIO_NR_RU",scheduleId, scenarioId);
+    toParquetPartition(spark,"local","SCENARIO_NR_ANTENNA",scheduleId, scenarioId);
+    toParquetPartition(spark,"local","MOBILE_PARAMETER",scheduleId, scenarioId);
+    toParquetPartition(spark,"local","NRUETRAFFIC",scheduleId, scenarioId);
     toParquetPartition(spark,"local","NRSECTORPARAMETER",scheduleId, scenarioId);
     toParquetPartition(spark,"local","NRSYSTEM",scheduleId, scenarioId);
-    
     
     spark.close();
   }
