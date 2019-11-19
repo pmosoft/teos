@@ -39,7 +39,7 @@ def execute(scheduleId:String) = {
 def executeSql(spark: SparkSession, scheduleId:String) = {
 //var scheduleId = "8463189"; 
   
-var objNm = "RESULT_NR_2D_RSRPPILOT_RU"
+var objNm = "RESULT_NR_BF_RSRPPILOT_RU"
 //------------------------------------------------------
     println(objNm + " 시작");
 //------------------------------------------------------
@@ -53,7 +53,7 @@ val fs = FileSystem.get(conf)
 fs.delete(new Path(s"""/TEOS/warehouse/${objNm}/schedule_id=${scheduleId}"""),true)
 import spark.implicits._
 import spark.sql
-qry = s"""ALTER TABLE I_${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; sql(qry);
+qry = s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; sql(qry);
 
 //---------------------------------------------------
     println("insert partition table");
@@ -77,35 +77,17 @@ SELECT b.scenario_id, a.schedule_id, b.ru_id, b.enb_id, b.sector_ord as cell_id,
 ),
 ANTGAIN AS
 (
-select a.scenario_id, a.schedule_id, a.ru_id,
-       a.rx_tm_xpos div b.resolution * b.resolution as rx_tm_xpos,
-       a.rx_tm_ypos div b.resolution * b.resolution as rx_tm_ypos,
-       a.antgain,
-       a.los, a.pathloss, a.plprime, a.rsrppilot -- 비교 검증용
-  from
-	(
-	--@@@
-	select --5104573 as scenario_id, 8460062 as schedule_id,
-	       scenario_id, schedule_id,
-	       ru_id, rx_tm_xpos, rx_tm_ypos,
-	       antgain, los, pathloss, plprime, rsrppilot
---	  from RESULT_NR_2D_PILOT_RU_temp_8460964 -- 1RU
---	  from RESULT_NR_2D_PILOT_RU_temp_8460968 --152RU(Radial)
---	  from RESULT_NR_2D_PILOT_RU_temp_8460853 --152RU(BINtoBIN)
-	  from RESULT_NR_2D_PILOT_RU_temp_8463189 --154RU(Radial TRAFFIC)
-	) a left outer join
-	(  
-	select a.scenario_id, b.schedule_id, a.resolution
-	  from SCENARIO a, SCHEDULE b
-	 where b.schedule_id = 8463189
-	   and a.scenario_id = b.scenario_id
-	 limit 1
-	) b 
+select schedule_id,
+       ru_id, tbd_key, rx_tm_xpos, rx_tm_ypos, rx_floorz, rz,
+       0 as antgain
+  from RESULT_NR_BF_PATHLOSS_RU
+ where schedule_id = ${scheduleId}
 ),
 PLPRIME_temp AS
 (
-SELECT PATHLOSS.scenario_id, PATHLOSS.ru_id, PARAM.enb_id, PARAM.cell_id,
-       PATHLOSS.rx_tm_xpos, PATHLOSS.rx_tm_ypos, PATHLOSS.los, PATHLOSS.pathloss,
+SELECT PATHLOSS.ru_id, PARAM.enb_id, PARAM.cell_id, PATHLOSS.tbd_key,
+       PATHLOSS.rx_tm_xpos, PATHLOSS.rx_tm_ypos, PATHLOSS.rx_floorz, PATHLOSS.rz,
+       PATHLOSS.los, PATHLOSS.pathloss,
 --       0 as antenna_gain,
        PATHLOSS.pathloss -
        (
@@ -119,32 +101,21 @@ SELECT PATHLOSS.scenario_id, PATHLOSS.ru_id, PARAM.enb_id, PARAM.cell_id,
        PARAM.EIRPPerRB,
        PARAM.number_of_sc_per_rb,
        PATHLOSS.schedule_id
-  FROM RESULT_NR_2D_PATHLOSS_RU PATHLOSS, PARAM
+  FROM RESULT_NR_BF_PATHLOSS_RU PATHLOSS, PARAM
  WHERE PATHLOSS.schedule_id = ${scheduleId}
    and PATHLOSS.schedule_id = PARAM.schedule_id
    AND PATHLOSS.ru_id = PARAM.ru_id
 )
-insert into I_${objNm} partition (schedule_id=${scheduleId})
-select PLPRIME_temp.scenario_id
-     , PLPRIME_temp.ru_id
-     , PLPRIME_temp.enb_id
-     , PLPRIME_temp.cell_id
-     , PLPRIME_temp.rx_tm_xpos
-     , PLPRIME_temp.rx_tm_ypos
-     , PLPRIME_temp.los
-     , PLPRIME_temp.pathloss
-     , ANTGAIN.antgain
-     , PLPRIME_temp.pathloss - nvl(ANTGAIN.antgain,0) as pathlossprime
-     , PLPRIME_temp.EIRPPerRB - 10. * log10(PLPRIME_temp.number_of_sc_per_rb) - (PLPRIME_temp.pathloss - nvl(ANTGAIN.antgain,0)) as RSRPPilot
-     , ANTGAIN.antgain
-     , ANTGAIN.los
-     , ANTGAIN.pathloss
-     , ANTGAIN.plprime
-     , ANTGAIN.rsrppilot
+insert into ${objNm} partition (schedule_id=${scheduleId})
+select PLPRIME_temp.ru_id, PLPRIME_temp.enb_id, PLPRIME_temp.cell_id, PLPRIME_temp.tbd_key,
+       PLPRIME_temp.rx_tm_xpos, PLPRIME_temp.rx_tm_ypos, PLPRIME_temp.rx_floorz, PLPRIME_temp.rz,
+       PLPRIME_temp.los, PLPRIME_temp.pathloss,
+       ANTGAIN.antgain, 
+       PLPRIME_temp.pathloss - nvl(ANTGAIN.antgain,0) as pathlossprime,
+       PLPRIME_temp.EIRPPerRB - 10. * log10(PLPRIME_temp.number_of_sc_per_rb) - (PLPRIME_temp.pathloss - nvl(ANTGAIN.antgain,0)) as RSRPPilot,
+       PLPRIME_temp.schedule_id
   from PLPRIME_temp left outer join ANTGAIN
---  from PLPRIME_temp join ANTGAIN
-    on (PLPRIME_temp.rx_tm_xpos = ANTGAIN.rx_tm_xpos and PLPRIME_temp.rx_tm_ypos = ANTGAIN.rx_tm_ypos and PLPRIME_temp.ru_id = ANTGAIN.ru_id)
-
+    on (PLPRIME_temp.rx_tm_xpos = ANTGAIN.rx_tm_xpos and PLPRIME_temp.rx_tm_ypos = ANTGAIN.rx_tm_ypos and PLPRIME_temp.rx_floorz = ANTGAIN.rx_floorz and PLPRIME_temp.ru_id = ANTGAIN.ru_id and PLPRIME_temp.tbd_key = ANTGAIN.tbd_key)
 """
 println(qry); spark.sql(qry).take(100).foreach(println);
 

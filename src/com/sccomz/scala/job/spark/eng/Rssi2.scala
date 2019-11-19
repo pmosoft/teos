@@ -54,7 +54,7 @@ val fs = FileSystem.get(conf)
 fs.delete(new Path(s"""/TEOS/warehouse/${objNm}/schedule_id=${scheduleId}"""),true)
 import spark.implicits._
 import spark.sql
-qry = s"""ALTER TABLE I_${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; sql(qry);
+qry = s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; sql(qry);
 
 //---------------------------------------------------
     println("insert partition table");
@@ -71,7 +71,7 @@ select a.scenario_id, b.schedule_id, c.ant_category,
    and a.scenario_id = c.scenario_id
    and a.scenario_id = d.scenario_id
 )
-insert into I_${objNm} partition (schedule_id=${scheduleId})
+insert into ${objNm} partition (schedule_id=${scheduleId})
 select a.scenario_id, a.ru_id, a.enb_id, a.cell_id, a.rx_tm_xpos, a.rx_tm_ypos,
        a.los, a.pathloss, a.antenna_gain, a.pathlossprime, a.rsrppilot,
        if (RSSINoNoise = 0. , -9999, 10. * log10(RSSINoNoise)) as RSSINoNoise,  
@@ -117,7 +117,7 @@ val fs = FileSystem.get(conf)
 fs.delete(new Path(s"""/TEOS/warehouse/${objNm}/schedule_id=${scheduleId}"""),true)
 import spark.implicits._
 import spark.sql
-qry = s"""ALTER TABLE I_${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; sql(qry);
+qry = s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; sql(qry);
 
 //---------------------------------------------------
     println("insert partition table");
@@ -135,7 +135,7 @@ select a.scenario_id, b.schedule_id,
  where b.schedule_id = ${scheduleId}
    and a.scenario_id = b.scenario_id
 )
-insert into I_${objNm} partition (schedule_id=${scheduleId})
+insert into ${objNm} partition (schedule_id=${scheduleId})
 select max(AREA.scenario_id) as scenario_id,
        RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution as rx_tm_xpos,
        RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution as rx_tm_ypos,
