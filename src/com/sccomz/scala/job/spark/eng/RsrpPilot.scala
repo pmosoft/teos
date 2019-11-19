@@ -27,7 +27,7 @@ RsrpPilot.execute("8463189");
 
  */
 
-object RsrpPilot2 {
+object RsrpPilot {
 
   def main(args: Array[String]): Unit = {
     var scheduleId = if (args.length < 1) "" else args(0);

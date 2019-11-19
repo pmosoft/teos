@@ -23,12 +23,12 @@ RsrpPilot.execute("8463189");
 
  */
 
-object RsrpPilot {
+object RsrpPilot2 {
 
-def main(args: Array[String]): Unit = {  
+def main(args: Array[String]): Unit = {
   var scheduleId = if (args.length < 1) "" else args(0);
   execute(scheduleId);
-}     
+}
 
 def execute(scheduleId:String) = {
   val spark: SparkSession = SparkSession.builder().master("yarn").appName(this.getClass.getName).config("spark.sql.warehouse.dir","/TEOS/warehouse").enableHiveSupport().getOrCreate();
