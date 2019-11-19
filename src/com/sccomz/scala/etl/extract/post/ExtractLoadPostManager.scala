@@ -75,6 +75,7 @@ object ExtractLoadPostManager {
     var avgCnt = 1; 
 
     var loofCnt = 0;
+    var exeLoofCnt = 0;
     var bdYn = "N";
     
     qry = ExtractJobDisSql.selectBdYn(scenarioId); println(qry);
@@ -93,6 +94,10 @@ object ExtractLoadPostManager {
         println("extCnt="+extCnt);
 
         if(extCnt>0) {
+          exeLoofCnt += 1;
+          if(exeLoofCnt==1) {
+            executeExtractLoadOneTime(scheduleId,scenarioId);
+          }
           executeExtractLoad(scheduleId,bdYn,procStat);
         }
         println("loofCnt="+loofCnt);
@@ -174,7 +179,7 @@ object ExtractLoadPostManager {
     }
   }
 
-  def executeExtractLoadAvg(scheduleId:String,scenarioId:String): Unit = {
+  def executeExtractLoadOneTime(scheduleId:String,scenarioId:String): Unit = {
     Class.forName(App.dbDriverPost);
     var dbUrl = App.dbUrlPost;
     var con = DriverManager.getConnection(dbUrl,App.dbUserPost,App.dbPwPost);
@@ -192,11 +197,12 @@ object ExtractLoadPostManager {
     var pw = new PrintWriter(new File(filePathNm),"UTF-8");
     while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
     
-    //---------------------------------------
-      println("LoadHdfs SCENARIO_NR_RU_AVG_HEIGHT") 
-    //---------------------------------------
     LoadHdfsManager.postAvgToHdfs(scheduleId, scenarioId);
-    
+
+    //---------------------------------------
+         tabNm = "BLD_LIST";
+    //---------------------------------------
+         
   }  
   
   def insertJobDisExt(scheduleId:String,ruId:String,stat2:String) : Unit = {
