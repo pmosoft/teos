@@ -22,7 +22,7 @@ Rssi.execute("8463189");
 
  */
 
-object Rssi {
+object Rssi3 {
 
 
 def main(args: Array[String]): Unit = {  

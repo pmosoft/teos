@@ -25,7 +25,7 @@ Rssi.execute("8463189");
 
  */
 
-object Rssi2 {
+object Rssi {
 
   def main(args: Array[String]): Unit = {
     var scheduleId = if (args.length < 1) "" else args(0);
