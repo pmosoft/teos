@@ -23,7 +23,7 @@ Throughput.execute("8463189");
 
  */
 
-object Throughput {
+object Throughput2 {
 
   
 def main(args: Array[String]): Unit = {  

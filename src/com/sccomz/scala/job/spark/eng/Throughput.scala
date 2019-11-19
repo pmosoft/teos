@@ -26,7 +26,7 @@ Throughput.execute("8463189");
 
  */
 
-object Throughput2 {
+object Throughput {
 
   def main(args: Array[String]): Unit = {
     var scheduleId = if (args.length < 1) "" else args(0);
