@@ -1,31 +1,24 @@
 package com.sccomz.scala.etl.extract.post
 
+import java.io._
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.ResultSet
 import java.sql.Statement
-import java.io._
 
-import scala.collection.mutable.Map
-import scala.collection.mutable.HashMap
 import scala.collection._
+import scala.collection.mutable.Map
 
 import com.sccomz.scala.comm.App
-import com.sccomz.scala.etl.extract.post.sql.ExtractPostLosEngResultDis1Sql
-import com.sccomz.scala.etl.extract.post.sql.ExtractPostLosBldResultDisSql
-import com.sccomz.scala.etl.extract.post.sql.ExtractPostLosBldResultDis1Sql
 import com.sccomz.scala.etl.extract.post.sql.ExtractJobDisSql
-import com.sccomz.scala.etl.extract.post.sql.ExtractPostLosEngResultSql
-import com.sccomz.scala.etl.load.LoadHdfsLosManager
+import com.sccomz.scala.etl.extract.post.sql.ExtractPostLosBldResultSql
 import com.sccomz.scala.etl.extract.post.sql.ExtractPostScenarioNrRuDemSql
+import com.sccomz.scala.etl.load.LoadHdfsLosManager
 import com.sccomz.scala.etl.load.LoadHdfsManager
-import com.sccomz.scala.etl.extract.post.sql.ExtractPostTreeEngResultSql
-import com.sccomz.scala.etl.extract.post.sql.ExtractPostTreeEngResultSql
-import com.sccomz.scala.etl.extract.post.sql.ExtractPostTreeBldResultSql
 
 /*
 import com.sccomz.scala.etl.extract.post.ExtractLoadPostManager
-ExtractLoadPostManager.monitorJobDis("8463234","5113766");
+ExtractLoadPostManager.monitorJobDis("8463235","5113766");
 
 
 ExtractLoadPostManager.executeExtractLoadAvg("8463233","5113566");
@@ -61,7 +54,7 @@ object ExtractLoadPostManager {
     
     //extractPostToHadoopCsv("8460062","1012242284","gis01");
 
-    monitorJobDis("8463233","5113566");
+    monitorJobDis("8463235","5113766");
     
     println("ExtractLoadPostManager end");
   }
@@ -163,42 +156,43 @@ object ExtractLoadPostManager {
     var tabNm = ""; var qry = "";
     var filePathNm = "";
 
-    //---------------------------------------
-         tabNm = "RESULT_NR_2D_LOS_RU";
-    //---------------------------------------
-    qry = ExtractPostLosEngResultSql.selectLosEngResultCsv(scheduleId,ruId); println(qry);
-    rs = stat.executeQuery(qry); 
-    filePathNm = App.extJavaPath+"/"+tabNm+"_"+scheduleId+"_"+ruId+".dat"; println(filePathNm);
-    var pw = new PrintWriter(new File(filePathNm),"UTF-8");
-    while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
-
-    //---------------------------------------
-         tabNm = "TREE_ENG_RESULT";
-    //---------------------------------------
-    qry = ExtractPostTreeEngResultSql.selectTreeEngResultCsv(scheduleId,ruId); println(qry);
-    rs = stat.executeQuery(qry); 
-    filePathNm = App.extJavaPath+"/"+tabNm+"_"+scheduleId+"_"+ruId+".dat"; println(filePathNm);
-    pw = new PrintWriter(new File(filePathNm),"UTF-8");
-    while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
+    // //---------------------------------------
+    //      tabNm = "RESULT_NR_2D_LOS_RU";
+    // //---------------------------------------
+    // qry = ExtractPostLosEngResultSql.selectLosEngResultCsv(scheduleId,ruId); println(qry);
+    // rs = stat.executeQuery(qry); 
+    // filePathNm = App.extJavaPath+"/"+tabNm+"_"+scheduleId+"_"+ruId+".dat"; println(filePathNm);
+    // var pw = new PrintWriter(new File(filePathNm),"UTF-8");
+    // while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
+    // 
+    // //---------------------------------------
+    //      tabNm = "TREE_ENG_RESULT";
+    // //---------------------------------------
+    // qry = ExtractPostTreeEngResultSql.selectTreeEngResultCsv(scheduleId,ruId); println(qry);
+    // rs = stat.executeQuery(qry); 
+    // filePathNm = App.extJavaPath+"/"+tabNm+"_"+scheduleId+"_"+ruId+".dat"; println(filePathNm);
+    // pw = new PrintWriter(new File(filePathNm),"UTF-8");
+    // while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
     
     
     if(bdYn=="Y") {
       //---------------------------------------
-           tabNm = "LOS_BLD_RESULT_DIS"
+           tabNm = "RESULT_NR_BF_LOS_RU"
       //---------------------------------------
-      qry = ExtractPostLosBldResultDisSql.selectLosBldResultDisCsv(scheduleId); println(qry);
+      qry = ExtractPostLosBldResultSql.selectLosBldResultCsv(scheduleId,ruId); println(qry);
       rs = stat.executeQuery(qry);
-      pw = new PrintWriter(new File(App.extJavaPath+"/"+tabNm+"_"+scheduleId+".dat" ),"UTF-8");
-      while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
-
-      //---------------------------------------
-           tabNm = "TREE_BLD_RESULT";
-      //---------------------------------------
-      qry = ExtractPostTreeBldResultSql.selectTreeBldResultCsv(scheduleId,ruId); println(qry);
-      rs = stat.executeQuery(qry); 
-      var filePathNm = App.extJavaPath+"/"+tabNm+"_"+scheduleId+"_"+ruId+".dat"; println(filePathNm);
+      filePathNm = App.extJavaPath+"/"+tabNm+"_"+scheduleId+"_"+ruId+".dat"; println(filePathNm);
       var pw = new PrintWriter(new File(filePathNm),"UTF-8");
       while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
+
+      ////---------------------------------------
+      //     tabNm = "TREE_BLD_RESULT";
+      ////---------------------------------------
+      //qry = ExtractPostTreeBldResultSql.selectTreeBldResultCsv(scheduleId,ruId); println(qry);
+      //rs = stat.executeQuery(qry); 
+      //var filePathNm = App.extJavaPath+"/"+tabNm+"_"+scheduleId+"_"+ruId+".dat"; println(filePathNm);
+      //var pw = new PrintWriter(new File(filePathNm),"UTF-8");
+      //while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
     }
   }
 
