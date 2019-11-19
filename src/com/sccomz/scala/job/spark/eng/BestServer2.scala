@@ -4,9 +4,6 @@ import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.FileSystem
 import org.apache.hadoop.fs.Path
 import org.apache.spark.sql.SparkSession
-import com.sccomz.scala.comm.App
-import java.sql.DriverManager
-import java.sql.Statement
 
 /*
  * 설    명 :
@@ -18,29 +15,28 @@ BestServer.execute("8463189");
 
  */
 
-object BestServer {
+object BestServer2 {
 
   
-def main(args: Array[String]): Unit = {  
+def main(args: Array[String]): Unit = {
   var scheduleId = if (args.length < 1) "" else args(0);
   execute(scheduleId);
-}
+}   
 
 def execute(scheduleId:String) = {
-  executeSql(scheduleId);
+  val spark: SparkSession = SparkSession.builder().master("yarn").appName(this.getClass.getName).config("spark.sql.warehouse.dir","/TEOS/warehouse").enableHiveSupport().getOrCreate();
+  executeSql(spark, scheduleId);
+  spark.close();
 }
  
 
-def executeSql(scheduleId:String) = {
-  Class.forName(App.dbDriverHive);
-  var con = DriverManager.getConnection(App.dbUrlHive, App.dbUserHive, App.dbPwHive);
-  var stat:Statement = con.createStatement();
+def executeSql(spark: SparkSession, scheduleId:String) = {
   
 var objNm = "RESULT_NR_2D_BESTSERVER"
 //------------------------------------------------------
     println(objNm + " 시작");
 //------------------------------------------------------
-var qry = """ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; println(qry); stat.execute(qry);
+var qry = "";
 //var scheduleId = "8460062"; 
 //var scheduleId = "8460970"; 
   
@@ -50,13 +46,15 @@ var qry = """ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (schedule_id=${schedu
 val conf = new Configuration()
 val fs = FileSystem.get(conf)
 fs.delete(new Path(s"""/TEOS/warehouse/${objNm}/schedule_id=${scheduleId}"""),true)
-qry = s"""set hive.exec.dynamic.partition.mode=nonstrict"""; println(qry); stat.execute(qry);
+import spark.implicits._
+import spark.sql
+qry = s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; sql(qry);
 
 //---------------------------------------------------
     println("insert partition table");
 //---------------------------------------------------
 
-qry = s"""
+qry = s"""  
 with AREA as
 (
 select a.scenario_id, b.schedule_id,
@@ -94,14 +92,13 @@ SELECT a.scenario_id, a.schedule_id, a.rx_tm_xpos, a.rx_tm_ypos, b.ru_seq
 where a.schedule_id = b.schedule_id
   and a.ru_id = b.ru_id
 )
-insert into ${objNm} partition (schedule_id)
+insert into ${objNm} partition (schedule_id=${scheduleId})
 select max(AREA.scenario_id) as scenario_id,
        RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution as rx_tm_xpos,
        RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution as rx_tm_ypos,
        (RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution - AREA.tm_startx) / AREA.resolution as x_point,
        (RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution - AREA.tm_starty) / AREA.resolution as y_point,       
-       max(RSLT.ru_seq) as ru_seq,
-       max(AREA.schedule_id) as schedule_id
+       max(RSLT.ru_seq) as ru_seq
   from AREA, RSLT
  where RSLT.schedule_id = AREA.schedule_id
    and AREA.tm_startx <= RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution and RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution < AREA.tm_endx
@@ -109,7 +106,7 @@ select max(AREA.scenario_id) as scenario_id,
   group by RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution, RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution,
            (RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution - AREA.tm_startx) / AREA.resolution, (RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution - AREA.tm_starty) / AREA.resolution
 """
-println(qry); stat.execute(qry);
+println(qry); spark.sql(qry).take(100).foreach(println);
 
 }
 

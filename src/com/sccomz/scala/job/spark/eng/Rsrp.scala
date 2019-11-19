@@ -79,7 +79,7 @@ select enb_id, cell_id, rx_tm_xpos, rx_tm_ypos,
 group by enb_id, cell_id, rx_tm_xpos, rx_tm_ypos
  having count(*) > 1
 )
-insert into RESULT_NR_2D_RSRP_RU partition (schedule_id)
+insert into ${objNm} partition (schedule_id)
 select a.scenario_id, a.ru_id, a.enb_id, a.cell_id, a.rx_tm_xpos, a.rx_tm_ypos,
        a.los, a.pathloss, a.antenna_gain, a.pathlossprime, a.rsrppilot,
        case when b.rsrppilot is not null then b.rsrppilot else a.rsrppilot end rsrp,
@@ -129,7 +129,7 @@ select a.scenario_id, b.schedule_id,
  where b.schedule_id = ${scheduleId}
    and a.scenario_id = b.scenario_id
 )
-insert into RESULT_NR_2D_RSRP partition (schedule_id)
+insert into ${objNm} partition (schedule_id)
 select max(AREA.scenario_id) as scenario_id,
        RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution as rx_tm_xpos,
        RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution as rx_tm_ypos,

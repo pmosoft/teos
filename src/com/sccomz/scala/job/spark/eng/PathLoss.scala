@@ -135,7 +135,7 @@ select RU.scenario_id, RES.schedule_id, RES.ru_id,
                    )
        end as hE
   from RESULT_NR_2D_LOS_RU RES, RU
- where RES.schedule_id = 8463189
+ where RES.schedule_id = ${scheduleId}
    and RES.schedule_id = RU.schedule_id
    and RES.ru_id = RU.ru_id
 ),
