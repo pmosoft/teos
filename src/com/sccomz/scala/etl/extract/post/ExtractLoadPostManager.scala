@@ -193,7 +193,7 @@ object ExtractLoadPostManager {
     while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
     
     //---------------------------------------
-      println("LoadHdfs SCENARIO_NR_RU_AVG_HEIGHT")
+      println("LoadHdfs SCENARIO_NR_RU_AVG_HEIGHT") 
     //---------------------------------------
     LoadHdfsManager.postAvgToHdfs(scheduleId, scenarioId);
     
