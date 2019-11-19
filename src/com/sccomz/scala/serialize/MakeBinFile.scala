@@ -39,7 +39,7 @@ object MakeBinFile {
   // 2D Bin
   def executeEngResult(scheduleId: String) = {
     
-    //makeResultPath(scheduleId);
+    makeResultPath(scheduleId);
     makeEngResult(scheduleId, "LOS");
     //makeEngResult(scheduleId, "PATHLOSS");
     //makeEngResult(scheduleId, "BEST_SERVER");
@@ -186,13 +186,15 @@ object MakeBinFile {
         bin(x_point)(y_point).value = ByteUtil.floatToByteArray(sinr);
       }
     }
+    
+    
 
     logger.info("============================ 파일 Write ============================");
     //---------------------------------------------------------------------------------------------------------
     // 파일 Write
     //---------------------------------------------------------------------------------------------------------
-    //var file = new File(App.resultPath, DateUtil.getDate("yyyyMMdd") + "/" +sectorPath+ "/" + cdNm+".bin");
-    var file = new File(App.resultPath, "20191116" + "/" +sectorPath+ "/" + cdNm+".bin");
+    var file = new File(App.resultPath, DateUtil.getDate("yyyyMMdd") + "/" +sectorPath+ "/" + cdNm+".bin");
+    //var file = new File(App.resultPath, "20191116" + "/" +sectorPath+ "/" + cdNm+".bin");
     var fos = new FileOutputStream(file);
     for (y <- 0 until y_bin_cnt by 1) {
       for (x <- 0 until x_bin_cnt by 1) {
@@ -207,6 +209,8 @@ object MakeBinFile {
   // 2D RU별 결과
   def makeEngRuResult(scheduleId: String, cdNm: String, ruInfo : mutable.Map[String,String]) = {
 
+    logger.info("makeEngRuResult 01");
+    
     var tabNm = ""; var colNm = "";
          if(cdNm=="LOS"     ) { tabNm = "RESULT_NR_2D_LOS_RU"      ; colNm = "VALUE";}
     else if(cdNm=="PATHLOSS") { tabNm = "RESULT_NR_2D_PATHLOSS_RU" ; colNm = "PATHLOSS";}
@@ -214,26 +218,35 @@ object MakeBinFile {
     var qry2 = MakeBinFileSql.selectRuResultAll(scheduleId, tabNm, colNm); println(qry2);
     spark.sql("DROP TABLE IF EXISTS ENG_RU");
     println(qry2); var tDF = spark.sql(qry2); tDF.cache.createOrReplaceTempView("ENG_RU"); tDF.count();
+
+    logger.info("makeEngRuResult 02");
+    
+    var iCnt = 0;
     
     for(ruId <- ruInfo) {
+      iCnt = iCnt + 1;
+      
+      println(ruId._1+" : "+ruId._2);
+      
       if(ruId._1 != "SECTOR_PATH") {
         logger.info("============================== 초기화 ==============================");
         //---------------------------------------------------------------------------------------------------------
         // 초기화
         //---------------------------------------------------------------------------------------------------------
         var x_bin_cnt = 0; var y_bin_cnt = 0;
-        
+        logger.info("makeEngRuResult 03 "+ruId._1);
         var qry = MakeBinFileSql.select2dRuBinCnt(scheduleId,ruId._1); ; println(qry);
-
         println(qry); var sqlDf = spark.sql(qry);
-
+      
+        logger.info("makeEngRuResult 04 "+ruId._1);
+        
         for (row <- sqlDf.collect) {
           x_bin_cnt = row.mkString(",").split(",")(0).toInt;
           y_bin_cnt = row.mkString(",").split(",")(1).toInt;
         }
-
+      
         val bin = Array.ofDim[Byte4](x_bin_cnt, y_bin_cnt);
-
+      
         if (cdNm == "LOS") {
           for (y <- 0 until y_bin_cnt by 1) {
             for (x <- 0 until x_bin_cnt by 1) {
@@ -252,10 +265,13 @@ object MakeBinFile {
         //---------------------------------------------------------------------------------------------------------
         // Value 세팅
         //---------------------------------------------------------------------------------------------------------
+        logger.info("makeEngRuResult 05 "+ruId._1);
         
         //var qry2 = MakeBinFileSql4.selectRuResult(scheduleId, tabNm, colNm, ruId._1);
         var qry2 = MakeBinFileSql.selectRuResult2(ruId._1); println(qry2);
         var sqlDf2 = spark.sql(qry2);
+      
+        logger.info("makeEngRuResult 06 "+ruId._1);
         
         if(cdNm == "LOS") {
         	for (row <- sqlDf2.collect) {
@@ -272,7 +288,10 @@ object MakeBinFile {
         	  bin(x_point)(y_point).value = ByteUtil.floatToByteArray(pathloss);
         	}
         }
-
+      
+        logger.info("makeEngRuResult 07 "+ruId._1);
+        
+        
         logger.info("============================ RU별 파일 Write ============================");
         //---------------------------------------------------------------------------------------------------------
         // 파일 Write
@@ -284,6 +303,9 @@ object MakeBinFile {
             fos.write(bin(x)(y).value);
           }
         }
+        
+        logger.info("makeEngRuResult 08 "+ruId._1);
+        
         logger.info("=========================== RU별 Bin 생성 완료 ===========================");
         if (fos != null) fos.close();
       }

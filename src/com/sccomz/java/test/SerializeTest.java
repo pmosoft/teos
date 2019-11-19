@@ -9,6 +9,8 @@ public class SerializeTest {
 
     public static void main(String[] args) {
         SerializeTest s = new SerializeTest();
+        
+        s.array2to1();
         //s.readBin();
         //s.writeBinTest01();
         //s.readBinTest01();
@@ -17,30 +19,30 @@ public class SerializeTest {
         //s.array2to1();
         //s.bytePrint();
 
-        byte[] bb = s.floatToByteArray(Float.MAX_VALUE);
-        System.out.println(bb[0]);
-        System.out.println(bb[1]);
-        System.out.println(bb[2]);
-        System.out.println(bb[3]);
-        System.out.println(byteArrayToHexString(bb));
-
-        bb = s.floatToByteArray(Float.MIN_VALUE);
-        System.out.println(bb[0]);
-        System.out.println(bb[1]);
-        System.out.println(bb[2]);
-        System.out.println(bb[3]);
-        System.out.println(byteArrayToHexString(bb));
-
-        //binary bytes, 11111111 11111111 11111111 01111111. decimal ... hexidecimal, FFFFFF7F
-
-        String myString = "BF800000";
-        myString = "42CF43D7";
-        myString = "42CF1F74";
-
-        Long i = Long.parseLong(myString, 16);
-        Float f = Float.intBitsToFloat(i.intValue());
-        System.out.println(f);
-        System.out.println(Integer.toHexString(Float.floatToIntBits(f)));
+        //byte[] bb = s.floatToByteArray(Float.MAX_VALUE);
+        //System.out.println(bb[0]);
+        //System.out.println(bb[1]);
+        //System.out.println(bb[2]);
+        //System.out.println(bb[3]);
+        //System.out.println(byteArrayToHexString(bb));
+        //
+        //bb = s.floatToByteArray(Float.MIN_VALUE);
+        //System.out.println(bb[0]);
+        //System.out.println(bb[1]);
+        //System.out.println(bb[2]);
+        //System.out.println(bb[3]);
+        //System.out.println(byteArrayToHexString(bb));
+        //
+        ////binary bytes, 11111111 11111111 11111111 01111111. decimal ... hexidecimal, FFFFFF7F
+        //
+        //String myString = "BF800000";
+        //myString = "42CF43D7";
+        //myString = "42CF1F74";
+        //
+        //Long i = Long.parseLong(myString, 16);
+        //Float f = Float.intBitsToFloat(i.intValue());
+        //System.out.println(f);
+        //System.out.println(Integer.toHexString(Float.floatToIntBits(f)));
 
     }
 
@@ -86,6 +88,10 @@ public class SerializeTest {
     void array2to1(){
       int arr[][] = new int[10][5];
       int arr1[] = new int[arr.length*arr[0].length];
+      
+      System.out.println(10*5);
+      System.out.println(arr.length*arr[0].length);
+      
       //배열에 값을 넣는다.
       for(int i=0; i<arr.length; i++) {
         for(int j=0; j<arr[i].length; j++) {
