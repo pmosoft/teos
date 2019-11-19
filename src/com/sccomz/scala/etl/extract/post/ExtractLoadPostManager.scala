@@ -20,7 +20,7 @@ import com.sccomz.scala.etl.load.LoadHdfsManager
 import com.sccomz.scala.etl.extract.post.ExtractLoadPostManager
 ExtractLoadPostManager.monitorJobDis("8463235","5113766");
 
-
+ 
 ExtractLoadPostManager.executeExtractLoadAvg("8463233","5113566");
 
 ExtractLoadPostManager.monitorJobDis("8463233","5113566");
