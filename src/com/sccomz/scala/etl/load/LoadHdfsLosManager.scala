@@ -48,11 +48,10 @@ object LoadHdfsLosManager {
 
   def executeRealPostToHdfs(scheduleId:String,ruId:String,bdYn:String) = {
     samToParquetPartition("RESULT_NR_2D_LOS_RU",scheduleId,ruId);
+    //samToParquetPartition("RESULT_NR_2D_TREE_RU",scheduleId,ruId);
     if(bdYn=="Y") {
-      samToParquetPartition("RESULT_NR_2D_LOS_RU",scheduleId,ruId);
-      samToParquetPartition("RESULT_NR_2D_LOS_RU",scheduleId,ruId);
-      samToParquetPartition("RESULT_NR_2D_LOS_RU",scheduleId,ruId);
-      samToParquetPartition("RESULT_NR_2D_LOS_RU",scheduleId,ruId);
+      samToParquetPartition("RESULT_NR_BF_LOS_RU",scheduleId,ruId);
+      //samToParquetPartition("RESULT_NR_BF_TREE_RU",scheduleId,ruId);
     }
   }
   
