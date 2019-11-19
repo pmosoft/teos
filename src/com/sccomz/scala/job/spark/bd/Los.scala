@@ -27,12 +27,12 @@ object Los {
 
     //var scheduleId = "8463233";
 
-    var objNm = "RESULT_NR_2D_LOS"
+    var objNm = "RESULT_NR_BF_LOS"
     //------------------------------------------------------
     println(objNm + " 시작");
     //------------------------------------------------------
 
-    var qry = s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; println(qry); stat.execute(qry);
+    var qry = s"""ALTER TABLE ${objNm} DROP PARTITION(SCHEDULE_ID=${scheduleId})"""; println(qry); stat.execute(qry);
 
     //---------------------------------------------------
     println("partiton 파일 삭제 및 drop table partition");
@@ -47,34 +47,13 @@ object Los {
     //---------------------------------------------------
 
     qry = s"""
-with AREA as
-(
-select a.scenario_id, b.schedule_id,
-       a.tm_startx div a.resolution * a.resolution as tm_startx,
-       a.tm_starty div a.resolution * a.resolution as tm_starty,
-       a.tm_endx div a.resolution * a.resolution as tm_endx,
-       a.tm_endy div a.resolution * a.resolution as tm_endy,
-       a.resolution
-  from SCENARIO a, SCHEDULE b
- where b.schedule_id = ${scheduleId}
-   and a.scenario_id = b.scenario_id
-)
 insert into ${objNm} partition (schedule_id)
-select max(AREA.scenario_id) as scenario_id,
-       RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution as rx_tm_xpos,
-       RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution as rx_tm_ypos,
-       (RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution - AREA.tm_startx) / AREA.resolution as x_point,
-       (RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution - AREA.tm_starty) / AREA.resolution as y_point,
-       case when sum(case when RSLT.value = 1 then 1 else 0 end) > 0 then 1 else 0 end as los,
---       case when sum(case when upper(RSLT.is_bld) = 'T' THEN 1 else 0 end) > 0 then 1 else 0 end as los, -- PLB Check Only
-       max(AREA.schedule_id) as schedule_id
-  from AREA, RESULT_NR_2D_LOS_RU RSLT
- where RSLT.schedule_id = AREA.schedule_id
--- and RSLT.ru_id = 1012253245
-   and AREA.tm_startx <= RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution and RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution < AREA.tm_endx
-   and AREA.tm_starty <= RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution and RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution < AREA.tm_endy
-  group by RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution, RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution,
-           (RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution - AREA.tm_startx) / AREA.resolution, (RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution - AREA.tm_starty) / AREA.resolution
+select tbd_key, rx_tm_xpos, rx_tm_ypos, rx_floorz, 
+       case when sum(case when value = 1 then 1 else 0 end) > 0 then 1 else 0 end as los,
+       max(schedule_id) as schedule_id
+  from RESULT_NR_BF_LOS_RU
+ where schedule_id=${scheduleId}  
+ group by tbd_key, rx_tm_xpos, rx_tm_ypos, rx_floorz
 """
     println(qry); stat.execute(qry);
     

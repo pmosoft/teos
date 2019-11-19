@@ -40,7 +40,7 @@ def execute(scheduleId:String) = {
 
 def executeSql(spark: SparkSession, scheduleId:String) = {
   
-var objNm = "RESULT_NR_2D_THROUGHPUT"
+var objNm = "RESULT_NR_BF_THROUGHPUT"
 //------------------------------------------------------
     println(objNm + " 시작");
 //------------------------------------------------------
@@ -55,7 +55,7 @@ val fs = FileSystem.get(conf)
 fs.delete(new Path(s"""/TEOS/warehouse/${objNm}/schedule_id=${scheduleId}"""),true)
 import spark.implicits._
 import spark.sql
-qry = s"""ALTER TABLE I_${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; sql(qry);
+qry = s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; sql(qry);
 
 //---------------------------------------------------
     println("insert partition table");
@@ -89,7 +89,7 @@ select a.scenario_id, b.schedule_id,
             else -1
        end as UELayer         
   from SCENARIO a, SCHEDULE b, NRSYSTEM c, FABASE d, MOBILE_PARAMETER e
- where b.schedule_id = ${scheduleId}  
+ where b.schedule_id = ${scheduleId}
    and a.scenario_id = b.scenario_id
    and a.scenario_id = c.scenario_id
    and a.system_id = d.systemtype
@@ -122,7 +122,7 @@ select a.scenario_id, a.schedule_id,
 ),
 THROUGHPUTtemp as
 (
-select a.scenario_id, a.schedule_id, a.rx_tm_xpos, a.rx_tm_ypos, a.x_point, a.y_point,
+select a.schedule_id, a.tbd_key, a.rx_tm_xpos, a.rx_tm_ypos, a.rx_floorz,
        a.sinr as dSNR,
        b.dSINROffset,
        b.modulation1, b.modulation2, b.modulation3, b.modulation4, b.modulation5, 
@@ -152,180 +152,181 @@ select a.scenario_id, a.schedule_id, a.rx_tm_xpos, a.rx_tm_ypos, a.x_point, a.y_
        b.nCC * b.layer3  * b.modulation3  * b.dDLRatio * b.coderate3  * b.dMaxRBs * (12.0 / b.dAvr_Symbol_Duration) * (1.0 - b.dDLOH) * 0.000001 as thp3,
        b.nCC * b.layer1  * b.modulation2  * b.dDLRatio * b.coderate2  * b.dMaxRBs * (12.0 / b.dAvr_Symbol_Duration) * (1.0 - b.dDLOH) * 0.000001 as thp2,
        b.nCC * b.layer1  * b.modulation1  * b.dDLRatio * b.coderate1  * b.dMaxRBs * (12.0 / b.dAvr_Symbol_Duration) * (1.0 - b.dDLOH) * 0.000001 as thp1,
-		case when b.snr14 + b.dSINROffset < 0. or b.snr15 + b.dSINROffset < 0. or a.sinr < 0. then
-		           b.snr14 + b.dSINROffset + (abs(if(b.snr14 + b.dSINROffset < a.sinr, b.snr14 + b.dSINROffset, a.sinr)) + 1.)
-		     else  b.snr14 + b.dSINROffset
-		 end as dInfValue14,
-		case when b.snr14 + b.dSINROffset < 0. or b.snr15 + b.dSINROffset < 0. or a.sinr < 0. then
-		           b.snr15 + b.dSINROffset + (abs(if(b.snr14 + b.dSINROffset < a.sinr, b.snr14 + b.dSINROffset, a.sinr)) + 1.)
-		     else  b.snr15 + b.dSINROffset
-		 end as dSupValue14,
-		case when b.snr14 + b.dSINROffset < 0. or b.snr15 + b.dSINROffset < 0. or a.sinr < 0. then
-		           a.sinr  + (abs(if(b.snr14 + b.dSINROffset < a.sinr, b.snr14 + b.dSINROffset, a.sinr)) + 1.)
-		     else  a.sinr
-		 end as dValue14,
-		case when b.snr13 + b.dSINROffset < 0. or b.snr14 + b.dSINROffset < 0. or a.sinr < 0. then
-		           b.snr13 + b.dSINROffset + (abs(if(b.snr13 + b.dSINROffset < a.sinr, b.snr13 + b.dSINROffset, a.sinr)) + 1.)
-		     else  b.snr13 + b.dSINROffset
-		 end as dInfValue13,
-		case when b.snr13 + b.dSINROffset < 0. or b.snr14 + b.dSINROffset < 0. or a.sinr < 0. then
-		           b.snr14 + b.dSINROffset + (abs(if(b.snr13 + b.dSINROffset < a.sinr, b.snr13 + b.dSINROffset, a.sinr)) + 1.)
-		     else  b.snr14 + b.dSINROffset
-		 end as dSupValue13,
-		case when b.snr13 + b.dSINROffset < 0. or b.snr14 + b.dSINROffset < 0. or a.sinr < 0. then
-		           a.sinr  + (abs(if(b.snr13 + b.dSINROffset < a.sinr, b.snr13 + b.dSINROffset, a.sinr)) + 1.)
-		     else  a.sinr
-		 end as dValue13,
-		case when b.snr12 + b.dSINROffset < 0. or b.snr13 + b.dSINROffset < 0. or a.sinr < 0. then
-		           b.snr12 + b.dSINROffset + (abs(if(b.snr12 + b.dSINROffset < a.sinr, b.snr12 + b.dSINROffset, a.sinr)) + 1.)
-		     else  b.snr12 + b.dSINROffset
-		 end as dInfValue12,
-		case when b.snr12 + b.dSINROffset < 0. or b.snr13 + b.dSINROffset < 0. or a.sinr < 0. then
-		           b.snr13 + b.dSINROffset + (abs(if(b.snr12 + b.dSINROffset < a.sinr, b.snr12 + b.dSINROffset, a.sinr)) + 1.)
-		     else  b.snr13 + b.dSINROffset
-		 end as dSupValue12,
-		case when b.snr12 + b.dSINROffset < 0. or b.snr13 + b.dSINROffset < 0. or a.sinr < 0. then
-		           a.sinr  + (abs(if(b.snr12 + b.dSINROffset < a.sinr, b.snr12 + b.dSINROffset, a.sinr)) + 1.)
-		     else  a.sinr
-		 end as dValue12,
-		case when b.snr11 + b.dSINROffset < 0. or b.snr12 + b.dSINROffset < 0. or a.sinr < 0. then
-		           b.snr11 + b.dSINROffset + (abs(if(b.snr11 + b.dSINROffset < a.sinr, b.snr11 + b.dSINROffset, a.sinr)) + 1.)
-		     else  b.snr11 + b.dSINROffset
-		 end as dInfValue11,
-		case when b.snr11 + b.dSINROffset < 0. or b.snr12 + b.dSINROffset < 0. or a.sinr < 0. then
-		           b.snr12 + b.dSINROffset + (abs(if(b.snr11 + b.dSINROffset < a.sinr, b.snr11 + b.dSINROffset, a.sinr)) + 1.)
-		     else  b.snr12 + b.dSINROffset
-		 end as dSupValue11,
-		case when b.snr11 + b.dSINROffset < 0. or b.snr12 + b.dSINROffset < 0. or a.sinr < 0. then
-		           a.sinr  + (abs(if(b.snr11 + b.dSINROffset < a.sinr, b.snr11 + b.dSINROffset, a.sinr)) + 1.)
-		     else  a.sinr
-		 end as dValue11,
-		case when b.snr10 + b.dSINROffset < 0. or b.snr11 + b.dSINROffset < 0. or a.sinr < 0. then
-		           b.snr10 + b.dSINROffset + (abs(if(b.snr10 + b.dSINROffset < a.sinr, b.snr10 + b.dSINROffset, a.sinr)) + 1.)
-		     else  b.snr10 + b.dSINROffset
-		 end as dInfValue10,
-		case when b.snr10 + b.dSINROffset < 0. or b.snr11 + b.dSINROffset < 0. or a.sinr < 0. then
-		           b.snr11 + b.dSINROffset + (abs(if(b.snr10 + b.dSINROffset < a.sinr, b.snr10 + b.dSINROffset, a.sinr)) + 1.)
-		     else  b.snr11 + b.dSINROffset
-		 end as dSupValue10,
-		case when b.snr10 + b.dSINROffset < 0. or b.snr11 + b.dSINROffset < 0. or a.sinr < 0. then
-		           a.sinr  + (abs(if(b.snr10 + b.dSINROffset < a.sinr, b.snr10 + b.dSINROffset, a.sinr)) + 1.)
-		     else  a.sinr
-		 end as dValue10,
-		case when b.snr9 + b.dSINROffset < 0. or b.snr10 + b.dSINROffset < 0. or a.sinr < 0. then
-		           b.snr9 + b.dSINROffset + (abs(if(b.snr9 + b.dSINROffset < a.sinr, b.snr9 + b.dSINROffset, a.sinr)) + 1.)
-		     else  b.snr9 + b.dSINROffset
-		 end as dInfValue9,
-		case when b.snr9 + b.dSINROffset < 0. or b.snr10 + b.dSINROffset < 0. or a.sinr < 0. then
-		           b.snr10 + b.dSINROffset + (abs(if(b.snr9 + b.dSINROffset < a.sinr, b.snr9 + b.dSINROffset, a.sinr)) + 1.)
-		     else  b.snr10 + b.dSINROffset
-		 end as dSupValue9,
-		case when b.snr9 + b.dSINROffset < 0. or b.snr10 + b.dSINROffset < 0. or a.sinr < 0. then
-		           a.sinr  + (abs(if(b.snr9 + b.dSINROffset < a.sinr, b.snr9 + b.dSINROffset, a.sinr)) + 1.)
-		     else  a.sinr
-		 end as dValue9,
-		case when b.snr8 + b.dSINROffset < 0. or b.snr9 + b.dSINROffset < 0. or a.sinr < 0. then
-		           b.snr8 + b.dSINROffset + (abs(if(b.snr8 + b.dSINROffset < a.sinr, b.snr8 + b.dSINROffset, a.sinr)) + 1.)
-		     else  b.snr8 + b.dSINROffset
-		 end as dInfValue8,
-		case when b.snr8 + b.dSINROffset < 0. or b.snr9 + b.dSINROffset < 0. or a.sinr < 0. then
-		           b.snr9 + b.dSINROffset + (abs(if(b.snr8 + b.dSINROffset < a.sinr, b.snr8 + b.dSINROffset, a.sinr)) + 1.)
-		     else  b.snr9 + b.dSINROffset
-		 end as dSupValue8,
-		case when b.snr8 + b.dSINROffset < 0. or b.snr9 + b.dSINROffset < 0. or a.sinr < 0. then
-		           a.sinr  + (abs(if(b.snr8 + b.dSINROffset < a.sinr, b.snr8 + b.dSINROffset, a.sinr)) + 1.)
-		     else  a.sinr
-		 end as dValue8,
-		case when b.snr7 + b.dSINROffset < 0. or b.snr8 + b.dSINROffset < 0. or a.sinr < 0. then
-		           b.snr7 + b.dSINROffset + (abs(if(b.snr7 + b.dSINROffset < a.sinr, b.snr7 + b.dSINROffset, a.sinr)) + 1.)
-		     else  b.snr7 + b.dSINROffset
-		 end as dInfValue7,
-		case when b.snr7 + b.dSINROffset < 0. or b.snr8 + b.dSINROffset < 0. or a.sinr < 0. then
-		           b.snr8 + b.dSINROffset + (abs(if(b.snr7 + b.dSINROffset < a.sinr, b.snr7 + b.dSINROffset, a.sinr)) + 1.)
-		     else  b.snr8 + b.dSINROffset
-		 end as dSupValue7,
-		case when b.snr7 + b.dSINROffset < 0. or b.snr8 + b.dSINROffset < 0. or a.sinr < 0. then
-		           a.sinr  + (abs(if(b.snr7 + b.dSINROffset < a.sinr, b.snr7 + b.dSINROffset, a.sinr)) + 1.)
-		     else  a.sinr
-		 end as dValue7,
-		case when b.snr6 + b.dSINROffset < 0. or b.snr7 + b.dSINROffset < 0. or a.sinr < 0. then
-		           b.snr6 + b.dSINROffset + (abs(if(b.snr6 + b.dSINROffset < a.sinr, b.snr6 + b.dSINROffset, a.sinr)) + 1.)
-		     else  b.snr6 + b.dSINROffset
-		 end as dInfValue6,
-		case when b.snr6 + b.dSINROffset < 0. or b.snr7 + b.dSINROffset < 0. or a.sinr < 0. then
-		           b.snr7 + b.dSINROffset + (abs(if(b.snr6 + b.dSINROffset < a.sinr, b.snr6 + b.dSINROffset, a.sinr)) + 1.)
-		     else  b.snr7 + b.dSINROffset
-		 end as dSupValue6,
-		case when b.snr6 + b.dSINROffset < 0. or b.snr7 + b.dSINROffset < 0. or a.sinr < 0. then
-		           a.sinr  + (abs(if(b.snr6 + b.dSINROffset < a.sinr, b.snr6 + b.dSINROffset, a.sinr)) + 1.)
-		     else  a.sinr
-		 end as dValue6,
-		case when b.snr5 + b.dSINROffset < 0. or b.snr6 + b.dSINROffset < 0. or a.sinr < 0. then
-		           b.snr5 + b.dSINROffset + (abs(if(b.snr5 + b.dSINROffset < a.sinr, b.snr5 + b.dSINROffset, a.sinr)) + 1.)
-		     else  b.snr5 + b.dSINROffset
-		 end as dInfValue5,
-		case when b.snr5 + b.dSINROffset < 0. or b.snr6 + b.dSINROffset < 0. or a.sinr < 0. then
-		           b.snr6 + b.dSINROffset + (abs(if(b.snr5 + b.dSINROffset < a.sinr, b.snr5 + b.dSINROffset, a.sinr)) + 1.)
-		     else  b.snr6 + b.dSINROffset
-		 end as dSupValue5,
-		case when b.snr5 + b.dSINROffset < 0. or b.snr6 + b.dSINROffset < 0. or a.sinr < 0. then
-		           a.sinr  + (abs(if(b.snr5 + b.dSINROffset < a.sinr, b.snr5 + b.dSINROffset, a.sinr)) + 1.)
-		     else  a.sinr
-		 end as dValue5,
-		case when b.snr4 + b.dSINROffset < 0. or b.snr5 + b.dSINROffset < 0. or a.sinr < 0. then
-		           b.snr4 + b.dSINROffset + (abs(if(b.snr4 + b.dSINROffset < a.sinr, b.snr4 + b.dSINROffset, a.sinr)) + 1.)
-		     else  b.snr4 + b.dSINROffset
-		 end as dInfValue4,
-		case when b.snr4 + b.dSINROffset < 0. or b.snr5 + b.dSINROffset < 0. or a.sinr < 0. then
-		           b.snr5 + b.dSINROffset + (abs(if(b.snr4 + b.dSINROffset < a.sinr, b.snr4 + b.dSINROffset, a.sinr)) + 1.)
-		     else  b.snr5 + b.dSINROffset
-		 end as dSupValue4,
-		case when b.snr4 + b.dSINROffset < 0. or b.snr5 + b.dSINROffset < 0. or a.sinr < 0. then
-		           a.sinr  + (abs(if(b.snr4 + b.dSINROffset < a.sinr, b.snr4 + b.dSINROffset, a.sinr)) + 1.)
-		     else  a.sinr
-		 end as dValue4,
-		case when b.snr3 + b.dSINROffset < 0. or b.snr4 + b.dSINROffset < 0. or a.sinr < 0. then
-		           b.snr3 + b.dSINROffset + (abs(if(b.snr3 + b.dSINROffset < a.sinr, b.snr3 + b.dSINROffset, a.sinr)) + 1.)
-		     else  b.snr3 + b.dSINROffset
-		 end as dInfValue3,
-		case when b.snr3 + b.dSINROffset < 0. or b.snr4 + b.dSINROffset < 0. or a.sinr < 0. then
-		           b.snr4 + b.dSINROffset + (abs(if(b.snr3 + b.dSINROffset < a.sinr, b.snr3 + b.dSINROffset, a.sinr)) + 1.)
-		     else  b.snr4 + b.dSINROffset
-		 end as dSupValue3,
-		case when b.snr3 + b.dSINROffset < 0. or b.snr4 + b.dSINROffset < 0. or a.sinr < 0. then
-		           a.sinr  + (abs(if(b.snr3 + b.dSINROffset < a.sinr, b.snr3 + b.dSINROffset, a.sinr)) + 1.)
-		     else  a.sinr
-		 end as dValue3,
-		case when b.snr2 + b.dSINROffset < 0. or b.snr3 + b.dSINROffset < 0. or a.sinr < 0. then
-		           b.snr2 + b.dSINROffset + (abs(if(b.snr2 + b.dSINROffset < a.sinr, b.snr2 + b.dSINROffset, a.sinr)) + 1.)
-		     else  b.snr2 + b.dSINROffset
-		 end as dInfValue2,
-		case when b.snr2 + b.dSINROffset < 0. or b.snr3 + b.dSINROffset < 0. or a.sinr < 0. then
-		           b.snr3 + b.dSINROffset + (abs(if(b.snr2 + b.dSINROffset < a.sinr, b.snr2 + b.dSINROffset, a.sinr)) + 1.)
-		     else  b.snr3 + b.dSINROffset
-		 end as dSupValue2,
-		case when b.snr2 + b.dSINROffset < 0. or b.snr3 + b.dSINROffset < 0. or a.sinr < 0. then
-		           a.sinr  + (abs(if(b.snr2 + b.dSINROffset < a.sinr, b.snr2 + b.dSINROffset, a.sinr)) + 1.)
-		     else  a.sinr
-		 end as dValue2,
-		case when b.snr1 + b.dSINROffset < 0. or b.snr2 + b.dSINROffset < 0. or a.sinr < 0. then
-		           b.snr1 + b.dSINROffset + (abs(if(b.snr1 + b.dSINROffset < a.sinr, b.snr1 + b.dSINROffset, a.sinr)) + 1.)
-		     else  b.snr1 + b.dSINROffset
-		 end as dInfValue1,
-		case when b.snr1 + b.dSINROffset < 0. or b.snr2 + b.dSINROffset < 0. or a.sinr < 0. then
-		           b.snr2 + b.dSINROffset + (abs(if(b.snr1 + b.dSINROffset < a.sinr, b.snr1 + b.dSINROffset, a.sinr)) + 1.)
-		     else  b.snr2 + b.dSINROffset
-		 end as dSupValue1,
-		case when b.snr1 + b.dSINROffset < 0. or b.snr2 + b.dSINROffset < 0. or a.sinr < 0. then
-		           a.sinr  + (abs(if(b.snr1 + b.dSINROffset < a.sinr, b.snr1 + b.dSINROffset, a.sinr)) + 1.)
-		     else  a.sinr
-		 end as dValue1
-  from RESULT_NR_2D_SINR a, NR_DLTRAFFIC b
- where a.schedule_id = 8463189
+        case when b.snr14 + b.dSINROffset < 0. or b.snr15 + b.dSINROffset < 0. or a.sinr < 0. then
+                   b.snr14 + b.dSINROffset + (abs(if(b.snr14 + b.dSINROffset < a.sinr, b.snr14 + b.dSINROffset, a.sinr)) + 1.)
+             else  b.snr14 + b.dSINROffset
+         end as dInfValue14,
+        case when b.snr14 + b.dSINROffset < 0. or b.snr15 + b.dSINROffset < 0. or a.sinr < 0. then
+                   b.snr15 + b.dSINROffset + (abs(if(b.snr14 + b.dSINROffset < a.sinr, b.snr14 + b.dSINROffset, a.sinr)) + 1.)
+             else  b.snr15 + b.dSINROffset
+         end as dSupValue14,
+        case when b.snr14 + b.dSINROffset < 0. or b.snr15 + b.dSINROffset < 0. or a.sinr < 0. then
+                   a.sinr  + (abs(if(b.snr14 + b.dSINROffset < a.sinr, b.snr14 + b.dSINROffset, a.sinr)) + 1.)
+             else  a.sinr
+         end as dValue14,
+        case when b.snr13 + b.dSINROffset < 0. or b.snr14 + b.dSINROffset < 0. or a.sinr < 0. then
+                   b.snr13 + b.dSINROffset + (abs(if(b.snr13 + b.dSINROffset < a.sinr, b.snr13 + b.dSINROffset, a.sinr)) + 1.)
+             else  b.snr13 + b.dSINROffset
+         end as dInfValue13,
+        case when b.snr13 + b.dSINROffset < 0. or b.snr14 + b.dSINROffset < 0. or a.sinr < 0. then
+                   b.snr14 + b.dSINROffset + (abs(if(b.snr13 + b.dSINROffset < a.sinr, b.snr13 + b.dSINROffset, a.sinr)) + 1.)
+             else  b.snr14 + b.dSINROffset
+         end as dSupValue13,
+        case when b.snr13 + b.dSINROffset < 0. or b.snr14 + b.dSINROffset < 0. or a.sinr < 0. then
+                   a.sinr  + (abs(if(b.snr13 + b.dSINROffset < a.sinr, b.snr13 + b.dSINROffset, a.sinr)) + 1.)
+             else  a.sinr
+         end as dValue13,
+        case when b.snr12 + b.dSINROffset < 0. or b.snr13 + b.dSINROffset < 0. or a.sinr < 0. then
+                   b.snr12 + b.dSINROffset + (abs(if(b.snr12 + b.dSINROffset < a.sinr, b.snr12 + b.dSINROffset, a.sinr)) + 1.)
+             else  b.snr12 + b.dSINROffset
+         end as dInfValue12,
+        case when b.snr12 + b.dSINROffset < 0. or b.snr13 + b.dSINROffset < 0. or a.sinr < 0. then
+                   b.snr13 + b.dSINROffset + (abs(if(b.snr12 + b.dSINROffset < a.sinr, b.snr12 + b.dSINROffset, a.sinr)) + 1.)
+             else  b.snr13 + b.dSINROffset
+         end as dSupValue12,
+        case when b.snr12 + b.dSINROffset < 0. or b.snr13 + b.dSINROffset < 0. or a.sinr < 0. then
+                   a.sinr  + (abs(if(b.snr12 + b.dSINROffset < a.sinr, b.snr12 + b.dSINROffset, a.sinr)) + 1.)
+             else  a.sinr
+         end as dValue12,
+        case when b.snr11 + b.dSINROffset < 0. or b.snr12 + b.dSINROffset < 0. or a.sinr < 0. then
+                   b.snr11 + b.dSINROffset + (abs(if(b.snr11 + b.dSINROffset < a.sinr, b.snr11 + b.dSINROffset, a.sinr)) + 1.)
+             else  b.snr11 + b.dSINROffset
+         end as dInfValue11,
+        case when b.snr11 + b.dSINROffset < 0. or b.snr12 + b.dSINROffset < 0. or a.sinr < 0. then
+                   b.snr12 + b.dSINROffset + (abs(if(b.snr11 + b.dSINROffset < a.sinr, b.snr11 + b.dSINROffset, a.sinr)) + 1.)
+             else  b.snr12 + b.dSINROffset
+         end as dSupValue11,
+        case when b.snr11 + b.dSINROffset < 0. or b.snr12 + b.dSINROffset < 0. or a.sinr < 0. then
+                   a.sinr  + (abs(if(b.snr11 + b.dSINROffset < a.sinr, b.snr11 + b.dSINROffset, a.sinr)) + 1.)
+             else  a.sinr
+         end as dValue11,
+        case when b.snr10 + b.dSINROffset < 0. or b.snr11 + b.dSINROffset < 0. or a.sinr < 0. then
+                   b.snr10 + b.dSINROffset + (abs(if(b.snr10 + b.dSINROffset < a.sinr, b.snr10 + b.dSINROffset, a.sinr)) + 1.)
+             else  b.snr10 + b.dSINROffset
+         end as dInfValue10,
+        case when b.snr10 + b.dSINROffset < 0. or b.snr11 + b.dSINROffset < 0. or a.sinr < 0. then
+                   b.snr11 + b.dSINROffset + (abs(if(b.snr10 + b.dSINROffset < a.sinr, b.snr10 + b.dSINROffset, a.sinr)) + 1.)
+             else  b.snr11 + b.dSINROffset
+         end as dSupValue10,
+        case when b.snr10 + b.dSINROffset < 0. or b.snr11 + b.dSINROffset < 0. or a.sinr < 0. then
+                   a.sinr  + (abs(if(b.snr10 + b.dSINROffset < a.sinr, b.snr10 + b.dSINROffset, a.sinr)) + 1.)
+             else  a.sinr
+         end as dValue10,
+        case when b.snr9 + b.dSINROffset < 0. or b.snr10 + b.dSINROffset < 0. or a.sinr < 0. then
+                   b.snr9 + b.dSINROffset + (abs(if(b.snr9 + b.dSINROffset < a.sinr, b.snr9 + b.dSINROffset, a.sinr)) + 1.)
+             else  b.snr9 + b.dSINROffset
+         end as dInfValue9,
+        case when b.snr9 + b.dSINROffset < 0. or b.snr10 + b.dSINROffset < 0. or a.sinr < 0. then
+                   b.snr10 + b.dSINROffset + (abs(if(b.snr9 + b.dSINROffset < a.sinr, b.snr9 + b.dSINROffset, a.sinr)) + 1.)
+             else  b.snr10 + b.dSINROffset
+         end as dSupValue9,
+        case when b.snr9 + b.dSINROffset < 0. or b.snr10 + b.dSINROffset < 0. or a.sinr < 0. then
+                   a.sinr  + (abs(if(b.snr9 + b.dSINROffset < a.sinr, b.snr9 + b.dSINROffset, a.sinr)) + 1.)
+             else  a.sinr
+         end as dValue9,
+        case when b.snr8 + b.dSINROffset < 0. or b.snr9 + b.dSINROffset < 0. or a.sinr < 0. then
+                   b.snr8 + b.dSINROffset + (abs(if(b.snr8 + b.dSINROffset < a.sinr, b.snr8 + b.dSINROffset, a.sinr)) + 1.)
+             else  b.snr8 + b.dSINROffset
+         end as dInfValue8,
+        case when b.snr8 + b.dSINROffset < 0. or b.snr9 + b.dSINROffset < 0. or a.sinr < 0. then
+                   b.snr9 + b.dSINROffset + (abs(if(b.snr8 + b.dSINROffset < a.sinr, b.snr8 + b.dSINROffset, a.sinr)) + 1.)
+             else  b.snr9 + b.dSINROffset
+         end as dSupValue8,
+        case when b.snr8 + b.dSINROffset < 0. or b.snr9 + b.dSINROffset < 0. or a.sinr < 0. then
+                   a.sinr  + (abs(if(b.snr8 + b.dSINROffset < a.sinr, b.snr8 + b.dSINROffset, a.sinr)) + 1.)
+             else  a.sinr
+         end as dValue8,
+        case when b.snr7 + b.dSINROffset < 0. or b.snr8 + b.dSINROffset < 0. or a.sinr < 0. then
+                   b.snr7 + b.dSINROffset + (abs(if(b.snr7 + b.dSINROffset < a.sinr, b.snr7 + b.dSINROffset, a.sinr)) + 1.)
+             else  b.snr7 + b.dSINROffset
+         end as dInfValue7,
+        case when b.snr7 + b.dSINROffset < 0. or b.snr8 + b.dSINROffset < 0. or a.sinr < 0. then
+                   b.snr8 + b.dSINROffset + (abs(if(b.snr7 + b.dSINROffset < a.sinr, b.snr7 + b.dSINROffset, a.sinr)) + 1.)
+             else  b.snr8 + b.dSINROffset
+         end as dSupValue7,
+        case when b.snr7 + b.dSINROffset < 0. or b.snr8 + b.dSINROffset < 0. or a.sinr < 0. then
+                   a.sinr  + (abs(if(b.snr7 + b.dSINROffset < a.sinr, b.snr7 + b.dSINROffset, a.sinr)) + 1.)
+             else  a.sinr
+         end as dValue7,
+        case when b.snr6 + b.dSINROffset < 0. or b.snr7 + b.dSINROffset < 0. or a.sinr < 0. then
+                   b.snr6 + b.dSINROffset + (abs(if(b.snr6 + b.dSINROffset < a.sinr, b.snr6 + b.dSINROffset, a.sinr)) + 1.)
+             else  b.snr6 + b.dSINROffset
+         end as dInfValue6,
+        case when b.snr6 + b.dSINROffset < 0. or b.snr7 + b.dSINROffset < 0. or a.sinr < 0. then
+                   b.snr7 + b.dSINROffset + (abs(if(b.snr6 + b.dSINROffset < a.sinr, b.snr6 + b.dSINROffset, a.sinr)) + 1.)
+             else  b.snr7 + b.dSINROffset
+         end as dSupValue6,
+        case when b.snr6 + b.dSINROffset < 0. or b.snr7 + b.dSINROffset < 0. or a.sinr < 0. then
+                   a.sinr  + (abs(if(b.snr6 + b.dSINROffset < a.sinr, b.snr6 + b.dSINROffset, a.sinr)) + 1.)
+             else  a.sinr
+         end as dValue6,
+        case when b.snr5 + b.dSINROffset < 0. or b.snr6 + b.dSINROffset < 0. or a.sinr < 0. then
+                   b.snr5 + b.dSINROffset + (abs(if(b.snr5 + b.dSINROffset < a.sinr, b.snr5 + b.dSINROffset, a.sinr)) + 1.)
+             else  b.snr5 + b.dSINROffset
+         end as dInfValue5,
+        case when b.snr5 + b.dSINROffset < 0. or b.snr6 + b.dSINROffset < 0. or a.sinr < 0. then
+                   b.snr6 + b.dSINROffset + (abs(if(b.snr5 + b.dSINROffset < a.sinr, b.snr5 + b.dSINROffset, a.sinr)) + 1.)
+             else  b.snr6 + b.dSINROffset
+         end as dSupValue5,
+        case when b.snr5 + b.dSINROffset < 0. or b.snr6 + b.dSINROffset < 0. or a.sinr < 0. then
+                   a.sinr  + (abs(if(b.snr5 + b.dSINROffset < a.sinr, b.snr5 + b.dSINROffset, a.sinr)) + 1.)
+             else  a.sinr
+         end as dValue5,
+        case when b.snr4 + b.dSINROffset < 0. or b.snr5 + b.dSINROffset < 0. or a.sinr < 0. then
+                   b.snr4 + b.dSINROffset + (abs(if(b.snr4 + b.dSINROffset < a.sinr, b.snr4 + b.dSINROffset, a.sinr)) + 1.)
+             else  b.snr4 + b.dSINROffset
+         end as dInfValue4,
+        case when b.snr4 + b.dSINROffset < 0. or b.snr5 + b.dSINROffset < 0. or a.sinr < 0. then
+                   b.snr5 + b.dSINROffset + (abs(if(b.snr4 + b.dSINROffset < a.sinr, b.snr4 + b.dSINROffset, a.sinr)) + 1.)
+             else  b.snr5 + b.dSINROffset
+         end as dSupValue4,
+        case when b.snr4 + b.dSINROffset < 0. or b.snr5 + b.dSINROffset < 0. or a.sinr < 0. then
+                   a.sinr  + (abs(if(b.snr4 + b.dSINROffset < a.sinr, b.snr4 + b.dSINROffset, a.sinr)) + 1.)
+             else  a.sinr
+         end as dValue4,
+        case when b.snr3 + b.dSINROffset < 0. or b.snr4 + b.dSINROffset < 0. or a.sinr < 0. then
+                   b.snr3 + b.dSINROffset + (abs(if(b.snr3 + b.dSINROffset < a.sinr, b.snr3 + b.dSINROffset, a.sinr)) + 1.)
+             else  b.snr3 + b.dSINROffset
+         end as dInfValue3,
+        case when b.snr3 + b.dSINROffset < 0. or b.snr4 + b.dSINROffset < 0. or a.sinr < 0. then
+                   b.snr4 + b.dSINROffset + (abs(if(b.snr3 + b.dSINROffset < a.sinr, b.snr3 + b.dSINROffset, a.sinr)) + 1.)
+             else  b.snr4 + b.dSINROffset
+         end as dSupValue3,
+        case when b.snr3 + b.dSINROffset < 0. or b.snr4 + b.dSINROffset < 0. or a.sinr < 0. then
+                   a.sinr  + (abs(if(b.snr3 + b.dSINROffset < a.sinr, b.snr3 + b.dSINROffset, a.sinr)) + 1.)
+             else  a.sinr
+         end as dValue3,
+        case when b.snr2 + b.dSINROffset < 0. or b.snr3 + b.dSINROffset < 0. or a.sinr < 0. then
+                   b.snr2 + b.dSINROffset + (abs(if(b.snr2 + b.dSINROffset < a.sinr, b.snr2 + b.dSINROffset, a.sinr)) + 1.)
+             else  b.snr2 + b.dSINROffset
+         end as dInfValue2,
+        case when b.snr2 + b.dSINROffset < 0. or b.snr3 + b.dSINROffset < 0. or a.sinr < 0. then
+                   b.snr3 + b.dSINROffset + (abs(if(b.snr2 + b.dSINROffset < a.sinr, b.snr2 + b.dSINROffset, a.sinr)) + 1.)
+             else  b.snr3 + b.dSINROffset
+         end as dSupValue2,
+        case when b.snr2 + b.dSINROffset < 0. or b.snr3 + b.dSINROffset < 0. or a.sinr < 0. then
+                   a.sinr  + (abs(if(b.snr2 + b.dSINROffset < a.sinr, b.snr2 + b.dSINROffset, a.sinr)) + 1.)
+             else  a.sinr
+         end as dValue2,
+        case when b.snr1 + b.dSINROffset < 0. or b.snr2 + b.dSINROffset < 0. or a.sinr < 0. then
+                   b.snr1 + b.dSINROffset + (abs(if(b.snr1 + b.dSINROffset < a.sinr, b.snr1 + b.dSINROffset, a.sinr)) + 1.)
+             else  b.snr1 + b.dSINROffset
+         end as dInfValue1,
+        case when b.snr1 + b.dSINROffset < 0. or b.snr2 + b.dSINROffset < 0. or a.sinr < 0. then
+                   b.snr2 + b.dSINROffset + (abs(if(b.snr1 + b.dSINROffset < a.sinr, b.snr1 + b.dSINROffset, a.sinr)) + 1.)
+             else  b.snr2 + b.dSINROffset
+         end as dSupValue1,
+        case when b.snr1 + b.dSINROffset < 0. or b.snr2 + b.dSINROffset < 0. or a.sinr < 0. then
+                   a.sinr  + (abs(if(b.snr1 + b.dSINROffset < a.sinr, b.snr1 + b.dSINROffset, a.sinr)) + 1.)
+             else  a.sinr
+         end as dValue1
+  from RESULT_NR_BF_SINR a, NR_DLTRAFFIC b
+ where a.schedule_id = ${scheduleId}
    and a.schedule_id = b.schedule_id
 )
-insert into I_${objNm} partition (schedule_id=${scheduleId})
-select a.scenario_id, a.rx_tm_xpos, a.rx_tm_ypos, a.x_point, a.y_point,
+insert into ${objNm} partition (schedule_id=${scheduleId})
+select a.tbd_key, a.rx_tm_xpos, a.rx_tm_ypos, a.rx_floorz,
+       cast(
        case when a.dSNR >= a.snr15 + a.dSINROffset then
                    a.thp15
             when a.dSNR >= a.snr14 + a.dSINROffset then
@@ -357,7 +358,9 @@ select a.scenario_id, a.rx_tm_xpos, a.rx_tm_ypos, a.x_point, a.y_point,
             when a.dSNR >= a.snr1 + a.dSINROffset then
                     a.thp1 + (a.thp2 - a.thp1) * log10(dValue1 / dInfValue1) / log10(dSupValue1 / dInfValue1)
             else 0.
-        end as throughput
+        end
+        as float) as throughput,
+       a.schedule_id
   from THROUGHPUTtemp a
 """
 println(qry); spark.sql(qry).take(100).foreach(println);

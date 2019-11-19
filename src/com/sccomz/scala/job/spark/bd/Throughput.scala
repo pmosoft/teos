@@ -43,7 +43,7 @@ object Throughput {
     var con = DriverManager.getConnection(App.dbDriverHive, App.dbUserHive, App.dbPwHive);
     var stat:Statement = con.createStatement();
 
-    var objNm = "RESULT_NR_2D_THROUGHPUT"
+    var objNm = "RESULT_NR_BF_THROUGHPUT"
     //------------------------------------------------------
     println(objNm + " 시작");
     //------------------------------------------------------
@@ -88,9 +88,9 @@ select a.scenario_id, b.schedule_id,
             when d.downlinkfreq < 10000. and e.rx_layer = 4 then 4
             when d.downlinkfreq >= 10000. then 2
             else -1
-       end as UELayer
+       end as UELayer         
   from SCENARIO a, SCHEDULE b, NRSYSTEM c, FABASE d, MOBILE_PARAMETER e
- where b.schedule_id = ${scheduleId}
+ where b.schedule_id = ${scheduleId}  
    and a.scenario_id = b.scenario_id
    and a.scenario_id = c.scenario_id
    and a.system_id = d.systemtype
@@ -103,7 +103,7 @@ select a.scenario_id, a.schedule_id,
        a.nCC, a.dDLRatio, a.dMaxRBs, a.dDLOH,
        a.downlinkfreq, a.dAvr_Symbol_Duration,
        a.dSINROffset, a.rx_layer,
-       b.modulation1, b.modulation2, b.modulation3, b.modulation4, b.modulation5,
+       b.modulation1, b.modulation2, b.modulation3, b.modulation4, b.modulation5, 
        b.modulation6, b.modulation7, b.modulation8, b.modulation9, b.modulation10,
        b.modulation11, b.modulation12, b.modulation13, b.modulation14, b.modulation15,
        b.layer1, b.layer2, b.layer3, b.layer4, b.layer5,
@@ -123,7 +123,7 @@ select a.scenario_id, a.schedule_id,
 ),
 THROUGHPUTtemp as
 (
-select a.scenario_id, a.schedule_id, a.rx_tm_xpos, a.rx_tm_ypos, a.x_point, a.y_point,
+select a.schedule_id, a.tbd_key, a.rx_tm_xpos, a.rx_tm_ypos, a.rx_floorz,
        a.sinr as dSNR,
        b.dSINROffset,
        b.modulation1, b.modulation2, b.modulation3, b.modulation4, b.modulation5, 
@@ -321,12 +321,12 @@ select a.scenario_id, a.schedule_id, a.rx_tm_xpos, a.rx_tm_ypos, a.x_point, a.y_
                    a.sinr  + (abs(if(b.snr1 + b.dSINROffset < a.sinr, b.snr1 + b.dSINROffset, a.sinr)) + 1.)
              else  a.sinr
          end as dValue1
-  from RESULT_NR_2D_SINR a, NR_DLTRAFFIC b
+  from RESULT_NR_BF_SINR a, NR_DLTRAFFIC b
  where a.schedule_id = ${scheduleId}
    and a.schedule_id = b.schedule_id
 )
 insert into ${objNm} partition (schedule_id)
-select a.scenario_id, a.rx_tm_xpos, a.rx_tm_ypos, a.x_point, a.y_point,
+select a.tbd_key, a.rx_tm_xpos, a.rx_tm_ypos, a.rx_floorz,
        cast(
        case when a.dSNR >= a.snr15 + a.dSINROffset then
                    a.thp15

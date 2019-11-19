@@ -40,7 +40,7 @@ def execute(scheduleId:String) = {
 def executeSql(spark: SparkSession, scheduleId:String) = {
 //var scheduleId = "8463189"; 
   
-var objNm = "RESULT_NR_2D_SINR_RU"
+var objNm = "RESULT_NR_BF_SINR_RU"
 //------------------------------------------------------
     println(objNm + " 시작");
 //------------------------------------------------------
@@ -54,7 +54,7 @@ val fs = FileSystem.get(conf)
 fs.delete(new Path(s"""/TEOS/warehouse/${objNm}/schedule_id=${scheduleId}"""),true)
 import spark.implicits._
 import spark.sql
-qry = s"""ALTER TABLE I_${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; sql(qry);
+qry = s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; sql(qry);
 
 //---------------------------------------------------
     println("insert partition table");
@@ -68,7 +68,7 @@ select a.scenario_id, b.schedule_id, c.ant_category,
        c.diversitygainratio,
        d.noisefigure
   from SCENARIO a, SCHEDULE b, NRSYSTEM c, MOBILE_PARAMETER d
- where b.schedule_id = ${scheduleId}  
+ where b.schedule_id = ${scheduleId}
    and a.scenario_id = b.scenario_id
    and a.scenario_id = c.scenario_id
    and a.scenario_id = d.scenario_id
@@ -82,48 +82,51 @@ select a.scenario_id, b.schedule_id, a.ru_id, a.ru_seq
 ),
 ruRSSI as -- RU별 RSSI 정보
 (
-select a.scenario_id, a.schedule_id, a.ru_id, a.enb_id, a.cell_id, a.rx_tm_xpos, a.rx_tm_ypos, a.los, a.pathloss,
+select b.scenario_id, a.schedule_id, a.ru_id, a.enb_id, a.cell_id, a.tbd_key, a.rx_tm_xpos, a.rx_tm_ypos, a.rx_floorz, a.rz,
+       a.los, a.pathloss,
        a.antenna_gain, a.pathlossprime, a.rsrppilot, a.rssinonoise, a.rssi, c.ru_seq,
        b.ant_category, b.dlcovlimitrsrp_yn,
-   	   power(10, 
+       power(10, 
        case when upper(b.ant_category) = 'COMMON' then
                     -174. + b.noisefigure + 10. * log10 ((b.subcarrierspacing / 1000.) * 1000000.)
             else    -174. + b.noisefigure + 10. * log10 ((b.bandwidth_per_cc * b.number_of_cc) * 1000000.)
         end / 10.) as m_dNowMilliWatt
-  from RESULT_NR_2D_RSSI_RU a, NR_PARAMETER b, RU c
+  from RESULT_NR_BF_RSSI_RU a, NR_PARAMETER b, RU c
  where a.schedule_id = ${scheduleId}
    and a.schedule_id = b.schedule_id
    and a.schedule_id = c.schedule_id
    and a.ru_id = c.ru_id
 ),
-ruSumRSSI as -- ENB_ID, CELL_ID, BIN 별 RSSI sum
+ruSumRSSI as -- ENB_ID, CELL_ID, TBD_KEY, BIN 별 RSSI sum
 (
-SELECT a.enb_id, a.cell_id, a.rx_tm_xpos, a.rx_tm_ypos,
+SELECT a.enb_id, a.cell_id, a.tbd_key, a.rx_tm_xpos, a.rx_tm_ypos, a.rx_floorz, a.rz,
        sum(power(10, a.RSSINoNoise / 10.) * b.diversitygainratio) as RSSINoNoiseSUMMilliWatt
-  from RESULT_NR_2D_RSSI_RU a, NR_PARAMETER b
+  from RESULT_NR_BF_RSSI_RU a, NR_PARAMETER b
  where a.schedule_id = ${scheduleId}
    and a.schedule_id = b.schedule_id
- group by a.enb_id, a.cell_id, a.rx_tm_xpos, a.rx_tm_ypos
+ group by a.enb_id, a.cell_id, a.tbd_key, a.rx_tm_xpos, a.rx_tm_ypos, a.rx_floorz, a.rz
 ),
 ScenRSSI as -- 시나리오 RSSI 정보
 (
-select scenario_id, schedule_id, rx_tm_xpos, rx_tm_ypos, x_point, y_point, rssi
-  from RESULT_NR_2D_RSSI
+select schedule_id, tbd_key, rx_tm_xpos, rx_tm_ypos, rx_floorz, rssi
+  from RESULT_NR_BF_RSSI
  where schedule_id = ${scheduleId}
 ),
 ruRSSIResult as -- ruRSSI + ruSumRSSI 결과(RU별 결과)
 (
-select a.scenario_id, a.schedule_id, a.ru_id, a.enb_id, a.cell_id, a.rx_tm_xpos, a.rx_tm_ypos, a.los, a.pathloss,
+select a.schedule_id, a.ru_id, a.enb_id, a.cell_id, a.tbd_key, a.rx_tm_xpos, a.rx_tm_ypos, a.rx_floorz, a.rz,
+       a.los, a.pathloss,
        a.antenna_gain, a.pathlossprime, a.rsrppilot, a.rssinonoise, a.rssi, a.ru_seq,
        a.ant_category, a.dlcovlimitrsrp_yn,
        a.m_dNowMilliWatt,
        b.RSSINoNoiseSUMMilliWatt
   from ruRSSI a left outer join ruSumRSSI b
-   on (a.enb_id = b.enb_id and a.cell_id = b.cell_id and a.rx_tm_xpos = b.rx_tm_xpos and a.rx_tm_ypos = b.rx_tm_ypos)
+   on (a.enb_id = b.enb_id and a.cell_id = b.cell_id and a.tbd_key = b.tbd_key and a.rx_tm_xpos = b.rx_tm_xpos and a.rx_tm_ypos = b.rx_tm_ypos and a.rx_floorz = b.rx_floorz and a.rz = b.rz)
 ),
 SINRtemp as
 (
-SELECT a.scenario_id, a.schedule_id, a.ru_id, a.enb_id, a.cell_id, a.rx_tm_xpos, a.rx_tm_ypos, a.los, a.pathloss,
+SELECT a.schedule_id, a.ru_id, a.enb_id, a.cell_id, a.tbd_key, a.rx_tm_xpos, a.rx_tm_ypos, a.rx_floorz, a.rz,
+       a.los, a.pathloss,
        a.antenna_gain, a.pathlossprime, a.rsrppilot, a.rssinonoise, a.rssi, a.ru_seq,
        a.ant_category, a.dlcovlimitrsrp_yn,
        a.m_dNowMilliWatt,
@@ -141,28 +144,32 @@ SELECT a.scenario_id, a.schedule_id, a.ru_id, a.enb_id, a.cell_id, a.rx_tm_xpos,
  where a.schedule_id = ${scheduleId}
    and a.schedule_id = b.schedule_id
    and a.schedule_id = c.schedule_id
+   and a.tbd_key = c.tbd_key
    and a.rx_tm_xpos = c.rx_tm_xpos
    and a.rx_tm_ypos = c.rx_tm_ypos
+   and a.rx_floorz = c.rx_floorz
 )
-insert into I_${objNm} partition (schedule_id=${scheduleId})
-select a.scenario_id, a.ru_id, a.enb_id, a.cell_id, a.rx_tm_xpos, a.rx_tm_ypos, a.los, a.pathloss,
+insert into ${objNm} partition (schedule_id=${scheduleId})
+select a.ru_id, a.enb_id, a.cell_id, a.tbd_key, a.rx_tm_xpos, a.rx_tm_ypos, a.rx_floorz, a.rz,
+       a.los, a.pathloss,
        a.antenna_gain, a.pathlossprime, a.rsrppilot, a.rssinonoise, a.rssi, a.ru_seq,
        a.scenrssi, b.rsrp,
-       round(if (a.fSINRdB > 35., 35., a.fSINRdB),2) as SINR
+       round(if (a.fSINRdB > 35., 35., a.fSINRdB),2) as SINR,
 --       round(case when a.dlcovlimitrsrp_yn = 1 THEN
   --               case when b.rsrp <= if (a.los = 1, a.dlcoveragelimitrsrplos, a.dlcoveragelimitrsrp) then 340282346638528859811704183484516925440.
     --                  else if (a.fSINRdB > 35., 35., a.fSINRdB)
       --            end
         --    else if (a.fSINRdB > 35., 35., a.fSINRdB)
        -- end,2) as SINR,
---       a.ant_category, a.dlcovlimitrsrp_yn,
---       a.m_dNowMilliWatt,
---       a.RSSINoNoiseSUMMilliWatt
-  from SINRtemp a, RESULT_NR_2D_RSRP_RU b
+       a.schedule_id
+  from SINRtemp a, RESULT_NR_BF_RSRP_RU b
  where a.schedule_id = b.schedule_id
    and a.ru_id = b.ru_id
+   and a.tbd_key = b.tbd_key
    and a.rx_tm_xpos = b.rx_tm_xpos
    and a.rx_tm_ypos = b.rx_tm_ypos
+   and a.rx_floorz = b.rx_floorz
+   and a.rz = b.rz
 """
 println(qry); spark.sql(qry).take(100).foreach(println);
 
@@ -171,7 +178,7 @@ println(qry); spark.sql(qry).take(100).foreach(println);
 def executeSql2(spark: SparkSession, scheduleId:String) = {
 //var scheduleId = "8463189"; 
   
-var objNm = "RESULT_NR_2D_SINR"
+var objNm = "RESULT_NR_BF_SINR"
 //------------------------------------------------------
     println(objNm + " 시작");
 //------------------------------------------------------
@@ -185,46 +192,27 @@ val fs = FileSystem.get(conf)
 fs.delete(new Path(s"""/TEOS/warehouse/${objNm}/schedule_id=${scheduleId}"""),true)
 import spark.implicits._
 import spark.sql
-qry = s"""ALTER TABLE I_${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; sql(qry);
+qry = s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; sql(qry);
 
 //---------------------------------------------------
     println("insert partition table");
 //---------------------------------------------------
 qry = s"""
-with AREA as
+with SINRtemp as
 (
-select a.scenario_id, b.schedule_id,
-       a.tm_startx div a.resolution * a.resolution as tm_startx,
-       a.tm_starty div a.resolution * a.resolution as tm_starty,
-       a.tm_endx div a.resolution * a.resolution as tm_endx,
-       a.tm_endy div a.resolution * a.resolution as tm_endy,
-       a.resolution
-  from SCENARIO a, SCHEDULE b
- where b.schedule_id = ${scheduleId}
-   and a.scenario_id = b.scenario_id
-),
-SINRtemp as
-(
-SELECT a.scenario_id, a.schedule_id, a.rx_tm_xpos, a.rx_tm_ypos,
+SELECT a.schedule_id, a.tbd_key, a.rx_tm_xpos, a.rx_tm_ypos, a.rx_floorz,
        case when b.ru_seq is null then null else a.sinr end as sinr
-  from (select * from RESULT_NR_2D_SINR_RU where schedule_id = ${scheduleId}) a
+  from (select * from RESULT_NR_BF_SINR_RU where schedule_id = ${scheduleId}) a
        left outer join 
-       (select * from RESULT_NR_2D_BESTSERVER where schedule_id = ${scheduleId}) b
-    on (a.schedule_id = b.schedule_id and a.rx_tm_xpos = b.rx_tm_xpos and a.rx_tm_ypos = b.rx_tm_ypos and a.ru_seq = b.ru_seq)
+       (select * from RESULT_NR_BF_BESTSERVER where schedule_id = ${scheduleId}) b
+    on (a.schedule_id = b.schedule_id and a.tbd_key = b.tbd_key and a.rx_tm_xpos = b.rx_tm_xpos and a.rx_tm_ypos = b.rx_tm_ypos and a.rx_floorz = b.rx_floorz and a.ru_seq = b.ru_seq)
 )
-insert into I_${objNm} partition (schedule_id=${scheduleId})
-select max(AREA.scenario_id) as scenario_id,
-       RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution as rx_tm_xpos,
-       RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution as rx_tm_ypos,
-       (RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution - AREA.tm_startx) / AREA.resolution as x_point,
-       (RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution - AREA.tm_starty) / AREA.resolution as y_point,
+insert into ${objNm} partition (schedule_id=${scheduleId})
+select tbd_key, rx_tm_xpos, rx_tm_ypos, rx_floorz, 
        max(sinr) as SINR
-  from AREA, SINRtemp RSLT
- where RSLT.schedule_id = AREA.schedule_id
-   and AREA.tm_startx <= RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution and RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution < AREA.tm_endx
-   and AREA.tm_starty <= RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution and RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution < AREA.tm_endy
-  group by RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution, RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution,
-           (RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution - AREA.tm_startx) / AREA.resolution, (RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution - AREA.tm_starty) / AREA.resolution
+  from SINRtemp RSLT
+ where schedule_id=${scheduleId}
+ group by tbd_key, rx_tm_xpos, rx_tm_ypos, rx_floorz
 """
 println(qry); spark.sql(qry).take(100).foreach(println);
 
