@@ -1,4 +1,4 @@
-package com.sccomz.scala.job.spark.eng
+package com.sccomz.scala.job.spark.bd
 
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.FileSystem
