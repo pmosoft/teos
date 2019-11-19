@@ -295,7 +295,7 @@ select NLOS.scenario_id, NLOS.ru_id,
        NLOS.dist2d, NLOS.dist3d, NLOS.distBP,
        NLOS.hBS, NLOS.hUT,
        NLOS.schedule_id
-  from NLOS
+  from NLOS 
 """
 println(qry); stat.execute(qry);
 
