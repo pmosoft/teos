@@ -22,7 +22,7 @@ Sinr.execute("8463189");
 
  */
 
-object Sinr {
+object Sinr2 {
 
 
 def main(args: Array[String]): Unit = {  

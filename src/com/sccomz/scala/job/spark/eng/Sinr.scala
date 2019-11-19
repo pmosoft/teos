@@ -25,7 +25,7 @@ Sinr.execute("8463189");
 
  */
 
-object Sinr2 {
+object Sinr {
 
   def main(args: Array[String]): Unit = {
     var scheduleId = if (args.length < 1) "" else args(0);
