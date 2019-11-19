@@ -28,7 +28,7 @@ import com.sccomz.scala.etl.cache.LosResultCache
 
 import com.sccomz.scala.schedule.real.ExecuteJob
 ExecuteJob.executePostgreShell("8460064");
-
+ExecuteJob.executeEtlOracleToHdfs("8460064");
 ExecuteJob.execute("8460064");
 ExecuteJob.execute("8460178");
 
@@ -37,6 +37,8 @@ ExecuteJob.executeEtlOracleToHdfs("8460966","SC001");
 ExecuteJob.executeEtlOracleToHdfs("8460968","SC001");
 ExecuteJob.delStepLog("8460178");
 ExecuteJob.executePostgreShell("8460178")
+
+sshpass -pteos ssh -o StrictHostKeyChecking=no postgres@teos-cluster-dn1 /gis01/bin/anal_los_job_dis.sh 5113766
 
 */
 
@@ -169,7 +171,7 @@ object ExecuteJob {
   }  
   
   def executeEtlPostgreToHdfs(scheduleId:String,scenarioId:String): Unit = {
-    ExtractLoadPostManager.monitorJobDis(scheduleId,scenarioId);  
+    ExtractLoadPostManager.monitorJobDis(scheduleId,scenarioId);
   }
   
   

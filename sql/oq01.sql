@@ -48,8 +48,15 @@ AND    A.SCHEDULE_ID = 8460064
 ORDER BY A.REG_DT DESC
 ;
 
-SELECT 157 * 155 FROM DUAL
-;
+SELECT SCENARIO_ID FROM SCHEDULE WHERE SCHEDULE_ID = ${scheduleId}
+
+
+--scenario_id=5113766
+--schedule_id = 8463234 (2D분석)
+--schedule_id = 8463235 (3D분석)
+
+
+--SELECT 157 * 155 FROM DUAL;
 
 select * from NRUETRAFFIC
  where scenario_id = 5113566
@@ -61,18 +68,20 @@ SET    PROCESS_CD = '20001', PROCESS_MSG=''
 WHERE  SCHEDULE_ID IN (8462895,8462896)
 ;
 
-COMMIT;
-
+COMMIT
+;
 
 SELECT * FROM SCHEDULE_EXT
 ;
 
-SELECT 307*301 FROM DUAL;
+SELECT 307*301 FROM DUAL
+;
 
-SELECT 307*149 FROM DUAL;
+SELECT 307*149 FROM DUAL
+;
 
-SELECT 370000 / 92407 FROM DUAL;
-
+SELECT 370000 / 92407 FROM DUAL
+;
 
 SELECT * FROM i_result_nr_2d_los
 ;
@@ -108,12 +117,18 @@ ORDER BY  SCENARIO_NM
 SELECT * FROM SCHEDULE_WEIGHT
 ;
 
+;
+
+
+--scenario_id=5113766
+--schedule_id = 8463234 (2D분석)
+--schedule_id = 8463235 (3D분석)
+
 
 -------------------------------------------------
 -- SCENARIO
 -------------------------------------------------
 SELECT * FROM SCENARIO
-WHERE 
 ;
 
 SELECT NVL(TRIM(SCENARIO_DESC),'') 

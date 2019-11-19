@@ -11,6 +11,9 @@ import scala.io.Source
 
 /*
 import com.sccomz.scala.etl.load.LoadPostManager
+LoadPostManager.oracleToPostgreAll("8463234");
+LoadPostManager.oracleToPostgreAll("8463235");
+
 LoadPostManager.oracleToPostgreAll("8459967");
 
  * */
@@ -26,9 +29,12 @@ object LoadPostManager {
     
     println("LoadPostManager start");    
 
-    oracleToPostgreAll("8463233");
-    //oracleToPostgreAll("8460064");
+
+    oracleToPostgreAll("8463234");
+    oracleToPostgreAll("8463235");
     
+    //oracleToPostgreAll("8463233");
+    //oracleToPostgreAll("8460064");
     
     //oracleToPostgre("8460178",1);
     //oracleToPostgre("8460179",1);

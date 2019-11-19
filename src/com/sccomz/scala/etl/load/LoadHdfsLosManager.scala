@@ -43,8 +43,19 @@ object LoadHdfsLosManager {
 
   def main(args: Array[String]): Unit = {
     samToParquetPartition("RESULT_NR_2D_LOS_RU","8460062","1012242284")
+    
   }
 
+  def executeRealPostToHdfs(scheduleId:String,ruId:String,bdYn:String) = {
+    samToParquetPartition("RESULT_NR_2D_LOS_RU",scheduleId,ruId);
+    if(bdYn=="Y") {
+      samToParquetPartition("RESULT_NR_2D_LOS_RU",scheduleId,ruId);
+      samToParquetPartition("RESULT_NR_2D_LOS_RU",scheduleId,ruId);
+      samToParquetPartition("RESULT_NR_2D_LOS_RU",scheduleId,ruId);
+      samToParquetPartition("RESULT_NR_2D_LOS_RU",scheduleId,ruId);
+    }
+  }
+  
   def samToParquetPartition(objNm:String,scheduleId:String,ruId:String) = {
     
     //--------------------------------------
@@ -52,10 +63,10 @@ object LoadHdfsLosManager {
     //--------------------------------------
     var srcEntityPath = App.hdfsLinuxEtlPath;
 /*
-    var objNm = "SCENARIO"
-    var scheduleId = "8459967"
+    var objNm = "RESULT_NR_2D_LOS_RU"
+    var scheduleId = "8463234"
     var cd = "local"
-    var schema = SCENARIO.schema;
+    var schema = RESULT_NR_2D_LOS_RU.schema;
 * * */
 
     //--------------------------------------

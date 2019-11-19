@@ -23,6 +23,11 @@ import com.sccomz.scala.etl.extract.oracle.sql.ExtractOraNrsystemSql
 
 /*
 import com.sccomz.scala.etl.extract.oracle.ExtractOraManager
+ExtractOraManager.extractOracleToPostgreIns("8463234")
+ExtractOraManager.extractOracleToPostgreIns("8463235")
+
+
+import com.sccomz.scala.etl.extract.oracle.ExtractOraManager
 ExtractOraManager.extractOracleToHadoopCsv("8463233")
 
 8463233	5113566
@@ -47,7 +52,8 @@ object ExtractOraManager {
   var tabNm = "";
 
   def main(args: Array[String]): Unit = {
-    extractOracleToPostgreIns("8463233");
+    extractOracleToPostgreIns("8463234");
+    extractOracleToPostgreIns("8463235");
     //extractOracleToHadoopCsv("8460064");
     //extractOracleToHadoopCsv("8460178");
 

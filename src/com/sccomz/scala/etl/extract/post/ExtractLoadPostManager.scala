@@ -22,11 +22,12 @@ import com.sccomz.scala.etl.load.LoadHdfsManager
 
 /*
 import com.sccomz.scala.etl.extract.post.ExtractLoadPostManager
+ExtractLoadPostManager.monitorJobDis("8463234","5113766");
+
+
 ExtractLoadPostManager.executeExtractLoadAvg("8463233","5113566");
 
-
 ExtractLoadPostManager.monitorJobDis("8463233","5113566");
-
 
 ExtractJobDisSql.selectRuCnt("8463233");
 ExtractLoadPostManager.extractPostToHadoopCsv("8460062","1012242284","gis01");
@@ -74,11 +75,16 @@ object ExtractLoadPostManager {
     var avgCnt = 1; 
 
     var loofCnt = 0;
+    var bdYn = "N";
+    
+    qry = ExtractJobDisSql.selectBdYn(scenarioId); println(qry);
+    rs = stat.executeQuery(qry); rs.next();
+    bdYn = rs.getString("BD_YN");
+    var procStat = if(bdYn=="Y") 4 else 3;
     try {
       while(ruCnt>extDoneCnt) {
         loofCnt += 1;
-
-        qry = ExtractJobDisSql.selectRuCnt(scheduleId); println(qry);
+        qry = ExtractJobDisSql.selectRuCnt(scheduleId,procStat); println(qry);
         rs = stat.executeQuery(qry); rs.next();
         ruCnt  = rs.getInt("RU_CNT");
         extDoneCnt = rs.getInt("EXT_DONE_CNT");
@@ -87,10 +93,8 @@ object ExtractLoadPostManager {
         println("extCnt="+extCnt);
 
         if(extCnt>0) {
-          //if(avgCnt==1) {executeExtractLoadAvg(scheduleId,scenarioId);avgCnt=2;}
-          executeExtractLoad(scheduleId);
+          executeExtractLoad(scheduleId,bdYn,procStat);
         }
-
         println("loofCnt="+loofCnt);
         Thread.sleep(1000*3);
 
@@ -105,10 +109,9 @@ object ExtractLoadPostManager {
     } finally {
       con.close();
     }
-
   }
 
-  def executeExtractLoad(scheduleId:String): Unit = {
+  def executeExtractLoad(scheduleId:String,bdYn:String,procStat:Int): Unit = {
 
     Class.forName(App.dbDriverPost);
     var con:Connection = DriverManager.getConnection(App.dbUrlPost,App.dbUserPost,App.dbPwPost);
@@ -117,11 +120,10 @@ object ExtractLoadPostManager {
     var qry = "";
     var ruId = ""; var clusterName = "";
 
-    qry = ExtractJobDisSql.selectExtRu(scheduleId); println(qry);
+    qry = ExtractJobDisSql.selectExtRu(scheduleId,procStat); println(qry);
     rs = stat.executeQuery(qry);
 
     var extList = mutable.Map[String,String]();
-
     
     while(rs.next()) {
     //if(rs.next()) {
@@ -134,16 +136,15 @@ object ExtractLoadPostManager {
     for(ext <- extList) {
         ruId  = ext._1; clusterName = ext._2;
         insertJobDisExt(scheduleId,ruId,"4")
-        extractPostToHadoopCsv(scheduleId,ruId,clusterName);
-        LoadHdfsLosManager.samToParquetPartition("RESULT_NR_2D_LOS_RU", scheduleId, ruId);
+        extractPostToHadoopCsv(scheduleId,ruId,clusterName,bdYn);
+        LoadHdfsLosManager.executeRealPostToHdfs(scheduleId, ruId, bdYn);
         updateJobDisExt(scheduleId,ruId,"5")
     }
 
     LoadHdfsLosManager.sparkClose();    
   }
 
-
-  def extractPostToHadoopCsv(scheduleId:String,ruId:String,clusterName:String) : Unit = {
+  def extractPostToHadoopCsv(scheduleId:String,ruId:String,clusterName:String,bdYn:String) : Unit = {
 
     Class.forName(App.dbDriverPost);
     var dbUrl = if(clusterName=="gis01") App.dbUrlPost else if(clusterName=="gis02") App.dbUrlPost2 else if(clusterName=="gis03") App.dbUrlPost3 else if(clusterName=="gis04") App.dbUrlPost4 else App.dbUrlPost;
@@ -162,14 +163,15 @@ object ExtractLoadPostManager {
     var pw = new PrintWriter(new File(filePathNm),"UTF-8");
     while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
 
-    // //---------------------------------------
-    //      tabNm = "LOS_BLD_RESULT_DIS"
-    // //---------------------------------------
-    // qry = ExtractPostLosBldResultDisSql.selectLosBldResultDisCsv(scheduleId); println(qry);
-    // rs = stat.executeQuery(qry);
-    // pw = new PrintWriter(new File(App.extJavaPath+"/"+tabNm+"_"+scheduleId+".dat" ),"UTF-8");
-    // while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
-    //
+    if(bdYn=="Y") {
+      //---------------------------------------
+           tabNm = "LOS_BLD_RESULT_DIS"
+      //---------------------------------------
+      qry = ExtractPostLosBldResultDisSql.selectLosBldResultDisCsv(scheduleId); println(qry);
+      rs = stat.executeQuery(qry);
+      pw = new PrintWriter(new File(App.extJavaPath+"/"+tabNm+"_"+scheduleId+".dat" ),"UTF-8");
+      while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
+    }
   }
 
   def executeExtractLoadAvg(scheduleId:String,scenarioId:String): Unit = {

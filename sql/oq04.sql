@@ -1,3 +1,6 @@
+
+
+
 SELECT
        ENB_ID                                      ||'|'||
        NVL(PCI,0)                                  ||'|'||

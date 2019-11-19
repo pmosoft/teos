@@ -2,12 +2,22 @@ package com.sccomz.scala.etl.extract.post.sql
 
 object ExtractJobDisSql {
 
-def selectRuCnt(scheduleId:String) = {
+def selectBdYn(scenarioId:String) = {
+s"""
+SELECT CASE WHEN COUNT(*) = 1 THEN 'Y' ELSE 'N' END AS BD_YN
+FROM   SCHEDULE 
+WHERE  SCENARIO_ID = ${scenarioId} 
+AND    TYPE_CD     = 'SC051'"""
+}
+  
+  
+  
+def selectRuCnt(scheduleId:String,stat:Int) = {
 s"""
 SELECT A.RU_CNT , A.POST_DONE_CNT, A.POST_DONE_CNT - B.EXT_DONE_CNT EXT_CNT, B.EXT_ING_CNT, B.EXT_DONE_CNT
 FROM  (
 		   SELECT COUNT(A.RU_ID)                                 AS RU_CNT
-		        , COUNT(CASE WHEN A.STAT=3 THEN 1 ELSE NULL END) AS POST_DONE_CNT
+		        , COUNT(CASE WHEN A.STAT=${stat} THEN 1 ELSE NULL END) AS POST_DONE_CNT
 		   FROM   JOB_DIS A
 		   WHERE  A.SCENARIO_ID IN (SELECT CAST(SCENARIO_ID AS TEXT) FROM SCHEDULE WHERE SCHEDULE_ID = ${scheduleId})
        ) A,
@@ -20,14 +30,15 @@ FROM  (
 """
 }
 
-def selectExtRu(scheduleId:String) = {
+
+def selectExtRu(scheduleId:String,stat:Int) = {
 s"""
 SELECT A.RU_ID
      , A.CLUSTER_NAME	     
 FROM  (SELECT * 
        FROM   JOB_DIS
        WHERE  SCENARIO_ID IN (SELECT CAST(SCENARIO_ID AS TEXT) FROM SCHEDULE WHERE SCHEDULE_ID = ${scheduleId})
-       AND    STAT = 3) A
+       AND    STAT = ${stat}) A
        LEFT OUTER JOIN (
        SELECT DISTINCT SCHEDULE_ID, RU_ID 
        FROM   JOB_DIS_ETL 
