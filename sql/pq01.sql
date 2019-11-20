@@ -53,10 +53,10 @@ where schedule_id = 8463235
 
 select * from JOB_DIS_ETL where SCHEDULE_ID = '8463235';
 
+delete from JOB_DIS_ETL where SCHEDULE_ID = '8463235';
 
 select * FROM LOS_BLD_RESULT
 where schedule_id = 8463235
-
 
 --scenario_id=5113766
 --schedule_id = 8463234 (2DºÐ¼®)

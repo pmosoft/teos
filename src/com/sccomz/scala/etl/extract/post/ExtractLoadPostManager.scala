@@ -174,7 +174,6 @@ object ExtractLoadPostManager {
     // pw = new PrintWriter(new File(filePathNm),"UTF-8");
     // while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
     
-    
     if(bdYn=="Y") {
       //---------------------------------------
            tabNm = "RESULT_NR_BF_LOS_RU"
