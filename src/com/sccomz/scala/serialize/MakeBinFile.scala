@@ -19,8 +19,8 @@ import com.sccomz.java.serialize.ByteUtil
 /*
 
 import com.sccomz.scala.serialize.MakeBinFile
-MakeBinFile.makeEngSectorResult("8463233", "LOS","SYS/5113566");
 MakeBinFile.executeEngResult("8463233");
+MakeBinFile.makeEngSectorResult("8463233", "LOS","SYS/5113566");
 
  * */
 object MakeBinFile {

@@ -46,13 +46,14 @@ object Los2{
 
   
 def main(args: Array[String]): Unit = {  
-  var scheduleId = if (args.length < 1) "" else args(0);
-  execute(scheduleId);
+  var scheduleId = if (args.length < 2) "" else args(0);
+  var queueNm    = if (args.length < 2) "" else args(1);
+  execute(scheduleId,"lQueue");
 }   
 
-def execute(scheduleId:String) = {
+def execute(scheduleId:String,queueNm:String) = {
   
-  val spark: SparkSession = SparkSession.builder().master("yarn").appName(this.getClass.getName).config("spark.sql.warehouse.dir","/TEOS/warehouse").enableHiveSupport().getOrCreate();
+  val spark: SparkSession = SparkSession.builder().master("yarn").appName(this.getClass.getName).config("queue",queueNm).config("spark.sql.warehouse.dir","/TEOS/warehouse").enableHiveSupport().getOrCreate();
   executeSqlSpark(spark, scheduleId);
   spark.close();
   //executeSql(scheduleId);

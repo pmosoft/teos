@@ -444,20 +444,19 @@ CREATE EXTERNAL TABLE I_LOS_ENG_RESULT (
 )
 PARTITIONED BY (SCHEDULE_ID INT, RU_ID STRING)
 STORED AS PARQUET
-LOCATION '/teos/warehouse/LOS_ENG_RESULT';
-
+LOCATION '/teos/warehouse/LOS_ENG_RESULT'
+;
 
 set hive.exec.dynamic.partition.mode=nonstrict;
  
 insert overwrite table schedule_t1 select * from schedule
 ;
 
-
 select distinct schedule_id from schedule
 ;
 
-select * from schedule;
-
+select * from schedule
+;
 
 CREATE EXTERNAL TABLE `default.schedule_t1`(
   `type_cd` string, 
@@ -498,6 +497,5 @@ LOCATION
 TBLPROPERTIES (
   'transient_lastDdlTime'='1573609940')
 ;  
-
 
 INSERT INTO SCHEDULE_T2 PARTITION (SCHEDULE_ID) SELECT * FROM SCHEDULE_T1;
