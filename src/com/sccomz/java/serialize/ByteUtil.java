@@ -42,8 +42,16 @@ public class ByteUtil {
 		byte[] INT_MAX = new byte[4];
 		INT_MAX[0] = (byte) 0x00;  INT_MAX[1] = (byte) 0x00; INT_MAX[2] = (byte) 0x00; INT_MAX[3] = (byte) 0x00;
         return INT_MAX;
+	} 
+	
+	public static byte[] intOne() {
+		byte[] INT_ONE = new byte[4];
+		INT_ONE[0] = (byte) 0x00;  INT_ONE[1] = (byte) 0x00; INT_ONE[2] = (byte) 0x00; INT_ONE[3] = (byte) 0x00;
+        return INT_ONE;
 	}
-    public static byte[] intToByteArray(int value) {
+
+	
+	public static byte[] intToByteArray(int value) {
         byte[] byteArray = new byte[4];
         byteArray[3] = (byte)(value >> 24);
         byteArray[2] = (byte)(value >> 16);

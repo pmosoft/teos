@@ -93,7 +93,7 @@ object ExecuteJob {
     typeStepCd="01"; insStepLog(scheduleId,typeStepCd);
     executeEtlOracleToHdfs(scheduleId,typeStepCd);
     executeEtlOracleToPostgre(scheduleId,typeStepCd); 
-    executeEtlHdfsToPostgre(scheduleId,typeStepCd); 
+    //executeEtlHdfsToPostgre(scheduleId,typeStepCd); 
     typeStepCd="02"; insStepLog(scheduleId,typeStepCd);
     var isLoof = true;
     while(isLoof) {

@@ -110,6 +110,9 @@ set hive.exec.dynamic.partition.mode=nonstrict;
 
 INSERT INTO RESULT_NR_BF_LOS_RU_BAK PARTITION (SCHEDULE_ID) SELECT * FROM RESULT_NR_BF_LOS_RU;
 
+SELECT * FROM RESULT_NR_BF_LOS_RU;
+
+
 SELECT SCHEDULE_ID,RU_ID FROM RESULT_NR_2D_LOS_RU LIMIT 1;
 
 sql("SELECT * FROM I_SCENARIO").take(100).foreach(println);
@@ -132,3 +135,26 @@ SELECT DISTINCT X_POINT, Y_POINT, LOS FROM I_RESULT_NR_2D_LOS WHERE scenario_id 
 
 SELECT * FROM i_result_nr_2d_pathloss WHERE scenario_id = 5104573 ORDER BY X_POINT, Y_POINT
 ;
+
+
+CREATE EXTERNAL TABLE TEST03 (
+  RU_ID                            STRING
+, BIN_X                             FLOAT
+)
+PARTITIONED BY (SCHEDULE_ID INT)
+STORED AS PARQUET
+LOCATION '/teos/warehouse/TEST03';
+
+set hive.exec.dynamic.partition.mode=nonstrict;
+
+
+insert into TEST03 partition (schedule_id)
+select '222' AS RU_ID
+     , 222 AS BIN_X
+     , '111' AS SCHEDULE_ID
+;
+
+SELECT * FROM TEST03;
+
+
+

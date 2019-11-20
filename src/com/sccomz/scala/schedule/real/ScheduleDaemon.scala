@@ -135,8 +135,8 @@ object ScheduleDaemon {
       //[삽입:SCHEDULE_EXT]
       qry = ScheduleDaemonSql.insertScheduleExt(scheduleId,jobWeight,jobThreshold); println(qry);
       stat.execute(qry);
-
     }
+    
   }
 
 

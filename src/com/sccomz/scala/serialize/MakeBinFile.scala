@@ -272,6 +272,7 @@ object MakeBinFile {
         var sqlDf2 = spark.sql(qry2);
       
         logger.info("makeEngRuResult 06 "+ruId._1);
+
         
         if(cdNm == "LOS") {
         	for (row <- sqlDf2.collect) {
