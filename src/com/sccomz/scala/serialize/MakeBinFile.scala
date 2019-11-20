@@ -26,7 +26,7 @@ MakeBinFile.makeEngSectorResult("8463233", "LOS","SYS/5113566");
 object MakeBinFile {
 
   val logger: Logger = Logger.getLogger(this.getClass.getName());
-  val spark: SparkSession = SparkSession.builder().master("yarn").appName(this.getClass.getName).getOrCreate();
+  val spark: SparkSession = SparkSession.builder().appName(this.getClass.getName).getOrCreate();
   
   var ruInfo = mutable.Map[String,String]();
   
@@ -217,7 +217,10 @@ object MakeBinFile {
     
     var qry2 = MakeBinFileSql.selectRuResultAll(scheduleId, tabNm, colNm); println(qry2);
     spark.sql("DROP TABLE IF EXISTS ENG_RU");
-    println(qry2); var tDF = spark.sql(qry2); tDF.cache.createOrReplaceTempView("ENG_RU"); tDF.count();
+    println(qry2);
+    var tDF = spark.sql(qry2);
+    tDF.cache.createOrReplaceTempView("ENG_RU");
+    tDF.count();
 
     logger.info("makeEngRuResult 02");
     

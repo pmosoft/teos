@@ -8,6 +8,11 @@ import java.sql.DriverManager
 import com.sccomz.scala.comm.App
 import java.sql.Statement
 
+/*
+import com.sccomz.scala.job.spark.bd.Los
+Los.execute("8460965");
+*/
+
 object Los {
 
   def main(args: Array[String]): Unit = {
