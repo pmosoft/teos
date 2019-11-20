@@ -86,7 +86,7 @@ qry = s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleI
 
 sql("set hive.exec.dynamic.partition.mode=nonstrict");
 
-    qry= s"""SELECT RU_ID FROM SCENARIO_NR_RU WHERE SCHEDULE_ID=${scheduleId}"""; println(qry);  var sqlDf = spark.sql(qry);
+    qry= s"""SELECT DISTINCT RU_ID FROM SCENARIO_NR_RU WHERE SCENARIO_ID IN (SELECT SCENARIO_ID FROM SCHEDULE WHERE SCHEDULE_ID = ${scheduleId})"""; println(qry);  var sqlDf = spark.sql(qry);
 
     var ruId = "";
     for (row <- sqlDf.collect) {
