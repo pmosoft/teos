@@ -29,6 +29,10 @@ AND    A.SCENARIO_ID = 5104574
 ORDER BY REG_DT DESC
 ;
 
+select * FROM   SCHEDULE where SCHEDULE_ID = 8463234;
+
+select * FROM   SCHEDULE where SCHEDULE_ID = 8463235;
+
 select * FROM   SCHEDULE where SCHEDULE_ID = 8460064;
 
 select * FROM   SCENARIO where SCENARIO_ID = 5104574;
@@ -37,5 +41,28 @@ select * FROM   MOBILE_PARAMETER where SCENARIO_ID = 5104574;
 
 select COUNT(*) FROM   SCENARIO_NR_RU where SCENARIO_ID = '5113566';
 
-select * from JOB_DIS
+select * from JOB_DIS where SCENARIO_ID = 5104574;
+
+select * FROM   SCHEDULE where SCHEDULE_ID = 8463234;
+
+select * FROM SCHEDULE where SCHEDULE_ID = 8463234;
+
+select * FROM LOS_BLD_RESULT
+where schedule_id = 8463235
 ;
+
+select * from JOB_DIS_ETL where SCHEDULE_ID = '8463235';
+
+
+select * FROM LOS_BLD_RESULT
+where schedule_id = 8463235
+
+
+--scenario_id=5113766
+--schedule_id = 8463234 (2D분석)
+--schedule_id = 8463235 (3D분석)
+
+
+
+
+

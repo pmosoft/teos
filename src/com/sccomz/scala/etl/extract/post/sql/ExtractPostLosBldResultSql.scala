@@ -9,9 +9,12 @@ SELECT
        FLOOR_X                                   ||'|'||
        FLOOR_Y                                   ||'|'||
        FLOOR_Z                                   ||'|'||
-       CASE WHEN LOS IS TRUE THEN 1 ELSE 0 END   ||'|'
-       '${scheduleId}'                                ||'|'||
-       '${ruId}'                                      ||'|'
+       FLOOR_DEM                                 ||'|'||
+       THETA_DEG                                 ||'|'||
+       PHI_DEG                                   ||'|'||
+       CASE WHEN LOS IS TRUE THEN 1 ELSE 0 END   ||'|'||
+       '${scheduleId}'                           ||'|'||
+       '${ruId}'                                 ||'|'
 FROM   LOS_BLD_RESULT
 WHERE  SCHEDULE_ID = ${scheduleId}
 AND    RU_ID  = '${ruId}'

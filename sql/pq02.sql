@@ -3,16 +3,75 @@ FROM  (
 		   SELECT COUNT(A.RU_ID)                              AS RU_CNT
 		        , COUNT(CASE WHEN A.STAT=3 THEN 1 ELSE NULL END) AS POST_DONE_CNT
 		   FROM   JOB_DIS A
-		   WHERE  A.SCENARIO_ID IN (SELECT CAST(SCENARIO_ID AS TEXT) FROM SCHEDULE WHERE SCHEDULE_ID = 8463233)
+		   WHERE  A.SCENARIO_ID IN (SELECT CAST(SCENARIO_ID AS TEXT) FROM SCHEDULE WHERE SCHEDULE_ID = 8463234)
        ) A,
       (
 		   SELECT COUNT(CASE WHEN B.STAT=4 THEN 1 ELSE 0 END) AS EXT_ING_CNT
 		        , COUNT(CASE WHEN B.STAT=5 THEN 1 ELSE 0 END) AS EXT_DONE_CNT
 		   FROM   JOB_DIS_ETL B
-		   WHERE  B.SCHEDULE_ID = '8463233'
+		   WHERE  B.SCHEDULE_ID = '8463234'
 	     ) B
 ;
 
+
+SELECT distinct STAT 
+FROM   JOB_DIS
+WHERE  SCENARIO_ID IN (SELECT CAST(SCENARIO_ID AS TEXT) FROM SCHEDULE WHERE SCHEDULE_ID = 8463234)
+;
+
+
+
+
+SELECT A.RU_ID
+     , A.CLUSTER_NAME	     
+FROM  (SELECT * 
+       FROM   JOB_DIS
+       WHERE  SCENARIO_ID IN (SELECT CAST(SCENARIO_ID AS TEXT) FROM SCHEDULE WHERE SCHEDULE_ID = 8463234)
+       AND    STAT = 3) A
+       LEFT OUTER JOIN (
+       SELECT DISTINCT SCHEDULE_ID, RU_ID 
+       FROM   JOB_DIS_ETL 
+       WHERE  SCHEDULE_ID = '8463234'
+       AND    STAT IN (5)   
+       ) B
+       ON   A.RU_ID       = B.RU_ID
+WHERE  B.RU_ID IS NULL
+;
+
+select *
+FROM   JOB_DIS_ETL B
+WHERE  B.SCHEDULE_ID = '8463234'
+;
+
+--scenario_id=5113766
+--schedule_id = 8463234 (2DºÐ¼®)
+
+select *
+FROM   JOB_DIS
+WHERE  SCENARIO_ID IN (SELECT CAST(SCENARIO_ID AS TEXT) FROM SCHEDULE WHERE SCHEDULE_ID = 8463234)
+and RU_ID = '1012138268'
+;
+
+select * from 
+
+
+-- ru_bld_list 4
+-- bld_list    
+
+SELECT
+       BIN_X                                          ||'|'||
+       BIN_Y                                          ||'|'||
+       BIN_Z                                          ||'|'||
+       CASE WHEN LOS IS TRUE THEN 1 ELSE 0 END        ||'|'||
+       THETA_DEG                                      ||'|'||
+       PHI_DEG                                        ||'|'||
+       CASE WHEN IN_BLD IS TRUE THEN 'T' ELSE 'F' END ||'|'||
+       '8463234'                                ||'|'||
+       '1012138268'                                      ||'|'
+FROM   LOS_ENG_RESULT
+WHERE  SCHEDULE_ID = 8463234
+AND    RU_ID  = '1012138268'
+;
 
 select COUNT(*)
 from (
@@ -126,7 +185,6 @@ WHERE  SCHEDULE_ID = 8460178
 limit 100
 ;
 
-
 SELECT
        BIN_X         
      , BIN_Y         
@@ -142,15 +200,11 @@ FROM   LOS_ENG_RESULT
 limit 100
 ;
 
-
-
-
 select scenario_id,sector_id
      , count(*)
 FROM LOS_ENG_RESULT
 group by scenario_id,sector_id
 ;
-
 
 select scenario_id,ru_id,stat,cluster_name
 from job_dis
