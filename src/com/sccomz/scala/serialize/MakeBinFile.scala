@@ -166,7 +166,7 @@ object MakeBinFile extends Logging {
     // SELECT DISTINCT X_POINT, Y_POINT, ${colNm} FROM   ${tabNm} WHERE  SCHEDULE_ID = ${scheduleId} ORDER BY X_POINT, Y_POINT
     val qry = MakeBinFileSql.selectSectorResult(scheduleId, tabNm, colNm)
     logInfo(qry)
-    val sqlDf = spark.sql(qry).repartition(2)
+    val sqlDf = spark.sql(qry).repartition(1)
     
     sqlDf.foreachPartition { p =>
       println("partition start")
@@ -195,6 +195,15 @@ object MakeBinFile extends Logging {
       
       println("writing to file")
 //      println(bin.mkString(","))
+      
+      import org.apache.hadoop.fs.{FileSystem, Path}
+        val fs = FileSystem.get(spark.sparkContext.hadoopConfiguration)
+       val out = fs.create(new Path("/user/icpap/sector"))
+       bin.foreach { e =>
+       out.write(e.value)
+        }
+//    out.write(image);
+    out.close();
       
       println("partition end")
     }
