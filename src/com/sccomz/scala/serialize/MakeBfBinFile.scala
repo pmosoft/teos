@@ -112,7 +112,7 @@ object MakeBfBinFile extends Logging {
 
     val dos = new DataOutputStream(new FileOutputStream("c:/pony/excel/bin/file03.bin"));
     dos.writeInt(ByteUtil.swap(bldCount));                                   // bldCount       int        4
-    dos.writeInt(ByteUtil.swap(resolution));                                 // bldCount       int        4
+    dos.writeInt(ByteUtil.swap(resolution));                                 // resolution     int        4
 
     //---------------------------------------------------------------------------------------------------------
        logInfo(s"""파일 Write Header ${scheduleId}""");
