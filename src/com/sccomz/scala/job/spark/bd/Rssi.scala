@@ -37,7 +37,7 @@ object Rssi {
     executeSql2(scheduleId);
   }
 
-  //  * * * Hive Query(RU) * * *
+  //  * * * Hive Query(RU별) * * *
   def executeSql(scheduleId: String) = {
     Class.forName(App.dbDriverHive);
     var con = DriverManager.getConnection(App.dbUrlHive,App.dbUserHive,App.dbPwHive);
@@ -137,11 +137,7 @@ select tbd_key, rx_tm_xpos, rx_tm_ypos, rx_floorz,
  group by tbd_key, rx_tm_xpos, rx_tm_ypos, rx_floorz
 """
     println(qry); stat.execute(qry);
-
+    
   }
 
-
 }
-  
-  
-  

@@ -54,7 +54,7 @@ val fs = FileSystem.get(conf)
 fs.delete(new Path(s"""/TEOS/warehouse/${objNm}/schedule_id=${scheduleId}"""),true)
 import spark.implicits._
 import spark.sql
-qry = s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; sql(qry);
+qry = s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; println(qry); sql(qry);
 
 //---------------------------------------------------
     println("insert partition table");
@@ -118,7 +118,7 @@ val fs = FileSystem.get(conf)
 fs.delete(new Path(s"""/TEOS/warehouse/${objNm}/schedule_id=${scheduleId}"""),true)
 import spark.implicits._
 import spark.sql
-qry = s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; sql(qry);
+qry = s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; println(qry); sql(qry);
 
 //---------------------------------------------------
     println("insert partition table");
@@ -133,9 +133,6 @@ select tbd_key, rx_tm_xpos, rx_tm_ypos, rx_floorz,
 """
 println(qry); spark.sql(qry).take(100).foreach(println);
 
-}
+  }
 
 }
-  
-  
-  
