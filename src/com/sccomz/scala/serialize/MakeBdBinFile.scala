@@ -101,7 +101,8 @@ object MakeBdBinFile {
     var x_bin_cnt = 0; var y_bin_cnt = 0;
 
     logger.info("============================= 초기화 ==============================");
-    var qry2= MakeBinFileSql.selectBinCnt(scheduleId); println(qry2);
+    
+    var qry2= MakeBdBinFileSql.selectResultNrBfScenHeader(scheduleId); println(qry2);
     var sqlDf = spark.sql(qry2);
     
     for (row <- sqlDf.collect) {
@@ -130,12 +131,12 @@ object MakeBdBinFile {
     // Value 세팅
     //---------------------------------------------------------------------------------------------------------
     var tabNm = "";  var colNm = "";
-         if(cdNm=="LOS"     )    { tabNm = "RESULT_NR_BF_LOS"      ; colNm = "LOS"     ;}
-    else if(cdNm=="PATHLOSS")    { tabNm = "RESULT_NR_BF_PATHLOSS" ; colNm = "PATHLOSS";}
+         if(cdNm=="LOS"     )    { tabNm = "RESULT_NR_BF_LOS"        ; colNm = "LOS"     ;}
+    else if(cdNm=="PATHLOSS")    { tabNm = "RESULT_NR_BF_PATHLOSS"   ; colNm = "PATHLOSS";}
     else if(cdNm=="BEST_SERVER") { tabNm = "RESULT_NR_BF_BESTSERVER" ; colNm = "RU_SEQ";}
-    else if(cdNm=="PILOT_EC")    { tabNm = "RESULT_NR_BF_RSRP" ; colNm = "RSRP";}
-    else if(cdNm=="RSSI")        { tabNm = "RESULT_NR_BF_RSSI" ; colNm = "RSSI";}
-    else if(cdNm=="C2I")         { tabNm = "RESULT_NR_BF_SINR" ; colNm = "SINR";}
+    else if(cdNm=="PILOT_EC")    { tabNm = "RESULT_NR_BF_RSRP"       ; colNm = "RSRP";}
+    else if(cdNm=="RSSI")        { tabNm = "RESULT_NR_BF_RSSI"       ; colNm = "RSSI";}
+    else if(cdNm=="C2I")         { tabNm = "RESULT_NR_BF_SINR"       ; colNm = "SINR";}
     qry2= MakeBinFileSql.selectSectorResult(scheduleId, tabNm, colNm);  println(qry2);
     sqlDf = spark.sql(qry2);
     

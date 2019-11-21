@@ -43,7 +43,7 @@ object EngManager {
     if(jobWeight==2) queueNm = "mQueue";
     if(jobWeight==3) queueNm = "hQueue";    
     
-    Los.execute(scheduleId);
+    Los.execute(scheduleId,"");
     //PathLoss.execute(scheduleId);
     //RsrpPilot.execute(scheduleId);
     //Rsrp.execute(scheduleId);

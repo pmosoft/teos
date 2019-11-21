@@ -58,22 +58,23 @@ select a.scenario_id, b.schedule_id,
 ),
 HEADERtemp as
 (
-select a.schedule_id, a.tbd_key,
+select a.schedule_id, a.ru_id, a.tbd_key,
        b.nx as nx2, b.ny as ny2, b.floorz as floorz2, b.ext_sx as ext_sx2, b.ext_sy as ext_sy2,
        c.nx as nx5, c.ny as ny5, c.floorz as floorz5, c.ext_sx as ext_sx5, c.ext_sy as ext_sy5
-  from RESULT_NR_BF_TBDKEY a, BUILDING_3DS_HEADER b, BUILDING_3DS_HEADER_5BY5 c
+  from RESULT_NR_BF_RU_TBDKEY a, BUILDING_3DS_HEADER b, BUILDING_3DS_HEADER_5BY5 c
  where a.schedule_id = ${scheduleId}
    and a.tbd_key = b.tbd_key
    and a.tbd_key = c.tbd_key
 )
-insert into RESULT_NR_BF_SCEN_HEADER partition(schedule_id=${scheduleId})
-SELECT a.tbd_key,
+insert into RESULT_NR_BF_RU_HEADER partition(schedule_id)
+SELECT a.ru_id, a.tbd_key,
        row_number() over () - 1 as building_index,
        if (b.resolution = 2, nx2, nx5) as nx,
        if (b.resolution = 2, ny2, ny5) as ny,
        if (b.resolution = 2, floorz2, floorz5) as floorz,
        if (b.resolution = 2, ext_sx2, ext_sx5) as ext_sx,
-       if (b.resolution = 2, ext_sy2, ext_sy5) as ext_sy
+       if (b.resolution = 2, ext_sy2, ext_sy5) as ext_sy,
+       a.schedule_id
   from HEADERtemp a, AREA b
  where a.schedule_id = b.schedule_id
 """
