@@ -41,15 +41,15 @@ public class ByteUtil {
 		byte[] INT_MAX = new byte[4];
 		INT_MAX[0] = (byte) 0x00;  INT_MAX[1] = (byte) 0x00; INT_MAX[2] = (byte) 0x00; INT_MAX[3] = (byte) 0x00;
         return INT_MAX;
-	} 
-	
+	}
+
 	public static byte[] intOne() {
 		byte[] INT_ONE = new byte[4];
 		INT_ONE[0] = (byte) 0x00;  INT_ONE[1] = (byte) 0x00; INT_ONE[2] = (byte) 0x00; INT_ONE[3] = (byte) 0x00;
         return INT_ONE;
 	}
 
-	
+
 	public static byte[] intToByteArray(int value) {
         byte[] byteArray = new byte[4];
         byteArray[3] = (byte)(value >> 24);
@@ -58,7 +58,7 @@ public class ByteUtil {
         byteArray[0] = (byte)(value);
         return byteArray;
     }
-    
+
 	public static byte[] floatToByteArray(float value) {
 		int floatValue = Float.floatToIntBits(value);
 		return intToByteArray(floatValue);
@@ -76,5 +76,19 @@ public class ByteUtil {
         int value =  byteArrayToInt(bytes);
         return Float.intBitsToFloat(value);
     }
-    
+
+    public static short swap(short x) { return (short)((x << 8) | ((x >> 8) & 0xff)); }
+    public static char swap(char x) { return (char)((x << 8) | ((x >> 8) & 0xff)); }
+    public static int swap(int x) { return (int)((swap((short)x) << 16) | swap((short)(x >> 16)) & 0xffff); }
+    public static long swap(long x) { return (long)(((long)swap((int)(x)) << 32) | ((long)swap((int)(x >> 32)) & 0xffffffffL)); }
+    public static float swap(float x) { return Float.intBitsToFloat(swap(Float.floatToRawIntBits(x))); }
+    public static double swap(double x) { return Double.longBitsToDouble(swap(Double.doubleToRawLongBits(x))); }
+
+    public static String swapString20(String str) {
+    	char[] c20 = new char[20];
+    	for(int i=0;i<c20.length;i++)  { c20[i]= (byte) 0x00;	}
+    	for(int i=0;i<str.length();i++){ c20[i]= swap(str.charAt(i)); }
+    	return c20.toString();
+    }
+
 }

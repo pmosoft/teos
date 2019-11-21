@@ -8,15 +8,23 @@ import java.io._
 import java.io.File;
 import com.sccomz.scala.comm.App
 
-object MakeBdBinFileSql {
+object MakeBfBinFileSql {
 
 def main(args: Array[String]): Unit = {
 }
 
 def selectResultNrBfScenHeader(scheduleId:String) = {
+    // int    buildingIndex; // Building Index
+    // char   cTBDKey[20];	 // TBD Key
+    // UCha   xyz[4];			   // 0 : X Bin Count
+    // 				               // 1 : Y Bin count
+    //                       // 2 : Z floor
+    //                       // 3 : Padding
+    // float  startX, startY;	// Building Border letf bottom
+    // ULLong	startPointBin;	// start point of BIN data
 s"""
-SELECT TBD_KEY
-     , BUILDING_INDEX
+SELECT BUILDING_INDEX
+     , TBD_KEY
      , NX
      , NY
      , FLOORZ
@@ -24,12 +32,13 @@ SELECT TBD_KEY
      , EXT_SY
 FROM   RESULT_NR_BF_SCEN_HEADER
 WHERE  SCHEDULE_ID = ${scheduleId}
+ORDER BY BUILDING_INDEX
 """
 }
 
 def selectResultNrBfRuHeader(scheduleId:String) = {
 s"""
-SELECT RU_ID 
+SELECT RU_ID
      , TBD_KEY
      , BUILDING_INDEX
      , NX
@@ -39,38 +48,26 @@ SELECT RU_ID
      , EXT_SY
      , SCHEDULE_ID
 FROM   RESULT_NR_BF_RU_HEADER
-WHERE  SCHEDULE_ID = ${scheduleId}  
-"""
-}
-
-// X,Y Total Bin 갯수
-def selectBinCnt(scheduleId:String) = {
-s"""
-SELECT BIN_X_CNT
-     , BIN_Y_CNT
-FROM   SCHEDULE
 WHERE  SCHEDULE_ID = ${scheduleId}
 """
 }
 
-// Directory Name Create
-def selectBinFilePath(scheduleId:String) = {
+def selectBldCount() = {
 s"""
-SELECT B.SCHEDULE_ID
-     , A.X_BIN_CNT, A.Y_BIN_CNT
-     --, DATE_FORMAT(CURRENT_DATE(), 'yyyyMMdd') AS TODATE
-     , B.USER_ID
-     , A.ENB_ID
-     , A.PCI
-     , A.PCI_PORT
-     , A.RU_ID
-     , CONCAT(B.USER_ID,'/',A.SCENARIO_ID) AS SECTOR_PATH
-     , CONCAT(B.USER_ID,'/',A.SCENARIO_ID,'/ENB_',A.ENB_ID,'/PCI_',A.PCI,'_PORT_',A.PCI_PORT,'_',A.RU_ID) AS RU_PATH
-FROM   SCENARIO_NR_RU A, SCHEDULE B
-WHERE  B.SCHEDULE_ID = ${scheduleId}
-AND    A.SCENARIO_ID = B.SCENARIO_ID
+SELECT COUNT(DISTINCT TBD_KEY) AS bldCount
+FROM   M_RESULT_NR_BF_SCEN_HEADER
 """
 }
+
+// RESOLUTION
+def selectResolution(scheduleId:String) = {
+s"""
+SELECT RESOLUTION
+FROM   SCENARIO
+WHERE  SCENARIO_ID = (SELECT SCENARIO_ID FROM SCHEDULE WHERE SCHEDULE_ID = ${scheduleId})
+"""
+}
+
 
 // Value Setting..
 def selectSectorResult(scheduleId:String,tabNm:String,colNm:String) = {
@@ -101,7 +98,7 @@ SELECT B.SCHEDULE_ID, A.ENB_ID, A.PCI, A.PCI_PORT, A.RU_ID,
    AND A.SCENARIO_ID = B.SCENARIO_ID
 )
 SELECT RU_ID, X_POINT, Y_POINT, ${colNm} AS VALUE
-FROM 
+FROM
 (
 SELECT DISTINCT
        A.RU_ID, B.X_BIN_CNT, B.Y_BIN_CNT,
@@ -124,7 +121,7 @@ AND   Y_POINT < Y_BIN_CNT
 
 def selectRuResult2(ruId:String) = {
 s"""
-SELECT X_POINT, Y_POINT, VALUE 
+SELECT X_POINT, Y_POINT, VALUE
 FROM   ENG_RU
 WHERE  RU_ID = ${ruId}
 """
@@ -147,7 +144,7 @@ SELECT B.SCHEDULE_ID, A.ENB_ID, A.PCI, A.PCI_PORT, A.RU_ID,
    AND A.RU_ID       = ${ruId}
 )
 SELECT X_POINT, Y_POINT, ${colNm}
-FROM 
+FROM
 (
 SELECT DISTINCT
        B.X_BIN_CNT, B.Y_BIN_CNT,

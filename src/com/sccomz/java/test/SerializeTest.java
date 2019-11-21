@@ -5,8 +5,8 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+
+import com.sccomz.java.serialize.ByteUtil;
 
 public class SerializeTest {
 
@@ -14,8 +14,7 @@ public class SerializeTest {
         //SerializeTest s = new SerializeTest();
         //s.array2to1();
 
-
-        hexWriteTest02();
+        hexWriteTest04();
         //s.readBin();
         //s.writeBinTest01();
         //s.readBinTest01();
@@ -23,34 +22,6 @@ public class SerializeTest {
 
         //s.array2to1();
         //s.bytePrint();
-
-        //byte[] bb = s.floatToByteArray(Float.MAX_VALUE);
-        //System.out.println(bb[0]);
-        //System.out.println(bb[1]);
-        //System.out.println(bb[2]);
-        //System.out.println(bb[3]);
-        //System.out.println(byteArrayToHexString(bb));
-        //
-        //bb = s.floatToByteArray(Float.MIN_VALUE);
-        //System.out.println(bb[0]);
-        //System.out.println(bb[1]);
-        //System.out.println(bb[2]);
-        //System.out.println(bb[3]);
-        //System.out.println(byteArrayToHexString(bb));
-        //
-        ////binary bytes, 11111111 11111111 11111111 01111111. decimal ... hexidecimal, FFFFFF7F
-        //
-        //String myString = "BF800000";
-        //myString = "42CF43D7";
-        //myString = "42CF1F74";
-        //
-        //Long i = Long.parseLong(myString, 16);
-        //Float f = Float.intBitsToFloat(i.intValue());
-        //System.out.println(f);
-        //System.out.println(Integer.toHexString(Float.floatToIntBits(f)));
-
-        //new Byte4(ByteUtil.floatMax())
-
     }
 
     static short swap(short x) { return (short)((x << 8) | ((x >> 8) & 0xff)); }
@@ -61,6 +32,22 @@ public class SerializeTest {
     static double swap(double x) { return Double.longBitsToDouble(swap(Double.doubleToRawLongBits(x))); }
 
 
+	public static void hexWriteTest04(){
+	    int i = Integer.parseUnsignedInt("4294967295");
+	    long l = Long.parseUnsignedLong("18446744073709551615");
+	    
+
+	    System.out.println("i의 값");
+	    System.out.println(i);
+	    System.out.println(Integer.toUnsignedString(i));
+	    System.out.println(Integer.toUnsignedString(i, 2)); // 2진법
+
+	    System.out.println("l의 값");
+	    System.out.println(l);
+	    System.out.println(Long.toUnsignedString(l));
+	    System.out.println(Long.toUnsignedString(l, 2)); // 2진법
+
+	}
 	public static void hexWriteTest03(){
 
 
@@ -84,7 +71,7 @@ public class SerializeTest {
         DataOutputStream dos = null;
         try {
         	dos = new DataOutputStream(new FileOutputStream("c:/pony/excel/bin/file03.bin"));
-        	dos.writeInt(swap(value));
+        	dos.writeInt(ByteUtil.swap(value));
        } catch (Exception e) { e.printStackTrace(); }
 	}
 
@@ -345,7 +332,35 @@ public class SerializeTest {
         }
     }
 
+    void test01(){
+        //byte[] bb = s.floatToByteArray(Float.MAX_VALUE);
+        //System.out.println(bb[0]);
+        //System.out.println(bb[1]);
+        //System.out.println(bb[2]);
+        //System.out.println(bb[3]);
+        //System.out.println(byteArrayToHexString(bb));
+        //
+        //bb = s.floatToByteArray(Float.MIN_VALUE);
+        //System.out.println(bb[0]);
+        //System.out.println(bb[1]);
+        //System.out.println(bb[2]);
+        //System.out.println(bb[3]);
+        //System.out.println(byteArrayToHexString(bb));
+        //
+        ////binary bytes, 11111111 11111111 11111111 01111111. decimal ... hexidecimal, FFFFFF7F
+        //
+        //String myString = "BF800000";
+        //myString = "42CF43D7";
+        //myString = "42CF1F74";
+        //
+        //Long i = Long.parseLong(myString, 16);
+        //Float f = Float.intBitsToFloat(i.intValue());
+        //System.out.println(f);
+        //System.out.println(Integer.toHexString(Float.floatToIntBits(f)));
 
+        //new Byte4(ByteUtil.floatMax())
+
+    }
     void readBinTest01(){
         File file = new File("d:/fframe/workspace/pony/src/test/java/test/serialize/file.bin") ;
         FileInputStream fis = null ;
