@@ -99,21 +99,7 @@ object MakeBfBinFile extends Logging {
     ruInfo;
   }
 
-  // todo use jdbc
-  def getBinCounts(scheduleId: String): (Int, Int) = {
-    val qry = MakeBinFileSql.selectBinCnt(scheduleId)
-    logInfo(qry)
-    val sqlDf = spark.sql(qry)
 
-    val row = sqlDf.collect.last
-    val x_bin_cnt = row(0).asInstanceOf[Int]
-    val y_bin_cnt = row(1).asInstanceOf[Int]
-    
-    println(s"x_bin_cnt=$x_bin_cnt, y_bin_cnt=$y_bin_cnt")
-
-    (x_bin_cnt, y_bin_cnt)
-  }
-  
   def initialArray(x_bin_count: Int, y_bin_count: Int, initialValue: Array[Byte]) = {
       val iv = new Byte4(initialValue)
 
@@ -126,31 +112,44 @@ object MakeBfBinFile extends Logging {
       bin
   }
 
+  //def getBinCounts(scheduleId: String): (Int, Int) = {
+  //  // val qry = MakeBinFileSql.selectBinCnt(scheduleId)
+  //  // logInfo(qry)
+  //  // val sqlDf = spark.sql(qry)
+  //  // 
+  //  // val row = sqlDf.collect.last
+  //  // val x_bin_cnt = row(0).asInstanceOf[Int]
+  //  // val y_bin_cnt = row(1).asInstanceOf[Int]
+  //  // 
+  //  // println(s"x_bin_cnt=$x_bin_cnt, y_bin_cnt=$y_bin_cnt")
+  //  // 
+  //  // (x_bin_cnt, y_bin_cnt)
+  //}  
+  
+  
   // 섹터 결과
   def makeSectorResult(spark: SparkSession, scheduleId: String, cdNm: String, sectorPath: String) = {
-
+    
     logInfo(s"""makeSectorResult start ${scheduleId}""")
 
-    val names = cdNm match {
-      case "LOS"         => ("RESULT_NR_BF_LOS"        , "LOS"     )
-      case "PATHLOSS"    => ("RESULT_NR_BF_PATHLOSS"   , "PATHLOSS")
-      case "BEST_SERVER" => ("RESULT_NR_BF_BESTSERVER" , "RU_SEQ"  )
-      case "PILOT_EC"    => ("RESULT_NR_BF_RSRP"       , "RSRP"    )
-      case "RSSI"        => ("RESULT_NR_BF_RSSI"       , "RSSI"    )
-      case "C2I"         => ("RESULT_NR_BF_SINR"       , "SINR"    )
-    }
+    // int    buildingIndex; // Building Index
+    // char   cTBDKey[20];	 // TBD Key
+    // UCha   xyz[4];			   // 0 : X Bin Count
+    // 				               // 1 : Y Bin count
+    //                       // 2 : Z floor
+    //                       // 3 : Padding
+    // float  startX, startY;	// Building Border letf bottom
+    // ULLong	startPointBin;	// start point of BIN data
 
-    val tabNm = names._1
-    val colNm = names._2
-
-    // SELECT DISTINCT X_POINT, Y_POINT, ${colNm} FROM   ${tabNm} WHERE  SCHEDULE_ID = ${scheduleId} ORDER BY X_POINT, Y_POINT
-    val qry = MakeBfBinFileSql.selectSectorResult(scheduleId, tabNm, colNm)
-    logInfo(qry)
-    val sqlDf = spark.sql(qry).repartition(1)
-    
-    sqlDf.foreachPartition { p =>
+	  //int    bldCount;
+	  //int    resolution;    
+	  //char*  bldHeader;	// BuildingHeader    
+	  //ULLong binCount;	// binData Count(do not save in file)    
+	  //char*  binData;    
+    var qry = "";
+    val headerDF = spark.sql(qry).repartition(1); logInfo(qry); headerDF.cache.createOrReplaceTempView("M_RESULT_NR_BF_SCEN_HEADER");
+    headerDF.foreachPartition { p =>
       println("partition start") 
-
 
       p.foreach { row =>
        //val i = row(0).asInstanceOf[Int] * binCounts._1 + row(1).asInstanceOf[Int]
@@ -171,21 +170,65 @@ object MakeBfBinFile extends Logging {
        // }
         
       }
-      
-      println("writing to file")
-//      println(bin.mkString(","))
-      
-      import org.apache.hadoop.fs.{FileSystem, Path}
-        val fs = FileSystem.get(spark.sparkContext.hadoopConfiguration)
-       val out = fs.create(new Path("/user/icpap/sector"))
-       bin.foreach { e =>
-       out.write(e.value)
-        }
-    out.close()
-      
-    logInfo(s"""makeSectorResult end ${scheduleId}""")
-
     }
+    
+    logInfo(s"""makeSectorResult start ${scheduleId}""")
+
+    val names = cdNm match {
+      case "LOS"         => ("RESULT_NR_BF_LOS"        , "LOS"     )
+      case "PATHLOSS"    => ("RESULT_NR_BF_PATHLOSS"   , "PATHLOSS")
+      case "BEST_SERVER" => ("RESULT_NR_BF_BESTSERVER" , "RU_SEQ"  )
+      case "PILOT_EC"    => ("RESULT_NR_BF_RSRP"       , "RSRP"    )
+      case "RSSI"        => ("RESULT_NR_BF_RSSI"       , "RSSI"    )
+      case "C2I"         => ("RESULT_NR_BF_SINR"       , "SINR"    )
+    }
+
+    // val tabNm = names._1
+    // val colNm = names._2
+    // 
+    // // SELECT DISTINCT X_POINT, Y_POINT, ${colNm} FROM   ${tabNm} WHERE  SCHEDULE_ID = ${scheduleId} ORDER BY X_POINT, Y_POINT
+    // val qry = MakeBfBinFileSql.selectSectorResult(scheduleId, tabNm, colNm)
+    // logInfo(qry)
+    // val sqlDf = spark.sql(qry).repartition(1)
+    // 
+    // sqlDf.foreachPartition { p =>
+    //   println("partition start") 
+    // 
+    // 
+    //   p.foreach { row =>
+    //    //val i = row(0).asInstanceOf[Int] * binCounts._1 + row(1).asInstanceOf[Int]
+    //    //
+    //    //bin(i).value = colNm match {
+    //    //   case "LOS" =>
+    //    //     ByteUtil.intToByteArray(row(2).asInstanceOf[Int])
+    //    //   case "PATHLOSS" =>
+    //    //     ByteUtil.floatToByteArray(row(2).asInstanceOf[Float])
+    //    //   case "RU_SEQ" =>
+    //    //     ByteUtil.intToByteArray(row(2).asInstanceOf[Int])
+    //    //   case "RSRP" =>
+    //    //     ByteUtil.floatToByteArray(row(2).asInstanceOf[Float])
+    //    //   case "RSSI" =>
+    //    //     ByteUtil.floatToByteArray(row(2).asInstanceOf[Float])
+    //    //   case _ =>
+    //    //     ByteUtil.floatToByteArray(row(2).asInstanceOf[Float])
+    //    // }
+    //     
+    //   }
+    //   
+    //   println("writing to file")
+//  //     println(bin.mkString(","))
+    //   
+    //   import org.apache.hadoop.fs.{FileSystem, Path}
+    //     val fs = FileSystem.get(spark.sparkContext.hadoopConfiguration)
+    //    val out = fs.create(new Path("/user/icpap/sector"))
+    //    bin.foreach { e =>
+    //    out.write(e.value)
+    //     }
+    // out.close()
+    //   
+    // logInfo(s"""makeSectorResult end ${scheduleId}""")
+
+    //}
 
 /*    sqlDf.collect.foreach { row =>
       val i = row(0).asInstanceOf[Int] * binCounts._1 + row(1).asInstanceOf[Int]
