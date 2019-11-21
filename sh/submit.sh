@@ -25,6 +25,7 @@ spark2-submit --master yarn --class com.sccomz.scala.job.spark.eng.Los2 /home/ic
 # BatchJob 실행
 spark2-submit --jars /home/icpap/lib/hiveJdbc11.jar,/home/icpap/lib/ojdbc7.jar --class com.sccomz.scala.schedule.batch.BatchJob /home/icpap/bin/teos.jar 20191111
 
+spark2-submit --master local[*] --properties-file spark-defaults.conf --driver-memory 8g --jars /home/icpap/lib/hiveJdbc11.jar --class com.sccomz.scala.serialize.MakeBinFile /home/icpap/bin/teos.jar 8463233
 
 
 

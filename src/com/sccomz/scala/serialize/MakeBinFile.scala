@@ -202,8 +202,7 @@ object MakeBinFile extends Logging {
        bin.foreach { e =>
        out.write(e.value)
         }
-//    out.write(image);
-    out.close();
+    out.close()
       
       println("partition end")
     }
