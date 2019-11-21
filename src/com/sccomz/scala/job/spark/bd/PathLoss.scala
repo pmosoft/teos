@@ -35,10 +35,8 @@ def main(args: Array[String]): Unit = {
 }     
 
 def execute(scheduleId:String) = {
-  //val spark: SparkSession = SparkSession.builder().master("yarn").appName(this.getClass.getName).config("spark.sql.warehouse.dir","/TEOS/warehouse").enableHiveSupport().getOrCreate();
-  //executeSql(spark, scheduleId);
-  //spark.close();
   executeSql(scheduleId);
+  executeSql2(scheduleId);
 }
 
  

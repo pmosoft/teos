@@ -31,10 +31,6 @@ def main(args: Array[String]): Unit = {
 }
 
 def execute(scheduleId:String) = {
-  //val spark: SparkSession = SparkSession.builder().master("yarn").appName(this.getClass.getName).config("spark.sql.warehouse.dir","/TEOS/warehouse").enableHiveSupport().getOrCreate();
-  //executeSql(spark, scheduleId);
-  //executeSql2(spark, scheduleId);
-  //spark.close();
   executeSql(scheduleId);
   executeSql2(scheduleId);
 }
@@ -51,7 +47,7 @@ var objNm = "RESULT_NR_BF_RSRP_RU"
     println(objNm + " 시작");
 //------------------------------------------------------
 
-var qry=s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; println(qry);stat.execute(qry);
+var qry=s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; println(qry); stat.execute(qry);
 
 //---------------------------------------------------
     println("partiton 파일 삭제 및 drop table partition");
@@ -59,7 +55,7 @@ var qry=s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (schedule_id=${schedul
 val conf = new Configuration()
 val fs = FileSystem.get(conf)
 fs.delete(new Path(s"""/TEOS/warehouse/${objNm}/schedule_id=${scheduleId}"""),true)
-qry=s"""set hive.exec.dynamic.partition.mode=nonstrict"""; println(qry);stat.execute(qry);
+qry=s"""set hive.exec.dynamic.partition.mode=nonstrict"""; println(qry); stat.execute(qry);
 
 //---------------------------------------------------
     println("insert partition table");
@@ -100,7 +96,7 @@ var objNm = "RESULT_NR_BF_RSRP"
     println(objNm + " 시작");
 //------------------------------------------------------
 
-var qry=s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; println(qry);stat.execute(qry);
+var qry = s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; println(qry); stat.execute(qry);
 
 //---------------------------------------------------
     println("partiton 파일 삭제 및 drop table partition");
@@ -108,13 +104,13 @@ var qry=s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (schedule_id=${schedul
 val conf = new Configuration()
 val fs = FileSystem.get(conf)
 fs.delete(new Path(s"""/TEOS/warehouse/${objNm}/schedule_id=${scheduleId}"""),true)
-qry=s"""set hive.exec.dynamic.partition.mode=nonstrict"""; println(qry);stat.execute(qry);
+qry = s"""set hive.exec.dynamic.partition.mode=nonstrict"""; println(qry);stat.execute(qry);
 
 //---------------------------------------------------
     println("insert partition table");
 //---------------------------------------------------
 qry = s"""
-insert into RESULT_NR_BF_RSRP partition (schedule_id)
+insert into ${objNm} partition (schedule_id)
 select tbd_key, rx_tm_xpos, rx_tm_ypos, rx_floorz, 
        max(rsrp) as rsrp,
        max(schedule_id) as schedule_id
