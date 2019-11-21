@@ -36,7 +36,6 @@ def execute(scheduleId:String) = {
   executeSql(spark, scheduleId);
   spark.close();
 }
- 
 
 def executeSql(spark: SparkSession, scheduleId:String) = {
   
@@ -55,7 +54,7 @@ val fs = FileSystem.get(conf)
 fs.delete(new Path(s"""/TEOS/warehouse/${objNm}/schedule_id=${scheduleId}"""),true)
 import spark.implicits._
 import spark.sql
-qry = s"""ALTER TABLE I_${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; sql(qry);
+qry = s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; sql(qry);
 
 //---------------------------------------------------
     println("insert partition table");
@@ -321,10 +320,10 @@ select a.scenario_id, a.schedule_id, a.rx_tm_xpos, a.rx_tm_ypos, a.x_point, a.y_
 		     else  a.sinr
 		 end as dValue1
   from RESULT_NR_2D_SINR a, NR_DLTRAFFIC b
- where a.schedule_id = 8463189
+ where a.schedule_id = ${scheduleId}
    and a.schedule_id = b.schedule_id
 )
-insert into I_${objNm} partition (schedule_id=${scheduleId})
+insert into ${objNm} partition (schedule_id=${scheduleId})
 select a.scenario_id, a.rx_tm_xpos, a.rx_tm_ypos, a.x_point, a.y_point,
        case when a.dSNR >= a.snr15 + a.dSINROffset then
                    a.thp15

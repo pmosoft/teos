@@ -54,7 +54,7 @@ val fs = FileSystem.get(conf)
 fs.delete(new Path(s"""/TEOS/warehouse/${objNm}/schedule_id=${scheduleId}"""),true)
 import spark.implicits._
 import spark.sql
-qry = s"""ALTER TABLE I_${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; sql(qry);
+qry = s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; println(qry); sql(qry);
 
 //---------------------------------------------------
     println("insert partition table");
@@ -144,7 +144,7 @@ SELECT a.scenario_id, a.schedule_id, a.ru_id, a.enb_id, a.cell_id, a.rx_tm_xpos,
    and a.rx_tm_xpos = c.rx_tm_xpos
    and a.rx_tm_ypos = c.rx_tm_ypos
 )
-insert into I_${objNm} partition (schedule_id=${scheduleId})
+insert into ${objNm} partition (schedule_id=${scheduleId})
 select a.scenario_id, a.ru_id, a.enb_id, a.cell_id, a.rx_tm_xpos, a.rx_tm_ypos, a.los, a.pathloss,
        a.antenna_gain, a.pathlossprime, a.rsrppilot, a.rssinonoise, a.rssi, a.ru_seq,
        a.scenrssi, b.rsrp,
@@ -185,7 +185,7 @@ val fs = FileSystem.get(conf)
 fs.delete(new Path(s"""/TEOS/warehouse/${objNm}/schedule_id=${scheduleId}"""),true)
 import spark.implicits._
 import spark.sql
-qry = s"""ALTER TABLE I_${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; sql(qry);
+qry = s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; println(qry); sql(qry);
 
 //---------------------------------------------------
     println("insert partition table");
@@ -212,7 +212,7 @@ SELECT a.scenario_id, a.schedule_id, a.rx_tm_xpos, a.rx_tm_ypos,
        (select * from RESULT_NR_2D_BESTSERVER where schedule_id = ${scheduleId}) b
     on (a.schedule_id = b.schedule_id and a.rx_tm_xpos = b.rx_tm_xpos and a.rx_tm_ypos = b.rx_tm_ypos and a.ru_seq = b.ru_seq)
 )
-insert into I_${objNm} partition (schedule_id=${scheduleId})
+insert into ${objNm} partition (schedule_id=${scheduleId})
 select max(AREA.scenario_id) as scenario_id,
        RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution as rx_tm_xpos,
        RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution as rx_tm_ypos,

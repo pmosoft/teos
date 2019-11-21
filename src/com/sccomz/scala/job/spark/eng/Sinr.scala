@@ -37,7 +37,7 @@ object Sinr {
     executeSql2(scheduleId);
   }
 
-  //  * * * Hive Query(RU) * * *
+  //  * * * Hive Query(RU별) * * *
   def executeSql(scheduleId: String) = {
     Class.forName(App.dbDriverHive);
     var con = DriverManager.getConnection(App.dbUrlHive, App.dbUserHive, App.dbPwHive);
@@ -178,7 +178,7 @@ select a.scenario_id, a.ru_id, a.enb_id, a.cell_id, a.rx_tm_xpos, a.rx_tm_ypos, 
     //------------------------------------------------------
     println(objNm + " 시작");
     //------------------------------------------------------
-    var qry = """ALTER TABLE I_${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; println(qry); stat.execute(qry);
+    var qry = s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; println(qry); stat.execute(qry);
 
     //---------------------------------------------------
     println("partiton 파일 삭제 및 drop table partition");
