@@ -169,7 +169,7 @@ object MakeBinFile extends Logging {
     val sqlDf = spark.sql(qry).repartition(1)
     
     sqlDf.foreachPartition { p =>
-      println("partition start")
+      println("partition start") 
 
       val bin = initialArray(binCounts._1, binCounts._2, initialValue)
 
