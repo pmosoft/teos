@@ -256,7 +256,6 @@ object MakeBfBinFile extends Logging {
           }
 
           // bin 출력
-
           println("partition end")
         }
 
