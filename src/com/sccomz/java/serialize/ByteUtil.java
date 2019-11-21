@@ -12,7 +12,6 @@ public class ByteUtil {
 
     	//testDirFileInfo();
         //0x41200000 10
-
         byte[] aa = floatToByteArray(10f);
         System.out.println(aa[0]);
         System.out.println(aa[1]);

@@ -154,7 +154,6 @@ select '222' AS RU_ID
      , '111' AS SCHEDULE_ID
 ;
 
-SELECT * FROM TEST03;
-
-
+SELECT * FROM TEST03
+;
 

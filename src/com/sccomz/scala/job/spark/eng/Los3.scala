@@ -20,7 +20,7 @@ import java.sql.Statement
  * 2019-11-01 | 박준용 | 최초작성
 
 import com.sccomz.scala.job.spark.eng.Los3
-Los2.execute("8463233");
+Los3.execute("8463233");
 
 
 
@@ -53,7 +53,10 @@ def main(args: Array[String]): Unit = {
 
 def execute(scheduleId:String,queueNm:String) = {
   
-  val spark: SparkSession = SparkSession.builder().master("yarn").appName(this.getClass.getName).config("queue",queueNm).config("spark.sql.warehouse.dir","/TEOS/warehouse").enableHiveSupport().getOrCreate();
+  //val spark: SparkSession = SparkSession.builder().master("yarn").appName(this.getClass.getName).config("queue",queueNm).config("spark.sql.warehouse.dir","/TEOS/warehouse").enableHiveSupport().getOrCreate();
+  val spark: SparkSession = SparkSession.builder().master("yarn").appName(this.getClass.getName).config("spark.sql.warehouse.dir","/TEOS/warehouse").enableHiveSupport().getOrCreate();
+
+  //val spark = SparkSession.builder().master("local[*]").appName(this.getClass.getName).config("spark.sql.warehouse.dir","/teos/warehouse").enableHiveSupport().getOrCreate()  
   executeSqlSpark(spark, scheduleId);
   spark.close();
   //executeSql(scheduleId);
@@ -84,43 +87,43 @@ qry = s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleI
     println("insert partition table");
 //---------------------------------------------------
 
-sql("set hive.exec.dynamic.partition.mode=nonstrict");
+qry= s"""SELECT DISTINCT RU_ID FROM SCENARIO_NR_RU WHERE SCENARIO_ID IN (SELECT SCENARIO_ID FROM SCHEDULE WHERE SCHEDULE_ID = ${scheduleId})"""; 
+println(qry);  
+var sqlDf = spark.sql(qry);
 
-    qry= s"""SELECT DISTINCT RU_ID FROM SCENARIO_NR_RU WHERE SCENARIO_ID IN (SELECT SCENARIO_ID FROM SCHEDULE WHERE SCHEDULE_ID = ${scheduleId})"""; println(qry);  var sqlDf = spark.sql(qry);
-
-    var ruId = "";
-    for (row <- sqlDf.collect) {
-       ruId = row.mkString(",").split(",")(0).toString;
-       qry = s"""
-       with AREA as
-       (
-       select a.scenario_id, b.schedule_id,
-              a.tm_startx div a.resolution * a.resolution as tm_startx,
-              a.tm_starty div a.resolution * a.resolution as tm_starty,
-              a.tm_endx div a.resolution * a.resolution as tm_endx,
-              a.tm_endy div a.resolution * a.resolution as tm_endy,
-              a.resolution
-         from SCENARIO a, SCHEDULE b
-        where b.schedule_id = ${scheduleId}
-          and a.scenario_id = b.scenario_id
-       )
-       insert into table RESULT_NR_2D_LOS partition (schedule_id=${scheduleId})
-       select max(AREA.scenario_id) as scenario_id,
-              RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution as rx_tm_xpos,
-              RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution as rx_tm_ypos,
-              (RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution - AREA.tm_startx) / AREA.resolution as x_point,
-              (RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution - AREA.tm_starty) / AREA.resolution as y_point,
-              case when sum(case when RSLT.value = 1 then 1 else 0 end) > 0 then 1 else 0 end as los
-         from AREA, RESULT_NR_2D_LOS_RU RSLT
-        where RSLT.schedule_id = AREA.schedule_id
-          and RSLT.ru_id = '${ruId}'
-          and AREA.tm_startx <= RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution and RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution < AREA.tm_endx
-          and AREA.tm_starty <= RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution and RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution < AREA.tm_endy
-         group by RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution, RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution,
-                  (RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution - AREA.tm_startx) / AREA.resolution, (RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution - AREA.tm_starty) / AREA.resolution
-       """
-       println(qry); spark.sql(qry).take(100).foreach(println);
-    }    
+var ruId = "";
+for (row <- sqlDf.collect) {
+   ruId = row.mkString(",").split(",")(0).toString;
+   qry = s"""
+   with AREA as
+   (
+   select a.scenario_id, b.schedule_id,
+          a.tm_startx div a.resolution * a.resolution as tm_startx,
+          a.tm_starty div a.resolution * a.resolution as tm_starty,
+          a.tm_endx div a.resolution * a.resolution as tm_endx,
+          a.tm_endy div a.resolution * a.resolution as tm_endy,
+          a.resolution
+     from SCENARIO a, SCHEDULE b
+    where b.schedule_id = ${scheduleId}
+      and a.scenario_id = b.scenario_id
+   )
+   insert into table RESULT_NR_2D_LOS partition (schedule_id=${scheduleId})
+   select max(AREA.scenario_id) as scenario_id,
+          RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution as rx_tm_xpos,
+          RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution as rx_tm_ypos,
+          (RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution - AREA.tm_startx) / AREA.resolution as x_point,
+          (RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution - AREA.tm_starty) / AREA.resolution as y_point,
+          case when sum(case when RSLT.value = 1 then 1 else 0 end) > 0 then 1 else 0 end as los
+     from AREA, RESULT_NR_2D_LOS_RU RSLT
+    where RSLT.schedule_id = AREA.schedule_id
+      and RSLT.ru_id = '${ruId}'
+      and AREA.tm_startx <= RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution and RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution < AREA.tm_endx
+      and AREA.tm_starty <= RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution and RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution < AREA.tm_endy
+     group by RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution, RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution,
+              (RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution - AREA.tm_startx) / AREA.resolution, (RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution - AREA.tm_starty) / AREA.resolution
+   """
+   println(qry); spark.sql(qry).take(100).foreach(println);
+}    
 
 }
 

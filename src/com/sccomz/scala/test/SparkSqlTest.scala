@@ -56,8 +56,15 @@ select max(AREA.scenario_id) as scenario_id,
 def test02(spark: SparkSession) = {
 
 spark.sql(s"""
-SELECT COUNT(*) FROM
-(SELECT DISTINCT RU_ID FROM RESULT_NR_2D_LOS_RU WHERE SCHEDULE_ID = 8463234)
+SELECT DISTINCT SCHEDULE_ID FROM RESULT_NR_BF_SCEN_HEADER
+""").take(100).foreach(println);
+
+spark.sql(s"""
+SELECT * FROM RESULT_NR_BF_SCEN_HEADER WHERE SCHEDULE_ID = 8460965
+""").take(100).foreach(println);
+
+spark.sql(s"""
+SELECT * FROM RESULT_NR_BF_SCEN_HEADER WHERE SCHEDULE_ID = 8460965
 """).take(100).foreach(println);
 
 

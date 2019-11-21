@@ -160,6 +160,7 @@ object ExecuteJob {
     //sshpass -pteos ssh -o StrictHostKeyChecking=no postgres@teos-cluster-dn1 sh /gis01/bin/alos_job_dis.sh 11
     //sshpass -pteos ssh -o StrictHostKeyChecking=no postgres@teos-cluster-dn1 cat /gis01/bin/alos_job_dis.sh
     //var res = Process(s"sshpass postgres@teos-cluster-dn1 /gis01/bin/alos_job_dis.sh 11").lineStream;
+    //sshpass -pteos ssh -o StrictHostKeyChecking=no postgres@teos-cluster-dn1 /gis01/bin/anal_los_job_dis.sh 5113766
     
     //while(!logFile.exists()){
     //  Thread.sleep(1000*1);
@@ -167,7 +168,6 @@ object ExecuteJob {
     //}
 
     println("executePostgreShell end");
-    
   }  
   
   def executeEtlPostgreToHdfs(scheduleId:String,scenarioId:String): Unit = {

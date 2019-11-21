@@ -1,6 +1,7 @@
 package com.sccomz.java.test;
 
 
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -8,9 +9,11 @@ import java.io.FileOutputStream;
 public class SerializeTest {
 
     public static void main(String[] args) {
-        SerializeTest s = new SerializeTest();
+        //SerializeTest s = new SerializeTest();
+        //s.array2to1();
         
-        s.array2to1();
+        
+        hexWriteTest02();
         //s.readBin();
         //s.writeBinTest01();
         //s.readBinTest01();
@@ -43,9 +46,45 @@ public class SerializeTest {
         //Float f = Float.intBitsToFloat(i.intValue());
         //System.out.println(f);
         //System.out.println(Integer.toHexString(Float.floatToIntBits(f)));
+        
+        //new Byte4(ByteUtil.floatMax())
 
     }
 
+	public static void hexWriteTest02(){
+		
+        DataOutputStream dos = null;
+
+        try {
+        	dos = new DataOutputStream(new FileOutputStream("c:/pony/excel/bin/file02.bin"));
+        	dos.writeInt(1);
+       } catch (Exception e) { e.printStackTrace(); }
+
+
+	}
+    
+    
+	public static void hexWriteTest01(){
+
+		
+        File file = new File("d:/fframe/workspace/pony/src/test/java/test/serialize/file01.bin") ;
+        FileOutputStream fos = null ;
+
+		int i1 = 1;
+		
+		//byte[] INT_MAX = new byte[4];
+		//INT_MAX[0] = (byte) 0x00;  INT_MAX[1] = (byte) 0x00; INT_MAX[2] = (byte) 0x00; INT_MAX[3] = (byte) 0x00;
+        
+        try {
+            fos = new FileOutputStream(file);
+            fos.write(i1) ;
+        } catch (Exception e) { e.printStackTrace(); }
+
+        if (fos != null) { try { fos.close(); } catch (Exception e) { e.printStackTrace();}}
+
+	}
+    
+    
 	public static String byteArrayToHexString(byte[] bytes){
 
 		StringBuilder sb = new StringBuilder();
