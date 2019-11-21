@@ -97,7 +97,7 @@ select a.scenario_id, a.schedule_id, a.ru_id,
 	(  
 	select a.scenario_id, b.schedule_id, a.resolution
 	  from SCENARIO a, SCHEDULE b
-	 where b.schedule_id = 8463189
+	 where b.schedule_id = ${scheduleId}
 	   and a.scenario_id = b.scenario_id
 	 limit 1
 	) b 
@@ -124,7 +124,7 @@ SELECT PATHLOSS.scenario_id, PATHLOSS.ru_id, PARAM.enb_id, PARAM.cell_id,
    and PATHLOSS.schedule_id = PARAM.schedule_id
    AND PATHLOSS.ru_id = PARAM.ru_id
 )
-insert into I_${objNm} partition (schedule_id=${scheduleId})
+insert into ${objNm} partition (schedule_id=${scheduleId})
 select PLPRIME_temp.scenario_id
      , PLPRIME_temp.ru_id
      , PLPRIME_temp.enb_id

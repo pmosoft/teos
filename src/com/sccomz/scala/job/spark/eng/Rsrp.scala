@@ -54,7 +54,7 @@ var objNm = "RESULT_NR_2D_RSRP_RU"
     println(objNm + " 시작");
 //------------------------------------------------------
 
-var qry=s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; println(qry);stat.execute(qry);
+var qry=s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; println(qry); stat.execute(qry);
 
 //---------------------------------------------------
     println("partiton 파일 삭제 및 drop table partition");
@@ -62,7 +62,7 @@ var qry=s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (schedule_id=${schedul
 val conf = new Configuration()
 val fs = FileSystem.get(conf)
 fs.delete(new Path(s"""/TEOS/warehouse/${objNm}/schedule_id=${scheduleId}"""),true)
-qry=s"""set hive.exec.dynamic.partition.mode=nonstrict"""; println(qry);stat.execute(qry);
+qry=s"""set hive.exec.dynamic.partition.mode=nonstrict"""; println(qry); stat.execute(qry);
 
 //---------------------------------------------------
     println("insert partition table");

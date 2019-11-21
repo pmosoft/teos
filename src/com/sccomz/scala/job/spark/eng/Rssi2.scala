@@ -66,7 +66,7 @@ select a.scenario_id, b.schedule_id, c.ant_category,
        c.number_of_cc, c.number_of_sc_per_rb, c.rb_per_cc, c.bandwidth_per_cc, c.subcarrierspacing,
        d.noisefigure
   from SCENARIO a, SCHEDULE b, NRSYSTEM c, MOBILE_PARAMETER d
- where b.schedule_id = 8463189  
+ where b.schedule_id = ${scheduleId}
    and a.scenario_id = b.scenario_id
    and a.scenario_id = c.scenario_id
    and a.scenario_id = d.scenario_id
@@ -92,7 +92,7 @@ select a.scenario_id, a.ru_id, a.enb_id, a.cell_id, a.rx_tm_xpos, a.rx_tm_ypos,
 	        end / 10.)  as MobileNoiseFloor, -- m_dNowMilliWatt
 	       a.schedule_id
 	  from RESULT_NR_2D_RSRPPILOT_RU a, NR_PARAMETER b
-	 where a.schedule_id = 8463189
+	 where a.schedule_id = ${scheduleId}
 	   and a.schedule_id = b.schedule_id
 	) a
 """
@@ -154,6 +154,3 @@ println(qry); spark.sql(qry).take(100).foreach(println);
 }
 
 }
-  
-  
-  
