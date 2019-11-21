@@ -5,14 +5,16 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 public class SerializeTest {
 
     public static void main(String[] args) {
         //SerializeTest s = new SerializeTest();
         //s.array2to1();
-        
-        
+
+
         hexWriteTest02();
         //s.readBin();
         //s.writeBinTest01();
@@ -46,13 +48,49 @@ public class SerializeTest {
         //Float f = Float.intBitsToFloat(i.intValue());
         //System.out.println(f);
         //System.out.println(Integer.toHexString(Float.floatToIntBits(f)));
-        
+
         //new Byte4(ByteUtil.floatMax())
 
     }
 
+    static short swap(short x) { return (short)((x << 8) | ((x >> 8) & 0xff)); }
+    static char swap(char x) { return (char)((x << 8) | ((x >> 8) & 0xff)); }
+    static int swap(int x) { return (int)((swap((short)x) << 16) | swap((short)(x >> 16)) & 0xffff); }
+    static long swap(long x) { return (long)(((long)swap((int)(x)) << 32) | ((long)swap((int)(x >> 32)) & 0xffffffffL)); }
+    static float swap(float x) { return Float.intBitsToFloat(swap(Float.floatToRawIntBits(x))); }
+    static double swap(double x) { return Double.longBitsToDouble(swap(Double.doubleToRawLongBits(x))); }
+
+
+	public static void hexWriteTest03(){
+
+
+		//int value=1;
+		//int newValue = swap(value);
+		//System.out.println("big endian value = 0x" + Integer.toHexString(value) + ", little endian value = 0x" + Integer.toHexString(newValue));
+
+		//byte[] x=new byte[100];
+		//ByteBuffer buf=ByteBuffer.allocate(100);
+		//buf.order(ByteOrder.LITTLE_ENDIAN);
+		//buf.position(0);
+		//buf.get(x);
+		//System.out.println(Integer.toHexString(buf.getInt()));
+		////System.out.println(Integer.toHexString(buf.getChar()));
+		////System.out.println(Long.toHexString(buf.getLong()));
+		////System.out.println(buf.getDouble());
+
+
+		int value=1;
+
+        DataOutputStream dos = null;
+        try {
+        	dos = new DataOutputStream(new FileOutputStream("c:/pony/excel/bin/file03.bin"));
+        	dos.writeInt(swap(value));
+       } catch (Exception e) { e.printStackTrace(); }
+	}
+
+
 	public static void hexWriteTest02(){
-		
+
         DataOutputStream dos = null;
 
         try {
@@ -62,19 +100,19 @@ public class SerializeTest {
 
 
 	}
-    
-    
+
+
 	public static void hexWriteTest01(){
 
-		
+
         File file = new File("d:/fframe/workspace/pony/src/test/java/test/serialize/file01.bin") ;
         FileOutputStream fos = null ;
 
 		int i1 = 1;
-		
+
 		//byte[] INT_MAX = new byte[4];
 		//INT_MAX[0] = (byte) 0x00;  INT_MAX[1] = (byte) 0x00; INT_MAX[2] = (byte) 0x00; INT_MAX[3] = (byte) 0x00;
-        
+
         try {
             fos = new FileOutputStream(file);
             fos.write(i1) ;
@@ -83,8 +121,8 @@ public class SerializeTest {
         if (fos != null) { try { fos.close(); } catch (Exception e) { e.printStackTrace();}}
 
 	}
-    
-    
+
+
 	public static String byteArrayToHexString(byte[] bytes){
 
 		StringBuilder sb = new StringBuilder();
@@ -127,10 +165,10 @@ public class SerializeTest {
     void array2to1(){
       int arr[][] = new int[10][5];
       int arr1[] = new int[arr.length*arr[0].length];
-      
+
       System.out.println(10*5);
       System.out.println(arr.length*arr[0].length);
-      
+
       //배열에 값을 넣는다.
       for(int i=0; i<arr.length; i++) {
         for(int j=0; j<arr[i].length; j++) {
