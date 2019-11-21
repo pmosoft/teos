@@ -35,9 +35,6 @@ def main(args: Array[String]): Unit = {
 }     
 
 def execute(scheduleId:String) = {
-  //val spark: SparkSession = SparkSession.builder().master("yarn").appName(this.getClass.getName).config("spark.sql.warehouse.dir","/TEOS/warehouse").enableHiveSupport().getOrCreate();
-  //executeSql(spark, scheduleId);
-  //spark.close();
   executeSql(scheduleId);
 }
 
@@ -154,7 +151,7 @@ select LOS_PREPARE.scenario_id, LOS_PREPARE.schedule_id, LOS_PREPARE.ru_id,
        4. * (LOS_PREPARE.hBS - LOS_PREPARE.hE) * (LOS_PREPARE.hUT - LOS_PREPARE.hE) * FREQ.fq / (300000000.) as distBP,
        FREQ.fq, FREQ.mfq, FREQ.gfq
   from LOS_PREPARE, FREQ
- where LOS_PREPARE.schedule_id = 8463189
+ where LOS_PREPARE.schedule_id = ${scheduleId}
    and LOS_PREPARE.schedule_id = FREQ.schedule_id
 ),
 LOS_temp as

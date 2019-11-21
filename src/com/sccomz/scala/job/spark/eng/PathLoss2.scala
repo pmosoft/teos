@@ -128,7 +128,7 @@ select RU.scenario_id, RES.schedule_id, RES.ru_id,
                    )
        end as hE
   from RESULT_NR_2D_LOS_RU RES, RU
- where RES.schedule_id = 8463189
+ where RES.schedule_id = ${scheduleId}
    and RES.schedule_id = RU.schedule_id
    and RES.ru_id = RU.ru_id
 ),
@@ -147,7 +147,7 @@ select LOS_PREPARE.scenario_id, LOS_PREPARE.schedule_id, LOS_PREPARE.ru_id,
        4. * (LOS_PREPARE.hBS - LOS_PREPARE.hE) * (LOS_PREPARE.hUT - LOS_PREPARE.hE) * FREQ.fq / (300000000.) as distBP,
        FREQ.fq, FREQ.mfq, FREQ.gfq
   from LOS_PREPARE, FREQ
- where LOS_PREPARE.schedule_id = 8463189
+ where LOS_PREPARE.schedule_id = ${scheduleId}
    and LOS_PREPARE.schedule_id = FREQ.schedule_id
 ),
 LOS_temp as

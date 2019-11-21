@@ -40,7 +40,7 @@ var objNm = "RESULT_NR_2D_BESTSERVER"
 //------------------------------------------------------
     println(objNm + " 시작");
 //------------------------------------------------------
-var qry = """ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; println(qry); stat.execute(qry);
+var qry = s"""ALTER TABLE ${objNm} DROP IF EXISTS PARTITION (schedule_id=${scheduleId})"""; println(qry); stat.execute(qry);
 //var scheduleId = "8460062"; 
 //var scheduleId = "8460970"; 
   
