@@ -181,7 +181,7 @@ object ExecuteJob {
   }
   
   def executeSparkMakeBinFile(scheduleId:String): Unit = {
-     MakeBinFile.executeEngResult(scheduleId);
+//     MakeBinFile.executeEngResult(scheduleId);
   }
 
 }

@@ -108,6 +108,13 @@ AND   Y_POINT < Y_BIN_CNT
 }
 
 
+def selectAllRuResult2() = {
+s"""
+SELECT RU_ID, X_POINT, Y_POINT, VALUE 
+FROM   ENG_RU
+"""
+}
+
 def selectRuResult2(ruId:String) = {
 s"""
 SELECT X_POINT, Y_POINT, VALUE 
