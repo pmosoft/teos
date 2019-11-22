@@ -62,7 +62,14 @@ where schedule_id = 8463235
 --schedule_id = 8463234 (2D분석)
 --schedule_id = 8463235 (3D분석)
 
+select *
+  from RESULT_NR_2D_LOS_RU RSLT
+ where  RSLT.ru_id = 1011760123
+ ;
 
 
 
+
+select * from result_nr_bf_scen_header where schedule_id = 8463235
+;
 

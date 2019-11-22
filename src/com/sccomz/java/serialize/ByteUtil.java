@@ -1,5 +1,7 @@
 package com.sccomz.java.serialize;
 
+import java.nio.charset.StandardCharsets;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,11 +86,13 @@ public class ByteUtil {
     public static float swap(float x) { return Float.intBitsToFloat(swap(Float.floatToRawIntBits(x))); }
     public static double swap(double x) { return Double.longBitsToDouble(swap(Double.doubleToRawLongBits(x))); }
 
-    public static String swapString20(String str) {
-    	char[] c20 = new char[20];
-    	for(int i=0;i<c20.length;i++)  { c20[i]= (byte) 0x00;	}
-    	for(int i=0;i<str.length();i++){ c20[i]= swap(str.charAt(i)); }
-    	return c20.toString();
+    public static byte[] toByte20(String str) {
+    	byte[] b20 = new byte[20];
+    	//byte[] bStr = str.getBytes(StandardCharsets.US_ASCII);
+    	//for(int i=0;i<bStr.length;i++) { b20[i]= bStr[i]; }
+    	System.arraycopy(str.getBytes(StandardCharsets.US_ASCII),0, b20, 0, 17);    	
+    	
+    	return b20;
     }
 
 }

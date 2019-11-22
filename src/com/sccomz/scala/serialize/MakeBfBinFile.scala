@@ -117,20 +117,19 @@ object MakeBfBinFile extends Logging {
     //---------------------------------------------------------------------------------------------------------
        logInfo(s"""파일 Write Header ${scheduleId}""");
     //---------------------------------------------------------------------------------------------------------
+       
     headerDF.foreachPartition { p =>
-      var aa : String = "aaa";
       p.foreach { row =>
         dos.writeInt(ByteUtil.swap(row(0).asInstanceOf[Int]));                // BUILDING_INDEX int        4
-        dos.writeChars(ByteUtil.swapString20(row(1).asInstanceOf[String]));   // TBD_KEY        char[20]  20
-        dos.writeByte(Integer.parseUnsignedInt(row(2).asInstanceOf[String])); // BinXCnt        uchar      1
-        dos.writeByte(Integer.parseUnsignedInt(row(3).asInstanceOf[String])); // BinYCnt        uchar      1
-        dos.writeByte(Integer.parseUnsignedInt(row(4).asInstanceOf[String])); // FloorZ         uchar      1
-        dos.writeByte(Integer.parseUnsignedInt(""));                          // Padding        uchar      1
-        dos.writeInt(ByteUtil.swap(row(5).asInstanceOf[Int]));                // startX         int        4
-        dos.writeInt(ByteUtil.swap(row(6).asInstanceOf[Int]));                // startY         int        4
-        //dos.writeLong(ByteUtil.swap(Long.parseUnsignedLong("")));              // start point    ulong      4
-        dos.writeLong(ByteUtil.swap(1));                                      // start point    ulong      4
-      }
+        dos.write(ByteUtil.toByte20(row(1).asInstanceOf[String]));            // TBD_KEY        char[20]  20
+        dos.write(row(2).asInstanceOf[Int]);                                  // BinXCnt        uchar      1
+        dos.write(row(3).asInstanceOf[Int]);                                  // BinYCnt        uchar      1
+        dos.write(row(4).asInstanceOf[Int]);                                  // FloorZ         uchar      1
+        dos.write(row(4).asInstanceOf[Int]);                                  // Padding        uchar      1
+        dos.writeFloat(ByteUtil.swap(row(5).asInstanceOf[Float]));            // startX         float      4
+        dos.writeFloat(ByteUtil.swap(row(6).asInstanceOf[Float]));            // startY         float      4
+        dos.writeLong(row(7).asInstanceOf[Long]);                             // start point    ulong      8
+        }
     }
 
     //---------------------------------------------------------------------------------------------------------

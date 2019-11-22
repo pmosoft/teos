@@ -56,8 +56,35 @@ select max(AREA.scenario_id) as scenario_id,
 def test02(spark: SparkSession) = {
 
 spark.sql(s"""
-SELECT DISTINCT SCHEDULE_ID FROM RESULT_NR_BF_SCEN_HEADER
+SELECT BUILDING_INDEX
+     , TBD_KEY
+     , NX
+     , NY
+     , FLOORZ
+     , EXT_SX
+     , EXT_SY
+FROM   RESULT_NR_BF_SCEN_HEADER
+WHERE  SCHEDULE_ID = 8460965
+ORDER BY BUILDING_INDEX
+""").cache.createOrReplaceTempView("M_RESULT_NR_BF_SCEN_HEADER")
+;
+
+
+spark.sql(s"""
+SELECT BUILDING_INDEX
+--     , TBD_KEY
+     , NX
+     , NY
+     , FLOORZ
+--     , EXT_SX
+--     , EXT_SY
+     , NX*NY*FLOORZ AS BINCNT
+     , SUM(NX*NY*FLOORZ) OVER (ORDER BY BUILDING_INDEX) - NX*NY*FLOORZ AS STARTPOINTBIN
+FROM   M_RESULT_NR_BF_SCEN_HEADER
 """).take(100).foreach(println);
+
+
+
 
 spark.sql(s"""
 SELECT * FROM RESULT_NR_BF_SCEN_HEADER WHERE SCHEDULE_ID = 8460965
@@ -66,6 +93,22 @@ SELECT * FROM RESULT_NR_BF_SCEN_HEADER WHERE SCHEDULE_ID = 8460965
 spark.sql(s"""
 SELECT * FROM RESULT_NR_BF_SCEN_HEADER WHERE SCHEDULE_ID = 8460965
 """).take(100).foreach(println);
+
+
+spark.sql(s"""
+SELECT COUNT(*) FROM RESULT_NR_BF_LOS_RU WHERE SCHEDULE_ID = 8463235
+""").take(100).foreach(println);
+
+spark.sql(s"""
+SELECT DISTINCT RU_ID FROM RESULT_NR_BF_LOS_RU WHERE SCHEDULE_ID = 8463235
+""").take(100).foreach(println);
+
+
+
+// 5,156,492,021
+
+
+//RESULT_NR_BF_LOS_RU_8463235_1012138268
 
 
 spark.sql(s"""

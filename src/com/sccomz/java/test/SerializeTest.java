@@ -14,7 +14,7 @@ public class SerializeTest {
         //SerializeTest s = new SerializeTest();
         //s.array2to1();
 
-        hexWriteTest04();
+        hexWriteTest06();
         //s.readBin();
         //s.writeBinTest01();
         //s.readBinTest01();
@@ -31,12 +31,22 @@ public class SerializeTest {
     static float swap(float x) { return Float.intBitsToFloat(swap(Float.floatToRawIntBits(x))); }
     static double swap(double x) { return Double.longBitsToDouble(swap(Double.doubleToRawLongBits(x))); }
 
+	public static void hexWriteTest06(){
 
+		int value=255;
+
+        DataOutputStream dos = null;
+        try {
+        	dos = new DataOutputStream(new FileOutputStream("c:/pony/excel/bin/file03.bin"));
+        	dos.write(value);
+       } catch (Exception e) { e.printStackTrace(); }
+	}
+    
+    
+    
 	public static void hexWriteTest04(){
 	    int i = Integer.parseUnsignedInt("4294967295");
 	    long l = Long.parseUnsignedLong("18446744073709551615");
-	    
-
 	    System.out.println("i의 값");
 	    System.out.println(i);
 	    System.out.println(Integer.toUnsignedString(i));

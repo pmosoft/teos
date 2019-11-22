@@ -8,7 +8,6 @@ spark-submit
   --master spark://127.0.0.1:7077
   --driver-java-options "-Dlog4j.configuration=file:/path/to/log4j-driver.properties -Ddm.logging.level=DEBUG"
   --conf "spark.executor.extraJavaOptions=-Dlog4j.configuration=file:/path/to/log4j-executor.properties -Ddm.logging.name=myapp -Ddm.logging.level=DEBUG"
-  ...
 
 spark.sparkContext.setLogLevel("ERROR")
 

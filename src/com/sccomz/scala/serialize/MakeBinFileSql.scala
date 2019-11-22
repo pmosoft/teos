@@ -10,10 +10,23 @@ import com.sccomz.scala.comm.App
 
 object MakeBinFileSql {
 
+Class.forName(App.dbDriverOra);
+var con:Connection = DriverManager.getConnection(App.dbUrlOra,App.dbUserOra,App.dbPwOra);
+var stat:Statement=con.createStatement();
+  
+  
 def main(args: Array[String]): Unit = {
 }
 
-
+// X,Y Total Bin 갯수
+def selectBinCnt(scheduleId:String) = {
+s"""
+SELECT BIN_X_CNT
+     , BIN_Y_CNT
+FROM   SCHEDULE
+WHERE  SCHEDULE_ID = ${scheduleId}
+"""
+}
 
 // X,Y RU Bin 갯수
 def select2dRuBinCnt(scheduleId:String, ruId:String) = {
@@ -74,7 +87,7 @@ SELECT B.SCHEDULE_ID, A.ENB_ID, A.PCI, A.PCI_PORT, A.RU_ID,
    AND A.SCENARIO_ID = B.SCENARIO_ID
 )
 SELECT RU_ID, X_POINT, Y_POINT, ${colNm} AS VALUE
-FROM
+FROM 
 (
 SELECT DISTINCT
        A.RU_ID, B.X_BIN_CNT, B.Y_BIN_CNT,
@@ -97,7 +110,7 @@ AND   Y_POINT < Y_BIN_CNT
 
 def selectRuResult2(ruId:String) = {
 s"""
-SELECT X_POINT, Y_POINT, VALUE
+SELECT X_POINT, Y_POINT, VALUE 
 FROM   ENG_RU
 WHERE  RU_ID = ${ruId}
 """
@@ -120,7 +133,7 @@ SELECT B.SCHEDULE_ID, A.ENB_ID, A.PCI, A.PCI_PORT, A.RU_ID,
    AND A.RU_ID       = ${ruId}
 )
 SELECT X_POINT, Y_POINT, ${colNm}
-FROM
+FROM 
 (
 SELECT DISTINCT
        B.X_BIN_CNT, B.Y_BIN_CNT,
