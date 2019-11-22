@@ -106,6 +106,15 @@ object MakeBfBinFile extends Logging {
     qry = MakeBfBinFileSql.selectResolution(scheduleId); logInfo(qry); rs = stat.executeQuery(qry);
     val resolution : Int = rs.getInt("RESOLUTION");
 
+    //---------------------------------------------------
+       logInfo(s"""[SEL] sumBinCnt ${scheduleId}""");
+    //---------------------------------------------------
+    qry = MakeBfBinFileSql.selectSumBinCnt(scheduleId); logInfo(qry); sqlDf = spark.sql(qry); row = sqlDf.collect.last
+    val sumBinCnt : Long = row(0).asInstanceOf[Long]
+
+    
+    
+    
     //---------------------------------------------------------------------------------------------------------
        logInfo(s"""파일 Write start ${scheduleId}""");
     //---------------------------------------------------------------------------------------------------------
@@ -135,7 +144,7 @@ object MakeBfBinFile extends Logging {
     //---------------------------------------------------------------------------------------------------------
        logInfo(s"""파일 Write binCount ${scheduleId}""");
     //---------------------------------------------------------------------------------------------------------
-    dos.writeLong(ByteUtil.swap(1));                                         // binCount        ulong      4
+    dos.writeLong(sumBinCnt);                                                 // binCount        ulong     8
 
     //---------------------------------------------------------------------------------------------------------
        logInfo(s"""파일 Write binData ${scheduleId}""");

@@ -23,16 +23,25 @@ def selectResultNrBfScenHeader(scheduleId:String) = {
     // float  startX, startY;	// Building Border letf bottom
     // ULLong	startPointBin;	// start point of BIN data
 s"""
-SELECT BUILDING_INDEX
-     , TBD_KEY
-     , NX
-     , NY
-     , FLOORZ
-     , EXT_SX
-     , EXT_SY
+SELECT BUILDING_INDEX -- 0
+     , TBD_KEY        -- 1
+     , NX             -- 2
+     , NY             -- 3
+     , FLOORZ         -- 4
+     , EXT_SX         -- 5
+     , EXT_SY         -- 7
+     , NX*NY*FLOORZ      AS BIN_CNT
+     , SUM(NX*NY*FLOORZ) OVER (ORDER BY BUILDING_INDEX) - NX*NY*FLOORZ AS START_POINT_BIN
 FROM   RESULT_NR_BF_SCEN_HEADER
 WHERE  SCHEDULE_ID = ${scheduleId}
 ORDER BY BUILDING_INDEX
+"""
+}
+
+def selectSumBinCnt(scheduleId:String) = {
+s"""
+SELECT SUM(BIN_CNT) AS SUM_BIN_CNT
+FROM   M_RESULT_NR_BF_SCEN_HEADER
 """
 }
 
@@ -49,6 +58,7 @@ SELECT RU_ID
      , SCHEDULE_ID
 FROM   RESULT_NR_BF_RU_HEADER
 WHERE  SCHEDULE_ID = ${scheduleId}
+ORDER BY BUILDING_INDEX  
 """
 }
 
@@ -62,7 +72,7 @@ FROM   M_RESULT_NR_BF_SCEN_HEADER
 // RESOLUTION
 def selectResolution(scheduleId:String) = {
 s"""
-SELECT RESOLUTION
+SELECT BUILDINGANALYSIS3D_RESOLUTION AS RESOLUTION
 FROM   SCENARIO
 WHERE  SCENARIO_ID = (SELECT SCENARIO_ID FROM SCHEDULE WHERE SCHEDULE_ID = ${scheduleId})
 """
