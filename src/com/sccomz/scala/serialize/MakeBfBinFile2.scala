@@ -143,7 +143,7 @@ object MakeBfBinFile2 extends Logging {
     var sectorPathFileNm = s"/user/icpap/result/${DateUtil.getDate("yyyyMMdd")}/$sectorPath/${cdNm}.bin"
     val dos = fs.create(new Path(sectorPathFileNm))
 
-    //val dos = new DataOutputStream(new FileOutputStream(sectorPathFileNm));
+    //val dos = new DataOutputStream(new FileOutputStream(sectorPathFileNm ));
     dos.writeInt(ByteUtil.swap(bldCount));                                   // bldCount       int        4
     dos.writeInt(ByteUtil.swap(resolution));                                 // resolution     int        4
 
