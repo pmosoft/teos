@@ -9,6 +9,12 @@ import java.sql.Connection
 
 import scala.collection._
 
+import org.apache.hadoop.conf.Configuration
+import org.apache.hadoop.fs.FileSystem
+import org.apache.hadoop.fs.Path
+import org.apache.hadoop.fs.permission.FsAction
+import org.apache.hadoop.fs.permission.FsPermission
+
 import org.apache.spark.internal.Logging
 import org.apache.spark.sql.SparkSession
 
@@ -132,8 +138,12 @@ object MakeBfBinFile2 extends Logging {
     //---------------------------------------------------------------------------------------------------------
        logInfo(s"""파일 Write start ${scheduleId}""");
     //---------------------------------------------------------------------------------------------------------
+    import org.apache.hadoop.fs.{ FileSystem, Path }
+    val fs = FileSystem.get(new Configuration())
+    var sectorPathFileNm = s"/user/icpap/result/${DateUtil.getDate("yyyyMMdd")}/$sectorPath/${cdNm}.bin"
+    val dos = fs.create(new Path(sectorPathFileNm))
 
-    val dos = new DataOutputStream(new FileOutputStream("c:/pony/excel/bin/file03.bin"));
+    //val dos = new DataOutputStream(new FileOutputStream(sectorPathFileNm));
     dos.writeInt(ByteUtil.swap(bldCount));                                   // bldCount       int        4
     dos.writeInt(ByteUtil.swap(resolution));                                 // resolution     int        4
 
