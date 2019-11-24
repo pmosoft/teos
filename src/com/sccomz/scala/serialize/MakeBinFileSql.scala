@@ -13,8 +13,8 @@ object MakeBinFileSql {
 Class.forName(App.dbDriverOra);
 var con:Connection = DriverManager.getConnection(App.dbUrlOra,App.dbUserOra,App.dbPwOra);
 var stat:Statement=con.createStatement();
-  
-  
+
+
 def main(args: Array[String]): Unit = {
 }
 
@@ -87,13 +87,13 @@ SELECT B.SCHEDULE_ID, A.ENB_ID, A.PCI, A.PCI_PORT, A.RU_ID,
    AND A.SCENARIO_ID = B.SCENARIO_ID
 )
 SELECT RU_ID, X_POINT, Y_POINT, ${colNm} AS VALUE
-FROM 
+FROM
 (
 SELECT DISTINCT
        A.RU_ID, B.X_BIN_CNT, B.Y_BIN_CNT,
        ((A.RX_TM_XPOS DIV B.RESOLUTION * B.RESOLUTION) - SITE_STARTX) DIV B.RESOLUTION AS X_POINT,
        ((A.RX_TM_YPOS DIV B.RESOLUTION * B.RESOLUTION) - SITE_STARTY) DIV B.RESOLUTION AS Y_POINT,
-       ${colNm}
+       ${colNm} AS VALUE
  FROM  ${tabNm} A, RU B
  WHERE A.SCHEDULE_ID = B.SCHEDULE_ID
    AND A.RU_ID       = B.RU_ID
@@ -110,14 +110,14 @@ AND   Y_POINT < Y_BIN_CNT
 
 def selectAllRuResult2() = {
 s"""
-SELECT RU_ID, X_POINT, Y_POINT, VALUE 
-FROM   ENG_RU
+SELECT RU_ID, X_POINT, Y_POINT, VALUE
+FROM   RU_VALUE
 """
 }
 
 def selectRuResult2(ruId:String) = {
 s"""
-SELECT X_POINT, Y_POINT, VALUE 
+SELECT X_POINT, Y_POINT, VALUE
 FROM   ENG_RU
 WHERE  RU_ID = ${ruId}
 """
@@ -140,7 +140,7 @@ SELECT B.SCHEDULE_ID, A.ENB_ID, A.PCI, A.PCI_PORT, A.RU_ID,
    AND A.RU_ID       = ${ruId}
 )
 SELECT X_POINT, Y_POINT, ${colNm}
-FROM 
+FROM
 (
 SELECT DISTINCT
        B.X_BIN_CNT, B.Y_BIN_CNT,

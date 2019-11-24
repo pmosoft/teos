@@ -31,7 +31,8 @@ SELECT BUILDING_INDEX -- 0
      , EXT_SX         -- 5
      , EXT_SY         -- 7
      , NX*NY*FLOORZ      AS BIN_CNT
-     , SUM(NX*NY*FLOORZ) OVER (ORDER BY BUILDING_INDEX) - NX*NY*FLOORZ AS START_POINT_BIN
+     , SUM(NX*NY*FLOORZ) OVER (ORDER BY BUILDING_INDEX) - NX*NY*FLOORZ      AS START_POINT_BIN
+     ,(SUM(NX*NY*FLOORZ) OVER (ORDER BY BUILDING_INDEX) - NX*NY*FLOORZ) * 4 AS START_POINT_4BIN
 FROM   RESULT_NR_BF_SCEN_HEADER
 WHERE  SCHEDULE_ID = ${scheduleId}
 ORDER BY BUILDING_INDEX
@@ -58,7 +59,7 @@ SELECT RU_ID
      , SCHEDULE_ID
 FROM   RESULT_NR_BF_RU_HEADER
 WHERE  SCHEDULE_ID = ${scheduleId}
-ORDER BY BUILDING_INDEX  
+ORDER BY BUILDING_INDEX
 """
 }
 
@@ -81,14 +82,26 @@ WHERE  SCENARIO_ID = (SELECT SCENARIO_ID FROM SCHEDULE WHERE SCHEDULE_ID = ${sch
 
 // Value Setting..
 def selectSectorResult(scheduleId:String,tabNm:String,colNm:String) = {
+        // 요청한 인덱스에 대한 값위치
+        //        int iPosition = startPosition
+        //                      + ( rtHead.getX()*rtHead.getY()*iZ*4 ) //층
+        //                      + ( rtHead.getX()*iY*4 )               //X
+        //                      + ( iX*4 );                            //Y
 s"""
-SELECT DISTINCT
-       X_POINT
-     , Y_POINT
-     , ${colNm}
-FROM   ${tabNm}
-WHERE  SCHEDULE_ID = ${scheduleId}
-ORDER BY X_POINT, Y_POINT
+SELECT A.TBD_KEY
+     , A.FLOORZ
+     , A.NY
+     , A.NX
+     , ${colNm} AS VALUE
+     , B.START_POINT_4BIN
+     + (A.FLOORZ*A.NY*A.NX*4)
+     + (A.NY*A.NX*4)
+     + (A.NX*4) AS POS
+FROM   ${tabNm} A,
+     , M_RESULT_NR_BF_SCEN_HEADER B
+WHERE  A.SCHEDULE_ID = ${scheduleId}
+AND    A.TBD_KEY = B.TBD_KEY
+ORDER BY FLOORZ, NY, NX
 """
 }
 

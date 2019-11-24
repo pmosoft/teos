@@ -5,11 +5,29 @@ import scala.collection.mutable.ListBuffer
 object CollectionTest {
 
   def main(args: Array[String]): Unit = {
-    mapTest04();
+    //mapTest04();
     //listTest01();
     //mapTest03();
+    optionTest01()
   }
 
+  def optionTest01() = {
+    val numbers = Map("one" -> 1, "two" -> 2)
+    val h2 : Option[Int] = numbers.get("two")
+    val h3 : Option[Int] = numbers.get("three")
+
+    val result = h2 match {
+              case Some(n) => n
+              case None => "nothing"
+    }
+
+    println(numbers)
+    println(h2);
+    println(numbers.get("two"));
+
+    println(h3)
+    println(result)
+  }
   def ArrayTest01() = {
 
     val a = Array("hello", "world")

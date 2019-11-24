@@ -138,7 +138,7 @@ object MakeBinFile extends Logging {
 
     bin
   }
-  
+
   def writeToHdfs(bin: Array[Byte4], path: String) {
       import org.apache.hadoop.fs.{ FileSystem, Path }
       val fs = FileSystem.get(new Configuration())
@@ -184,7 +184,7 @@ object MakeBinFile extends Logging {
     val qry = MakeBinFileSql.selectSectorResult(scheduleId, tabNm, colNm)
     logInfo(qry)
     val sqlDf = spark.sql(qry).repartition(1)
-    
+
     sqlDf.show()
 
     sqlDf.foreachPartition { p =>
@@ -214,7 +214,7 @@ object MakeBinFile extends Logging {
 
       println("writing to file")
       //      println(bin.mkString(","))
-      
+
       writeToHdfs(bin, s"/user/icpap/result${DateUtil.getDate("yyyyMMdd")}/$sectorPath/${cdNm}.bin")
 
       println("partition end")
@@ -327,11 +327,11 @@ object MakeBinFile extends Logging {
       var ruId: Option[Int] = None
       var ruSize: Option[(Int, Int)] = None
       var bin: Option[Array[Byte4]] = None
-      
+
       // bin 설정
       p.foreach { row =>
-        
-        
+
+
         // RU_ID, X_POINT, Y_POINT, VALUE
         val ru_id = row(0).asInstanceOf[Int] // ru_id
         val x_point = row(1).asInstanceOf[Int] // X_POINT
@@ -348,14 +348,14 @@ object MakeBinFile extends Logging {
             ByteUtil.intToByteArray(row(3).asInstanceOf[Int])
           case _ =>
             ByteUtil.floatToByteArray(row(3).asInstanceOf[Float])
-  
+
         }
       }
 
       // bin 출력
       println("writing to file")
       //      println(bin.mkString(","))
-      
+
       // ruId.get
       writeToHdfs(bin.get, s"/user/icpap/result${DateUtil.getDate("yyyyMMdd")}/$sectorPath/${cdNm}.bin")
 

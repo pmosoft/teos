@@ -20,6 +20,9 @@ import java.sql.Connection
 
 object MakeFolder extends Logging {
 
+  Class.forName(App.dbDriverHive);
+  var con = DriverManager.getConnection(App.dbUrlHive, App.dbUserHive, App.dbPwHive);
+  var stat: Statement = con.createStatement();
 
   def main(args: Array[String]): Unit = {
     var scheduleId = if (args.length < 1) "" else args(0);
@@ -30,9 +33,6 @@ object MakeFolder extends Logging {
   // 폴더 생성 메소드
   def makeResultPath(scheduleId: String): mutable.Map[String, String] = {
     var ruInfo = mutable.Map[String, String]()
-    Class.forName(App.dbDriverHive);
-    var con = DriverManager.getConnection(App.dbUrlHive, App.dbUserHive, App.dbPwHive);
-    var stat: Statement = con.createStatement();
     var qry = MakeBinFileSql.selectBinFilePath(scheduleId); ; println(qry);
     var rs = stat.executeQuery(qry);
     var rowCnt = 1;
@@ -64,4 +64,29 @@ object MakeFolder extends Logging {
     ruInfo;
   }
 
+  // 폴더 루트
+  def getSectorPath(scheduleId: String) = {
+    var ruInfo = mutable.Map[String, String]()
+    Class.forName(App.dbDriverHive);
+    var con = DriverManager.getConnection(App.dbUrlHive, App.dbUserHive, App.dbPwHive);
+    var stat: Statement = con.createStatement();
+    var qry = MakeBinFileSql.selectBinFilePath(scheduleId); ; println(qry);
+    var rs = stat.executeQuery(qry);
+
+    rs.next();
+    rs.getString("SECTOR_PATH");
+  }
+
+  // 폴더 생성 메소드
+  def getRuPath(scheduleId: String): mutable.Map[String, String] = {
+    var ruInfo = mutable.Map[String, String]()
+    var qry = MakeBinFileSql.selectBinFilePath(scheduleId); ; println(qry);
+    var rs = stat.executeQuery(qry);
+    var rowCnt = 1;
+
+    while (rs.next()) {
+      ruInfo += (rs.getString("RU_ID") -> rs.getString("RU_PATH"));
+    }
+    ruInfo;
+  }
 }
