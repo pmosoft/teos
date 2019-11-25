@@ -130,11 +130,18 @@ object MakeBfBinFile2 extends Logging {
     //---------------------------------------------------
        logInfo(s"""[SEL] value ${scheduleId}""");
     //---------------------------------------------------
-    qry = MakeBfBinFileSql.selectSumBinCnt(scheduleId); logInfo(qry); val vDf = spark.sql(qry);
-    //val sumBinCnt : Long = row(0).asInstanceOf[Long]
-    //val sumBinCnt2 : Int = row(0).asInstanceOf[Int]
-
-
+    val names = cdNm match {
+      case "LOS"         => ("RESULT_NR_BF_LOS"        , "LOS"     )
+      case "PATHLOSS"    => ("RESULT_NR_BF_PATHLOSS"   , "PATHLOSS")
+      case "BEST_SERVER" => ("RESULT_NR_BF_BESTSERVER" , "RU_SEQ"  )
+      case "PILOT_EC"    => ("RESULT_NR_BF_RSRP"       , "RSRP"    )
+      case "RSSI"        => ("RESULT_NR_BF_RSSI"       , "RSSI"    )
+      case "SINR"        => ("RESULT_NR_BF_SINR"       , "SINR"    )
+    };
+    val tabNm = names._1; val colNm = names._2;
+    qry = MakeBfBinFileSql.selectSectorResult(scheduleId, tabNm, colNm);logInfo(qry); 
+    val vDf = spark.sql(qry).repartition(1);
+    
     //---------------------------------------------------------------------------------------------------------
        logInfo(s"""파일 Write start ${scheduleId}""");
     //---------------------------------------------------------------------------------------------------------

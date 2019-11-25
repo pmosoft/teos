@@ -80,6 +80,8 @@ WHERE  SCENARIO_ID = (SELECT SCENARIO_ID FROM SCHEDULE WHERE SCHEDULE_ID = ${sch
 }
 
 
+
+
 // Value Setting..
 def selectSectorResult(scheduleId:String,tabNm:String,colNm:String) = {
         // 요청한 인덱스에 대한 값위치
