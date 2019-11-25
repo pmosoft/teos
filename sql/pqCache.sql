@@ -167,8 +167,7 @@ AND    B.CACHE_YN = 'Y'
 
 --------------------------------------------------------------------------------
 )
-SELECT * FROM TEMP01
-;
+SELECT * FROM TEMP01;
 
 DROP TABLE PUBLIC.I_SCENARIO_NR_RU_CACHE;
 
