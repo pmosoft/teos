@@ -11,10 +11,10 @@ import com.sccomz.java.serialize.ByteUtil;
 public class SerializeTest {
 
     public static void main(String[] args) {
-        //SerializeTest s = new SerializeTest();
-        //s.array2to1();
+        SerializeTest s = new SerializeTest();
+        s.array2to1();
 
-        hexWriteTest06();
+        //hexWriteTest06();
         //s.readBin();
         //s.writeBinTest01();
         //s.readBinTest01();
@@ -186,6 +186,7 @@ public class SerializeTest {
 
       for(int i=0; i<arr.length; i++) {
         for(int j=0; j<arr[i].length; j++) {
+          System.out.println("arr[i].length="+arr[i].length);	
           //2차원 배열의 원소를 1차원 배열의 원소로 이동.
           arr1[( i * arr[i].length ) + j ] = arr[i][j];
         }

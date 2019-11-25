@@ -46,8 +46,8 @@ object MakeFolder extends Logging {
         ruInfo += ("SECTOR_PATH" -> rs.getString("SECTOR_PATH"));
 
         // 폴더 삭제
-        FileUtil.delFiles2(App.resultPath + "/" + DateUtil.getDate("yyyyMMdd") + "/" + rs.getString("SECTOR_PATH"));
-        logInfo("Directory Drop Complete!!");
+        //FileUtil.delFiles2(App.resultPath + "/" + DateUtil.getDate("yyyyMMdd") + "/" + rs.getString("SECTOR_PATH"));
+        //logInfo("Directory Drop Complete!!");
       }
 
       // RU 정보 생성
@@ -55,10 +55,8 @@ object MakeFolder extends Logging {
 
       //      if (rowCnt <= 150) {
       // 폴더 생성
-      var dir = new File(App.resultPath, DateUtil.getDate("yyyyMMdd") + "/" + rs.getString("RU_PATH"));
-      if (!dir.exists()) dir.mkdirs();
-      println(dir);
-      //      }
+      //var dir = new File(App.resultPath, DateUtil.getDate("yyyyMMdd") + "/" + rs.getString("RU_PATH"));
+      //if (!dir.exists()) dir.mkdirs(); println(dir); 
       rowCnt = rowCnt + 1;
     }
     ruInfo;

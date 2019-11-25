@@ -8,9 +8,19 @@ object CollectionTest {
     //mapTest04();
     //listTest01();
     //mapTest03();
-    optionTest01()
+    optionTest02()
   }
 
+  def optionTest02() = {
+    var ruPath : Option[String] = None
+    val ru_path = "aa"
+    println("ru_path="+ru_path);
+    ruPath = Some(ru_path)
+    println("ruPath="+ruPath);
+    println("ruPath="+ruPath.get);
+
+  }
+  
   def optionTest01() = {
     val numbers = Map("one" -> 1, "two" -> 2)
     val h2 : Option[Int] = numbers.get("two")

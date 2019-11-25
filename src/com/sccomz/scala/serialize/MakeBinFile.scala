@@ -27,8 +27,11 @@ import com.sccomz.java.serialize.ByteUtil
 /*
 
 import com.sccomz.scala.serialize.MakeBinFile
-MakeBinFile.executeEngResult("8463233");
+MakeBinFile.executeEngResult(spark,"8463233");
 MakeBinFile.makeEngSectorResult("8463233", "LOS","SYS/5113566");
+
+spark2-submit --master yarn --jars /home/icpap/lib/ojdbc7.jar,/home/icpap/lib/hiveJdbc11.jar --class com.sccomz.scala.serialize.MakeBinFile /home/icpap/bin/teos1.jar 8463233
+
 
 */
 
@@ -69,7 +72,7 @@ object MakeBinFile extends Logging {
   // 2D Bin 생성
   def makeEngResult(spark: SparkSession, ruInfo: Map[String, String], scheduleId: String, cdNm: String) = {
     var sectorPath = ruInfo.getOrElse("SECTOR_PATH", "");
-    makeEngSectorResult(spark, scheduleId, cdNm, ruInfo.getOrElse("SECTOR_PATH", sectorPath));
+    //makeEngSectorResult(spark, scheduleId, cdNm, ruInfo.getOrElse("SECTOR_PATH", sectorPath));
 
     if (cdNm == "LOS" || cdNm == "PATHLOSS") {
       makeEngRuResult(spark, scheduleId, cdNm, ruInfo);
@@ -100,7 +103,7 @@ object MakeBinFile extends Logging {
     //---------------------------------------------------
        logInfo(s"""[SEL] binCount ${scheduleId}""");
     //---------------------------------------------------
-    qry = MakeBinFileSql.selectBinCnt(scheduleId); logInfo(qry); rs = stat.executeQuery(qry);
+    qry = MakeBinFileSql.selectBinCnt(scheduleId); logInfo(qry); rs = stat.executeQuery(qry); rs.next();
     val binXCnt = rs.getInt("BIN_X_CNT"); val binYCnt = rs.getInt("BIN_Y_CNT");
 
     //---------------------------------------------------
@@ -135,6 +138,7 @@ object MakeBinFile extends Logging {
 
       p.foreach { row =>
         val i = row(0).asInstanceOf[Int] * binYCnt + row(1).asInstanceOf[Int]
+        //val i = (row(1).asInstanceOf[Int] * row(0).asInstanceOf[Int]) + row(0).asInstanceOf[Int]
 
         bin(i).value = colNm match {
           case "LOS" => ByteUtil.intToByteArray(row(2).asInstanceOf[Int])
@@ -159,7 +163,7 @@ object MakeBinFile extends Logging {
        logInfo(s"""[SEL] RU_VALUE ${scheduleId}""");
     //---------------------------------------------------
     val names = cdNm match {
-      case "LOS"         => ("RESULT_NR_2D_LOS_RU"         , "LOS"     )
+      case "LOS"         => ("RESULT_NR_2D_LOS_RU"         , "VALUE"     )
       case "PATHLOSS"    => ("RESULT_NR_2D_PATHLOSS_RU"    , "PATHLOSS")
       case "BEST_SERVER" => ("RESULT_NR_2D_BESTSERVER_RU"  , "RU_SEQ"  )
       case "PILOT_EC"    => ("RESULT_NR_2D_RSRP_RU"        , "RSRP"    )
@@ -171,6 +175,7 @@ object MakeBinFile extends Logging {
     //spark.sql("DROP TABLE IF EXISTS ENG_RU");
     import spark.implicits._
     qry = MakeBinFileSql.selectRuResultAll(scheduleId, tabNm, colNm); logInfo(qry); val vDf = spark.sql(qry).repartition($"RU_ID");
+    //qry = MakeBinFileSql.selectRuResultAll(scheduleId, tabNm, colNm); logInfo(qry); val vDf = spark.sql(qry).repartition(1);
     //vDF.cache.createOrReplaceTempView("RU_VALUE");
 
     ////---------------------------------------------------
@@ -196,39 +201,45 @@ object MakeBinFile extends Logging {
         case _          => ByteUtil.intZero()
     }
 
+    println("vDf.foreachPartition");
+
     vDf.foreachPartition { p =>
       println("partition start")
 
       // bin 초기화
-      var ruId  : Option[Int] = None
-      var ruSize: Option[(Int, Int)] = None
-      var bin   : Option[Array[Byte4]] = None
-
+      var ruId   : Option[String] = None
+      var ruSize : Option[(Int, Int)] = None 
+      var bin    : Option[Array[Byte4]] = None
+      var ruPath : Option[String] = None
+      println("p.foreach");
+      
       // bin 설정
       p.foreach { row =>
         // RU_ID, X_POINT, Y_POINT, VALUE
-        val ru_id   = row(0).asInstanceOf[Int] // RU_ID
-        val x_point = row(3).asInstanceOf[Int] // X_POINT
-        val y_point = row(4).asInstanceOf[Int] // Y_POINT
+        val ru_id   = row(0).asInstanceOf[String] // RU_ID
+        val x_point = row(3).asInstanceOf[Int]    // X_POINT
+        val y_point = row(4).asInstanceOf[Int]    // Y_POINT
+        val ru_path = row(6).asInstanceOf[String] // RU_PATH
 
         if (ruId.isEmpty) {
           ruId   = Some(ru_id)
           ruSize = Some((row(1).asInstanceOf[Int], row(2).asInstanceOf[Int])) // X_BIN_CNT, Y_BIN_CNT
           bin    = Some(initialArray(ruSize.get._1, ruSize.get._2, initialValue))
+          ruPath = Some(ru_path)
         }
 
+        println("bin set ru_id="+ru_id);
+        
         bin.get(x_point * ruSize.get._2 + y_point).value = cdNm match {
           case "LOS" => ByteUtil.intToByteArray(row(5).asInstanceOf[Int])
           case _     => ByteUtil.floatToByteArray(row(5).asInstanceOf[Float])
         }
+        
       }
 
-      // bin 출력
-      println("writing to file")
-
       // ruId.get
-      writeToHdfs(bin.get, s"/user/icpap/result${DateUtil.getDate("yyyyMMdd")}/ruId._2/${cdNm}.bin")
-
+      var path = s"/user/icpap/result/${DateUtil.getDate("yyyyMMdd")}/${ruPath.get}/${cdNm}.bin"; println(path);
+      writeToHdfs(bin.get, path)
       println("partition end")
     }
 
