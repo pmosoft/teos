@@ -32,7 +32,8 @@ ExecuteJob.executeEtlOracleToHdfs("8460064");
 ExecuteJob.execute("8460064");
 ExecuteJob.execute("8460178");
 
-ExecuteJob.executeEtlOracleToHdfs("8460964","SC001");
+ExecuteJob.executeEtlOracleToHdfs("8463235","SC051");
+
 ExecuteJob.executeEtlOracleToHdfs("8460966","SC001");
 ExecuteJob.executeEtlOracleToHdfs("8460968","SC001");
 ExecuteJob.delStepLog("8460178");

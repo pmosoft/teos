@@ -16,7 +16,7 @@ import com.sccomz.scala.comm.App
 /*
 
 import com.sccomz.scala.etl.load.LoadHdfsManager
-LoadHdfsManager.oracleToHdfs("8463233", "5113566");
+LoadHdfsManager.oracleToHdfs("8463235", "5113766");
 LoadHdfsManager.toParquetPartition(spark,"local","SCHEDULE","8463233", "5113566");
 
 ExtractOraManager.extractOracleToHadoopCsv("8463233")
@@ -61,7 +61,6 @@ object LoadHdfsManager {
     toParquetPartition(spark,"local","NRUETRAFFIC",scheduleId, scenarioId);
     toParquetPartition(spark,"local","NRSECTORPARAMETER",scheduleId, scenarioId);
     toParquetPartition(spark,"local","NRSYSTEM",scheduleId, scenarioId);
-    
     spark.close();
   }
 
