@@ -238,7 +238,7 @@ object MakeBinFile extends Logging {
             case _     => ByteUtil.floatToByteArray(row(5).asInstanceOf[Float])
           }
         } catch {        
-          case _: Throwable=>println("ru_id="+ru_id+" : y="+y_point+" : x="+x_point+" : ruSize="+ruSize.get._2);        
+          case e: Exception => e.printStackTrace;println("ru_id="+ru_id+" : y="+y_point+" : x="+x_point+" : ruSize="+ruSize.get._2);
         }        
         
         //bin.get(y_point * ruSize.get._2 + x_point).value = cdNm match {
