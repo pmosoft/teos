@@ -25,7 +25,8 @@ spark2-submit --master yarn --jars /home/icpap/lib/ojdbc7.jar, /home/icpap/lib/h
 spark2-submit --master local[*] --properties-file spark-defaults.conf --driver-memory 8g --jars /home/icpap/lib/hiveJdbc11.jar --class com.sccomz.scala.serialize.MakeBinFile /home/icpap/bin/teos.jar 8463233
 
 #bf
-spark2-submit --master yarn --jars /home/icpap/lib/ojdbc7.jar,/home/icpap/lib/hiveJdbc11.jar --class com.sccomz.scala.serialize.MakeBfBinFile /home/icpap/bin/teos1.jar 8463235
+spark2-submit --master yarn --jars /home/icpap/lib/ojdbc7.jar,/home/icpap/lib/hiveJdbc11.jar --class com.sccomz.scala.serialize.MakeBfBinFile /home/icpap/bin/teos1.jar 8460965
+spark2-submit --master local[*] --jars /home/icpap/lib/ojdbc7.jar,/home/icpap/lib/hiveJdbc11.jar --class com.sccomz.scala.serialize.MakeBfBinFile /home/icpap/bin/teos1.jar 8460965
   
 
 #############################################

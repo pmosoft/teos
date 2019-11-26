@@ -65,7 +65,7 @@ ORDER BY BUILDING_INDEX
 
 def selectBldCount() = {
 s"""
-SELECT COUNT(DISTINCT TBD_KEY) AS bldCount
+SELECT CAST(COUNT(DISTINCT TBD_KEY) AS INTEGER) AS bldCount
 FROM   M_RESULT_NR_BF_SCEN_HEADER
 """
 }
@@ -79,9 +79,6 @@ WHERE  SCENARIO_ID = (SELECT SCENARIO_ID FROM SCHEDULE WHERE SCHEDULE_ID = ${sch
 """
 }
 
-
-
-
 // Value Setting..
 def selectSectorResult(scheduleId:String,tabNm:String,colNm:String) = {
         // 요청한 인덱스에 대한 값위치
@@ -91,19 +88,19 @@ def selectSectorResult(scheduleId:String,tabNm:String,colNm:String) = {
         //                      + ( iX*4 );                            //Y
 s"""
 SELECT A.TBD_KEY
-     , A.FLOORZ
-     , A.NY
-     , A.NX
+     , A.RX_FLOORZ
+     , A.RX_TM_YPOS
+     , A.RX_TM_XPOS
      , ${colNm} AS VALUE
      , B.START_POINT_4BIN
-     + (A.FLOORZ*A.NY*A.NX*4)
-     + (A.NY*A.NX*4)
-     + (A.NX*4) AS POS
-FROM   ${tabNm} A,
+     + (A.RX_FLOORZ*A.RX_TM_YPOS*A.RX_TM_XPOS*4)
+     + (A.RX_TM_YPOS*A.RX_TM_XPOS*4)
+     + (A.RX_TM_XPOS*4) AS POS
+FROM   ${tabNm} A
      , M_RESULT_NR_BF_SCEN_HEADER B
 WHERE  A.SCHEDULE_ID = ${scheduleId}
 AND    A.TBD_KEY = B.TBD_KEY
-ORDER BY FLOORZ, NY, NX
+ORDER BY RX_FLOORZ, RX_TM_YPOS, RX_TM_XPOS
 """
 }
 

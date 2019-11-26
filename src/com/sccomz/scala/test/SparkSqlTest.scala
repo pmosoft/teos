@@ -24,32 +24,46 @@ def main(args: Array[String]): Unit = {
 def test01(spark: SparkSession) = {
 
 spark.sql(s"""
-with AREA as
-(
-select a.scenario_id, b.schedule_id,
-       a.tm_startx div a.resolution * a.resolution as tm_startx,
-       a.tm_starty div a.resolution * a.resolution as tm_starty,
-       a.tm_endx div a.resolution * a.resolution as tm_endx,
-       a.tm_endy div a.resolution * a.resolution as tm_endy,
-       a.resolution
-  from SCENARIO a, SCHEDULE b
- where b.schedule_id = 8463189
-   and a.scenario_id = b.scenario_id
-)
-select max(AREA.scenario_id) as scenario_id,
-       RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution as rx_tm_xpos,
-       RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution as rx_tm_ypos,
-       (RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution - AREA.tm_startx) / AREA.resolution as x_point,
-       (RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution - AREA.tm_starty) / AREA.resolution as y_point,       
-       max(rsrp) as rsrp
-  from AREA, RESULT_NR_2D_RSRP_RU RSLT
- where RSLT.schedule_id = AREA.schedule_id
-   and RSLT.schedule_id = 8463189
-   and AREA.tm_startx <= RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution and RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution < AREA.tm_endx
-   and AREA.tm_starty <= RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution and RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution < AREA.tm_endy
-  group by RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution, RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution,
-           (RSLT.rx_tm_xpos div AREA.resolution * AREA.resolution - AREA.tm_startx) / AREA.resolution, (RSLT.rx_tm_ypos div AREA.resolution * AREA.resolution - AREA.tm_starty) / AREA.resolution
+SELECT BUILDING_INDEX -- 0
+     , TBD_KEY        -- 1
+     , NX             -- 2
+     , NY             -- 3
+     , FLOORZ         -- 4
+     , EXT_SX         -- 5
+     , EXT_SY         -- 7
+     , NX*NY*FLOORZ      AS BIN_CNT
+     , SUM(NX*NY*FLOORZ) OVER (ORDER BY BUILDING_INDEX) - NX*NY*FLOORZ      AS START_POINT_BIN
+     ,(SUM(NX*NY*FLOORZ) OVER (ORDER BY BUILDING_INDEX) - NX*NY*FLOORZ) * 4 AS START_POINT_4BIN
+FROM   RESULT_NR_BF_SCEN_HEADER
+WHERE  SCHEDULE_ID = 8463235
+ORDER BY BUILDING_INDEX
+""").cache.createOrReplaceTempView("M_RESULT_NR_BF_SCEN_HEADER")
+;
+
+spark.sql(s"""
+SELECT A.TBD_KEY
+     , A.RX_FLOORZ
+     , A.RX_TM_YPOS
+     , A.RX_TM_XPOS
+     , LOS AS VALUE
+     , B.START_POINT_4BIN
+     + (A.RX_FLOORZ*A.RX_TM_YPOS*A.RX_TM_XPOS*4)
+     + (A.RX_TM_YPOS*A.RX_TM_XPOS*4)
+     + (A.RX_TM_XPOS*4) AS POS
+FROM   RESULT_NR_BF_LOS A
+     , M_RESULT_NR_BF_SCEN_HEADER B
+WHERE  A.SCHEDULE_ID = 8463235
+AND    A.TBD_KEY = B.TBD_KEY
+ORDER BY RX_FLOORZ, RX_TM_YPOS, RX_TM_XPOS
+""").take(1000).foreach(println)
+;
+
+
+ 
+spark.sql(s"""
+SELECT SCHEDULE_ID, COUNT(*) FROM RESULT_NR_BF_SCEN_HEADER GROUP BY SCHEDULE_ID 
 """).take(1000).foreach(println);
+
 
 }
 

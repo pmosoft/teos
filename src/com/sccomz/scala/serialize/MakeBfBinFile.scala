@@ -46,7 +46,8 @@ object MakeBfBinFile extends Logging {
 
   def executeResult(scheduleId: String) = {
 
-    val spark: SparkSession = SparkSession.builder().master("yarn").appName(this.getClass.getName).getOrCreate();
+    //val spark: SparkSession = SparkSession.builder().master("yarn").appName(this.getClass.getName).getOrCreate();
+    val spark: SparkSession = SparkSession.builder().appName(this.getClass.getName).getOrCreate();
 
     // separate this function from the job
     val ruInfo = MakeFolder.makeResultPath(scheduleId);
@@ -112,7 +113,7 @@ object MakeBfBinFile extends Logging {
     //---------------------------------------------------
        logInfo(s"""[SEL] resolution ${scheduleId}""");
     //---------------------------------------------------
-    qry = MakeBfBinFileSql.selectResolution(scheduleId); logInfo(qry); rs = stat.executeQuery(qry);
+    qry = MakeBfBinFileSql.selectResolution(scheduleId); logInfo(qry); rs = stat.executeQuery(qry); rs.next();
     val resolution : Int = rs.getInt("RESOLUTION");
 
     //---------------------------------------------------
