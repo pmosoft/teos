@@ -87,6 +87,7 @@ object MakeBinFile extends Logging {
       import org.apache.hadoop.fs.{ FileSystem, Path }
       val fs = FileSystem.get(new Configuration())
       val out = fs.create(new Path(path))
+
       bin.foreach { e =>
         out.write(e.value)
 
