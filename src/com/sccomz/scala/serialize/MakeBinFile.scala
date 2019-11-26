@@ -141,7 +141,7 @@ object MakeBinFile extends Logging {
         //val i = row(0).asInstanceOf[Int] * binYCnt + row(1).asInstanceOf[Int]
         val i = row(1).asInstanceOf[Int] * binYCnt + row(0).asInstanceOf[Int]
         //val i = (row(1).asInstanceOf[Int] * row(0).asInstanceOf[Int]) + row(0).asInstanceOf[Int]
-        
+         
         bin(i).value = colNm match {
           case "LOS" => ByteUtil.intToByteArray(row(2).asInstanceOf[Int])
           case _     => ByteUtil.floatToByteArray(row(2).asInstanceOf[Float])
