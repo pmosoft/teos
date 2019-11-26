@@ -57,16 +57,14 @@ object MakeBinFile extends Logging {
 
   // 2D Bin
   def executeEngResult(spark: SparkSession, scheduleId: String) = {
-
     // separate this function from the job
     val ruInfo = MakeFolder.makeResultPath(scheduleId);
     makeEngResult(spark, ruInfo, scheduleId, "LOS");
-    //makeEngResult(scheduleId, "PATHLOSS");
-    //makeEngResult(scheduleId, "BEST_SERVER");
-    //makeEngResult(scheduleId, "PILOT_EC");     // RSRP
-    //makeEngResult(scheduleId, "RSSI");
-    //makeEngResult(scheduleId, "SINR");      // SINR
-
+    makeEngResult(spark, ruInfo, scheduleId, "PATHLOSS");
+    makeEngResult(spark, ruInfo, scheduleId, "BEST_SERVER");
+    makeEngResult(spark, ruInfo, scheduleId, "PILOT_EC");       // RSRP
+    makeEngResult(spark, ruInfo, scheduleId, "RSSI");
+    makeEngResult(spark, ruInfo, scheduleId, "SINR");           // SINR
   }
 
   // 2D Bin 생성
