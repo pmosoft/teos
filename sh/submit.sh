@@ -26,7 +26,7 @@ spark2-submit --master local[*] --properties-file spark-defaults.conf --driver-m
 
 #bf
 spark2-submit --master yarn --jars /home/icpap/lib/ojdbc7.jar,/home/icpap/lib/hiveJdbc11.jar --class com.sccomz.scala.serialize.MakeBfBinFile /home/icpap/bin/teos1.jar 8463235
-
+  
 
 #############################################
 # BatchJob
