@@ -25,7 +25,7 @@ def execute(scheduleId:String) = {
 }
  
 def executeSql(spark: SparkSession, scheduleId:String) = {
-//var scheduleId = "8463233";
+//var scheduleId = "8460965";
   
 var objNm = "RESULT_NR_BF_SCEN_HEADER"
 //------------------------------------------------------
