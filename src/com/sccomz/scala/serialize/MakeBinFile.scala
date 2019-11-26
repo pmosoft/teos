@@ -72,7 +72,7 @@ object MakeBinFile extends Logging {
   // 2D Bin 생성
   def makeEngResult(spark: SparkSession, ruInfo: Map[String, String], scheduleId: String, cdNm: String) = {
     var sectorPath = ruInfo.getOrElse("SECTOR_PATH", "");
-    //makeEngSectorResult(spark, scheduleId, cdNm, ruInfo.getOrElse("SECTOR_PATH", sectorPath));
+    makeEngSectorResult(spark, scheduleId, cdNm, ruInfo.getOrElse("SECTOR_PATH", sectorPath));
 
     if (cdNm == "LOS" || cdNm == "PATHLOSS") {
       makeEngRuResult(spark, scheduleId, cdNm, ruInfo);
@@ -137,9 +137,11 @@ object MakeBinFile extends Logging {
       var bin = initialArray(binXCnt, binYCnt, initialValue)
 
       p.foreach { row =>
-        val i = row(0).asInstanceOf[Int] * binYCnt + row(1).asInstanceOf[Int]
+        
+        //val i = row(0).asInstanceOf[Int] * binYCnt + row(1).asInstanceOf[Int]
+        val i = row(1).asInstanceOf[Int] * binYCnt + row(0).asInstanceOf[Int]
         //val i = (row(1).asInstanceOf[Int] * row(0).asInstanceOf[Int]) + row(0).asInstanceOf[Int]
-
+        
         bin(i).value = colNm match {
           case "LOS" => ByteUtil.intToByteArray(row(2).asInstanceOf[Int])
           case _     => ByteUtil.floatToByteArray(row(2).asInstanceOf[Float])
@@ -229,11 +231,20 @@ object MakeBinFile extends Logging {
         }
 
         println("bin set ru_id="+ru_id);
+
+        try {
+          bin.get(y_point * ruSize.get._2 + x_point).value = cdNm match {
+            case "LOS" => ByteUtil.intToByteArray(row(5).asInstanceOf[Int])
+            case _     => ByteUtil.floatToByteArray(row(5).asInstanceOf[Float])
+          }
+        } catch {        
+          case _: Throwable=>println("ru_id="+ru_id+" : y="+y_point+" : x="+x_point+" : ruSize="+ruSize.get._2);        
+        }        
         
-        bin.get(x_point * ruSize.get._2 + y_point).value = cdNm match {
-          case "LOS" => ByteUtil.intToByteArray(row(5).asInstanceOf[Int])
-          case _     => ByteUtil.floatToByteArray(row(5).asInstanceOf[Float])
-        }
+        //bin.get(y_point * ruSize.get._2 + x_point).value = cdNm match {
+        //  case "LOS" => ByteUtil.intToByteArray(row(5).asInstanceOf[Int])
+        //  case _     => ByteUtil.floatToByteArray(row(5).asInstanceOf[Float])
+        //}
         
       }
 

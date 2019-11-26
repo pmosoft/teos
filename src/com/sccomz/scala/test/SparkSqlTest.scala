@@ -174,7 +174,8 @@ SELECT COUNT(DISTINCT RU_ID) FROM RESULT_NR_BF_LOS_RU WHERE SCHEDULE_ID = 846323
 //RESULT_NR_BF_LOS_RU_8463235_1012138268
 
 
-spark.sql(s"""
+
+val sqlDf = spark.sql(s"""
 WITH RU AS
 (
 SELECT B.SCHEDULE_ID, A.ENB_ID, A.PCI, A.PCI_PORT, A.RU_ID,
@@ -183,19 +184,28 @@ SELECT B.SCHEDULE_ID, A.ENB_ID, A.PCI, A.PCI_PORT, A.RU_ID,
        INT(A.SITE_STARTY) DIV A.RESOLUTION * A.RESOLUTION AS SITE_STARTY,
        INT(A.SITE_ENDX) DIV A.RESOLUTION * A.RESOLUTION AS SITE_ENDX,
        INT(A.SITE_ENDY) DIV A.RESOLUTION * A.RESOLUTION AS SITE_ENDY,
-       A.RESOLUTION
+       A.RESOLUTION,
+       CONCAT(B.USER_ID,'/',A.SCENARIO_ID) AS SECTOR_PATH,
+       CONCAT(B.USER_ID,'/',A.SCENARIO_ID,'/ENB_',A.ENB_ID,'/PCI_',A.PCI,'_PORT_',A.PCI_PORT,'_',A.RU_ID) AS RU_PATH
   FROM SCENARIO_NR_RU A, SCHEDULE B
  WHERE B.SCHEDULE_ID = 8463233
    AND A.SCENARIO_ID = B.SCENARIO_ID
 )
-SELECT RU_ID, X_POINT, Y_POINT, VALUE AS VALUE
-FROM 
+SELECT RU_ID                                --0
+     , X_BIN_CNT                            --1
+     , Y_BIN_CNT                            --2
+     , CAST(X_POINT AS INTEGER) AS X_POINT  --3
+     , CAST(Y_POINT AS INTEGER) AS Y_POINT  --4
+     , VALUE                                --5
+     , RU_PATH                              --6  
+FROM
 (
 SELECT DISTINCT
        A.RU_ID, B.X_BIN_CNT, B.Y_BIN_CNT,
        ((A.RX_TM_XPOS DIV B.RESOLUTION * B.RESOLUTION) - SITE_STARTX) DIV B.RESOLUTION AS X_POINT,
        ((A.RX_TM_YPOS DIV B.RESOLUTION * B.RESOLUTION) - SITE_STARTY) DIV B.RESOLUTION AS Y_POINT,
-       VALUE
+       VALUE AS VALUE,
+       B.RU_PATH
  FROM  RESULT_NR_2D_LOS_RU A, RU B
  WHERE A.SCHEDULE_ID = B.SCHEDULE_ID
    AND A.RU_ID       = B.RU_ID
@@ -206,6 +216,36 @@ SELECT DISTINCT
 )
 WHERE X_POINT < X_BIN_CNT
 AND   Y_POINT < Y_BIN_CNT
+"""); sqlDf.cache.createOrReplaceTempView("RU_BIN"); sqlDf.count();
+
+spark.sql("DROP TABLE IF EXISTS M_RU_BIN2");
+
+spark.sql(s"""
+SELECT RU_ID 
+     , MAX(X_BIN_CNT) AS MAX_X_BIN_CNT  
+     , MAX(Y_BIN_CNT) AS MAX_Y_BIN_CNT 
+     , MIN(X_POINT)   AS MIN_X_POINT
+     , MAX(X_POINT)   AS MAX_X_POINT
+     , MIN(Y_POINT)   AS MIN_Y_POINT
+     , MAX(Y_POINT)   AS MAX_Y_POINT 
+FROM M_RU_BIN
+GROUP BY RU_ID
+""").cache.createOrReplaceTempView("M_RU_BIN2")
+
+spark.sql(s"""
+SELECT * FROM M_RU_BIN2
+""").take(100).foreach(println);
+
+spark.sql(s"""
+SELECT * 
+FROM   M_RU_BIN2
+WHERE  MAX_X_POINT >= MAX_X_BIN_CNT 
+""").take(100).foreach(println);
+
+spark.sql(s"""
+SELECT * 
+FROM   M_RU_BIN2
+WHERE  MAX_Y_POINT >= MAX_Y_BIN_CNT 
 """).take(100).foreach(println);
 
 
