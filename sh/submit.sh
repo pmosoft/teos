@@ -51,3 +51,7 @@ hadoop fs -chmod -R 777 /TEOS/warehouse/SCENARIO_NR_RU_AVG_HEIGHT;
 hadoop fs -chown -R icpap:hadoop /TEOS/warehouse/SCENARIO_NR_RU_AVG_HEIGHT
 hadoop fs -chown -R icpap:hadoop /TEOS/warehouse/SCENARIO
 hadoop fs -chmod -R 777 /TEOS/warehouse/
+
+df -h | grep data0[01234567] | sed 's/%//' | awk '{ result += $5 } END { print result }'
+
+
