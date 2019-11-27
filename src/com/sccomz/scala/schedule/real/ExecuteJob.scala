@@ -142,7 +142,11 @@ object ExecuteJob {
     //var scheduleId = "8460064";
     //var scenarioId = "5104574";
 
-    var res = Process(s"sshpass -pteos ssh -o StrictHostKeyChecking=no postgres@teos-cluster-dn1 /gis01/bin/anal_los_job_dis.sh ${scenarioId}").lineStream;
+    //var res = Process(s"sshpass -pteos ssh -o StrictHostKeyChecking=no postgres@teos-cluster-dn1 /gis01/bin/anal_los_job_dis.sh ${scenarioId}").lineStream;
+    var res1 = Process(s"sshpass -proot123 ssh -o StrictHostKeyChecking=no root@teos-cluster-dn1 ls").lineStream;
+    var res2 = Process(s"sshpass -proot123 ssh -o StrictHostKeyChecking=no root@teos-cluster-dn2 ls").lineStream;
+    var res3 = Process(s"sshpass -proot123 ssh -o StrictHostKeyChecking=no root@teos-cluster-dn3 ls").lineStream;
+    var res4 = Process(s"sshpass -proot123 ssh -o StrictHostKeyChecking=no root@teos-cluster-dn4 ls").lineStream;
     //var res = Process(s"sshpass -pteos ssh -o StrictHostKeyChecking=no postgres@teos-cluster-dn1 hadoop fs -df -h").lineStream;
 
     //var res = Process(s"ssh postgres@teos-cluster-dn1 /gis01/bin/anal_los_job_dis.sh ${scenarioId}").lineStream;
