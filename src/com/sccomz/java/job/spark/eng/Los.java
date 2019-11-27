@@ -13,7 +13,6 @@ public class Los {
 
 	public static void main(String[] args) {
 		
-		
 		String scheduleId = "";
 	    SparkSession spark = SparkSession
 	    	      .builder()

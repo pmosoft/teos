@@ -29,8 +29,7 @@ object ProcessBuilderTest {
   }
 
   def test03(): Unit = {
-    //val p = "sleep 100".run()               // start asynchronously
-    val p = "dir".run()               // start asynchronously
+    val p = "sleep 100".run()               // start asynchronously
     val f = Future(blocking(p.exitValue())) // wrap in Future
     val res = try {
                 Await.result(f, duration.Duration(2, "sec"))
