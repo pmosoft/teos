@@ -18,6 +18,14 @@ spark2-submit --master yarn --class com.sccomz.scala.job.spark.eng.Los3 /home/ic
 spark2-submit --master yarn --class com.sccomz.scala.job.spark.eng.Los2 /home/icpap/bin/teos.jar 8463233
 
 #############################################
+# Eng(Java)
+#############################################
+spark2-submit --master yarn --class com.sccomz.scala.job.spark.eng.Los2 /home/icpap/bin/teos1.jar 8463233 5113566
+spark2-submit --master yarn --class com.sccomz.scala.job.spark.eng.Los3 /home/icpap/bin/teos1.jar 8463233 5113566
+spark2-submit --master yarn --class com.sccomz.scala.job.spark.eng.Los2 /home/icpap/bin/teos.jar 8463233
+
+
+#############################################
 # MakeBin
 #############################################
 spark2-submit --master yarn --jars /home/icpap/lib/ojdbc7.jar, /home/icpap/lib/hiveJdbc11.jar --class com.sccomz.scala.serialize.MakeBinFile /home/icpap/bin/teos1.jar 8463233

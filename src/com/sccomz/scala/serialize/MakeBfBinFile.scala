@@ -31,7 +31,7 @@ MakeBfBinFile.executeResult("8463233");
 MakeBfBinFile.makeSectorResult("8463233", "LOS","SYS/5113566");
 
  * */
-object MakeBfBinFile extends Logging {
+object MakeBfBinFile extends Serializable {
 
   Class.forName(App.dbDriverOra);
   var con:Connection = DriverManager.getConnection(App.dbUrlOra,App.dbUserOra,App.dbPwOra);
@@ -81,7 +81,7 @@ object MakeBfBinFile extends Logging {
   // 섹터 Bin
   def makeSectorResult(spark: SparkSession, scheduleId: String, cdNm: String, sectorPath: String) = {
 
-    logInfo(s"""makeSectorResult start ${scheduleId}""");
+    println(s"""makeSectorResult start ${scheduleId}""");
 
     var qry = "";
     // int    buildingIndex; // Building Index
@@ -99,32 +99,32 @@ object MakeBfBinFile extends Logging {
 	  //ULLong binCount;	// binData Count(do not save in file)
 	  //char*  binData;
     //---------------------------------------------------
-       logInfo(s"""[SEL] Header ${scheduleId}""");
+       println(s"""[SEL] Header ${scheduleId}""");
     //---------------------------------------------------
-    qry = MakeBfBinFileSql.selectResultNrBfScenHeader(scheduleId); logInfo(qry);
-    val headerDF = spark.sql(qry).repartition(1); logInfo(qry); headerDF.cache.createOrReplaceTempView("M_RESULT_NR_BF_SCEN_HEADER");
+    qry = MakeBfBinFileSql.selectResultNrBfScenHeader(scheduleId); println(qry);
+    val headerDF = spark.sql(qry).repartition(1); println(qry); headerDF.cache.createOrReplaceTempView("M_RESULT_NR_BF_SCEN_HEADER");
 
     //---------------------------------------------------
-       logInfo(s"""[SEL] bldCount ${scheduleId}""");
+       println(s"""[SEL] bldCount ${scheduleId}""");
     //---------------------------------------------------
-    qry = MakeBfBinFileSql.selectBldCount(); logInfo(qry); var sqlDf = spark.sql(qry); var row = sqlDf.collect.last
+    qry = MakeBfBinFileSql.selectBldCount(); println(qry); var sqlDf = spark.sql(qry); var row = sqlDf.collect.last
     val bldCount : Int = row(0).asInstanceOf[Int]
 
     //---------------------------------------------------
-       logInfo(s"""[SEL] resolution ${scheduleId}""");
+       println(s"""[SEL] resolution ${scheduleId}""");
     //---------------------------------------------------
-    qry = MakeBfBinFileSql.selectResolution(scheduleId); logInfo(qry); rs = stat.executeQuery(qry); rs.next();
+    qry = MakeBfBinFileSql.selectResolution(scheduleId); println(qry); rs = stat.executeQuery(qry); rs.next();
     val resolution : Int = rs.getInt("RESOLUTION");
 
     //---------------------------------------------------
-       logInfo(s"""[SEL] sumBinCnt ${scheduleId}""");
+       println(s"""[SEL] sumBinCnt ${scheduleId}""");
     //---------------------------------------------------
-    qry = MakeBfBinFileSql.selectSumBinCnt(scheduleId); logInfo(qry); sqlDf = spark.sql(qry); row = sqlDf.collect.last
+    qry = MakeBfBinFileSql.selectSumBinCnt(scheduleId); println(qry); sqlDf = spark.sql(qry); row = sqlDf.collect.last
     val sumBinCnt : Long = row(0).asInstanceOf[Long]
-    val sumBinCnt2 : Int = row(0).asInstanceOf[Int]
+    val sumBinCnt2 : Int = row(1).asInstanceOf[Int]
 
     //---------------------------------------------------
-       logInfo(s"""[SEL] value ${scheduleId}""");
+       println(s"""[SEL] value ${scheduleId}""");
     //---------------------------------------------------
     val names = cdNm match {
       case "LOS"         => ("RESULT_NR_BF_LOS"        , "LOS"     )
@@ -135,11 +135,11 @@ object MakeBfBinFile extends Logging {
       case "SINR"        => ("RESULT_NR_BF_SINR"       , "SINR"    )
     };
     val tabNm = names._1; val colNm = names._2;
-    qry = MakeBfBinFileSql.selectSectorResult(scheduleId, tabNm, colNm);logInfo(qry); 
+    qry = MakeBfBinFileSql.selectSectorResult(scheduleId, tabNm, colNm);println(qry); 
     val vDf = spark.sql(qry).repartition(1);
     
     //---------------------------------------------------------------------------------------------------------
-       logInfo(s"""파일 Write start ${scheduleId}""");
+       println(s"""파일 Write start ${scheduleId}""");
     //---------------------------------------------------------------------------------------------------------
     import org.apache.hadoop.fs.{ FileSystem, Path }
     val fs = FileSystem.get(new Configuration())
@@ -151,38 +151,36 @@ object MakeBfBinFile extends Logging {
     dos.writeInt(ByteUtil.swap(resolution));                                 // resolution     int        4
 
     //---------------------------------------------------------------------------------------------------------
-       logInfo(s"""파일 Write Header ${scheduleId}""");
+       println(s"""파일 Write Header ${scheduleId}""");
     //---------------------------------------------------------------------------------------------------------
 
-    headerDF.foreachPartition { p =>
-      p.foreach { row =>
-        dos.writeInt(ByteUtil.swap(row(0).asInstanceOf[Int]));                // BUILDING_INDEX int        4
-        dos.write(ByteUtil.toByte20(row(1).asInstanceOf[String]));            // TBD_KEY        char[20]  20
-        dos.write(row(2).asInstanceOf[Int]);                                  // BinXCnt        uchar      1
-        dos.write(row(3).asInstanceOf[Int]);                                  // BinYCnt        uchar      1
-        dos.write(row(4).asInstanceOf[Int]);                                  // FloorZ         uchar      1
-        dos.write(row(4).asInstanceOf[Int]);                                  // Padding        uchar      1
-        dos.writeFloat(ByteUtil.swap(row(5).asInstanceOf[Float]));            // startX         float      4
-        dos.writeFloat(ByteUtil.swap(row(6).asInstanceOf[Float]));            // startY         float      4
-        dos.writeLong(row(7).asInstanceOf[Long]);                             // start point    ulong      8
-        }
-    }
-
+    //headerDF.foreach { row =>
+    //  dos.writeInt(ByteUtil.swap(row(0).asInstanceOf[Int]));                // BUILDING_INDEX int        4
+    //  dos.write(ByteUtil.toByte20(row(1).asInstanceOf[String]));            // TBD_KEY        char[20]  20
+    //  dos.write(row(2).asInstanceOf[Int]);                                  // BinXCnt        uchar      1
+    //  dos.write(row(3).asInstanceOf[Int]);                                  // BinYCnt        uchar      1
+    //  dos.write(row(4).asInstanceOf[Int]);                                  // FloorZ         uchar      1
+    //  dos.write(row(4).asInstanceOf[Int]);                                  // Padding        uchar      1
+    //  dos.writeFloat(ByteUtil.swap(row(5).asInstanceOf[Float]));            // startX         float      4
+    //  dos.writeFloat(ByteUtil.swap(row(6).asInstanceOf[Float]));            // startY         float      4
+    //  dos.writeLong(row(7).asInstanceOf[Long]);                             // start point    ulong      8
+    //}
+    
     //---------------------------------------------------------------------------------------------------------
-       logInfo(s"""파일 Write binCount ${scheduleId}""");
+       println(s"""파일 Write binCount ${scheduleId}""");
     //---------------------------------------------------------------------------------------------------------
     dos.writeLong(sumBinCnt);                                                 // binCount        ulong     8
-
+    
     //---------------------------------------------------------------------------------------------------------
-       logInfo(s"""파일 Write binData ${scheduleId}""");
+       println(s"""파일 Write binData ${scheduleId}""");
     //---------------------------------------------------------------------------------------------------------
     val initialValue = cdNm match {
         case "PATHLOSS" => ByteUtil.floatMax()
         case _          => ByteUtil.intZero()
     }
-
+    
     val bin = initialArray(sumBinCnt2 , initialValue)
-
+    
     vDf.foreachPartition { p =>
       p.foreach { row =>
         bin(row(5).asInstanceOf[Int]).value = cdNm match {
@@ -191,20 +189,20 @@ object MakeBfBinFile extends Logging {
         }
       }
     }
-
+    
     bin.foreach { e =>
        dos.write(e.value)
     }
     dos.close()
 
-    logInfo(s"""makeSectorResult end ${scheduleId}""");
+    println(s"""makeSectorResult end ${scheduleId}""");
 
   }
 
   // RU별 Bin
   def makeRuResult(spark: SparkSession,scheduleId: String, cdNm: String, ruInfo: mutable.Map[String, String]) = {
 
-    logInfo("makeRuResult 01")
+    println("makeRuResult 01")
 
     val names = cdNm match {
       case "LOS" => ("RESULT_NR_BF_LOS_RU", "VALUE")
@@ -218,22 +216,22 @@ object MakeBfBinFile extends Logging {
     spark.sql("DROP TABLE IF EXISTS ENG_RU")
 
     val qry = MakeBinFileSql.selectRuResultAll(scheduleId, tabNm, colNm)
-    logInfo(qry)
+    println(qry)
 
     val tDF = spark.sql(qry)
     tDF.cache.createOrReplaceTempView("ENG_RU")
     //    tDF.count();
 
-    logInfo("makeRuResult 02")
+    println("makeRuResult 02")
 
     //    val iCnt = ruInfo.size;
 
     // todo use jdbc
     def getRUBinCounts(scheduleId: String, ruId: (String, String)): (Int, Int) = {
-      logInfo("makeRuResult 04 " + ruId._1)
+      println("makeRuResult 04 " + ruId._1)
 
       val qry = MakeBinFileSql.select2dRuBinCnt(scheduleId, ruId._1)
-      logInfo(qry)
+      println(qry)
       val sqlDf = spark.sql(qry)
 
       val row = sqlDf.collect.last
@@ -247,7 +245,7 @@ object MakeBfBinFile extends Logging {
       println(ruId._1 + " : " + ruId._2)
 
       if (ruId._1 != "SECTOR_PATH") {
-        logInfo("============================== 초기화 ==============================")
+        println("============================== 초기화 ==============================")
         //---------------------------------------------------------------------------------------------------------
         // 초기화
         //---------------------------------------------------------------------------------------------------------
@@ -272,16 +270,16 @@ object MakeBfBinFile extends Logging {
           }
         }
 
-        logInfo("============================ RU별 Value 세팅 ============================")
+        println("============================ RU별 Value 세팅 ============================")
         //---------------------------------------------------------------------------------------------------------
         // Value 세팅
         //---------------------------------------------------------------------------------------------------------
-        logInfo("makeRuResult 05 " + ruId._1)
+        println("makeRuResult 05 " + ruId._1)
 
         //var qry2 = MakeBinFileSql4.selectRuResult(scheduleId, tabNm, colNm, ruId._1);
         // todo add a column called RU_ID
         val qry = MakeBinFileSql.selectRuResult2(ruId._1)
-        logInfo(qry)
+        println(qry)
 
         import spark.implicits._
 
@@ -289,7 +287,7 @@ object MakeBfBinFile extends Logging {
         // 처음부터 파티션 돼 있는 것이 좋음
         val sqlDf2 = spark.sql(qry).repartition($"RU_ID")
 
-        logInfo("makeRuResult 06 " + ruId._1)
+        println("makeRuResult 06 " + ruId._1)
 
         sqlDf2.foreachPartition { p =>
           println("partition start")
@@ -319,9 +317,9 @@ object MakeBfBinFile extends Logging {
           }
         }
 
-        logInfo("makeRuResult 07 " + ruId._1)
+        println("makeRuResult 07 " + ruId._1)
 
-        logInfo("============================ RU별 파일 Write ============================")
+        println("============================ RU별 파일 Write ============================")
         //---------------------------------------------------------------------------------------------------------
         // 파일 Write
         //---------------------------------------------------------------------------------------------------------
@@ -333,9 +331,9 @@ object MakeBfBinFile extends Logging {
           }
         }
 
-        logInfo("makeRuResult 08 " + ruId._1)
+        println("makeRuResult 08 " + ruId._1)
 
-        logInfo("=========================== RU별 Bin 생성 완료 ===========================")
+        println("=========================== RU별 Bin 생성 완료 ===========================")
         if (fos != null) fos.close()
       }
     }

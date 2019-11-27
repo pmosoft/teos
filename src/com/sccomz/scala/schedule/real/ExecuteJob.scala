@@ -143,10 +143,12 @@ object ExecuteJob {
     //var scenarioId = "5104574";
 
     var res = Process(s"sshpass -pteos ssh -o StrictHostKeyChecking=no postgres@teos-cluster-dn1 /gis01/bin/anal_los_job_dis.sh ${scenarioId}").lineStream;
+    //var res = Process(s"sshpass -pteos ssh -o StrictHostKeyChecking=no postgres@teos-cluster-dn1 hadoop fs -df -h").lineStream;
 
     //var res = Process(s"ssh postgres@teos-cluster-dn1 /gis01/bin/anal_los_job_dis.sh ${scenarioId}").lineStream;
     //var res = Process(s"ssh icpap@teos-cluster-dn1 /gis01/bin/anal_los_job_dis.sh ${scheduleId}").lineStream;
     //var res = Process(s"ssh icpap@teos-cluster-dn1 /home/icpap/sh//execPostgre.sh 111").lineStream;
+    // sshpass -pteos ssh -o StrictHostKeyChecking=no postgres@teos-cluster-dn1 hadoop fs -df -h
     // res.waitFor()
     //ssh postgres@teos-cluster-dn1 /gis01/bin/anal_los_job_dis.sh 5113566
     //var logFile = new File(s"sh /home/icpap/sh/${scheduleId}_end_log.txt");
