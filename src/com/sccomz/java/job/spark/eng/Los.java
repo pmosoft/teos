@@ -11,8 +11,8 @@ public class Los {
 
 	public static void main(String[] args) {
 		
-		String scheduleId = "";
-		String ruId = "";
+		String scheduleId = args[0];
+		String ruId = args[1];
 	    SparkSession spark = SparkSession
 	    	      .builder()
 	    	      .appName("Java Spark SQL basic example")
