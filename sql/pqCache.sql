@@ -231,8 +231,6 @@ ALTER TABLE PUBLIC.I_NR_RU_CACHE OWNER TO POSTGRES;
 GRANT ALL ON TABLE PUBLIC.I_NR_RU_CACHE TO POSTGRES;
 
 
-
-
 select scenario_id, max(height) as mobile_height
 from i_mobile_parameter
 group by scenario_id

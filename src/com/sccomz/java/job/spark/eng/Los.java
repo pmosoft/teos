@@ -5,27 +5,28 @@ import java.io.IOException;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
+
+
 
 public class Los {
 
 	public static void main(String[] args) {
-		Los los = new Los();
-		los.execute();
-	}
-	
-	void execute(SparkSession spark, String scheduleId) {
-		System.out.println("test");
-		SparkSession spark = 
-				SparkSession.builder().master("yarn").appName("Simple Application").config("spark.sql.warehouse.dir","/TEOS/warehouse").getOrCreate();
-		executeSql(spark, scheduleId);
+		
+		
+		String scheduleId = "";
+	    SparkSession spark = SparkSession
+	    	      .builder()
+	    	      .appName("Java Spark SQL basic example")
+	    	      .config("spark.some.config.option", "some-value")
+	    	      .getOrCreate();		
+
+	    
+	    executeSql(spark, scheduleId);
 		spark.close();
-	}
+	} 
 	
-	@SuppressWarnings("deprecation")
-	void executeSql(SparkSession spark, String scheduleId) {
+	private static void executeSql(SparkSession spark, String scheduleId) {
 		String objNm = "RESULT_NR_2D_LOS";
 		try {
 			//-----------------------------------------------------------------
@@ -46,7 +47,9 @@ public class Los {
 			//-----------------------------------------------------------------
 			String qry2 = "SELECT DISTINCT RU_ID FROM SCENARIO_NR_RU WHERE SCENARIO_ID IN (SELECT SCENARIO_ID FROM SCHEDULE WHERE SCHEDULE_ID = ${scheduleId})";
 			System.out.println(qry2);
-			spark.sql(qry2);
+            spark.sql(qry).take(100);
+
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

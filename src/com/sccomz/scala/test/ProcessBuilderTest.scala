@@ -11,7 +11,7 @@ import ExecutionContext.Implicits.global
 object ProcessBuilderTest {
 
   def main(args: Array[String]): Unit = {
-    test01();
+    test02();
   }
 
   def test01(): Unit = {
@@ -25,10 +25,12 @@ object ProcessBuilderTest {
   }
 
   def test02(): Unit = {
+    val contents = Process("notepad").lineStream
   }
 
   def test03(): Unit = {
-    val p = "sleep 100".run()               // start asynchronously
+    //val p = "sleep 100".run()               // start asynchronously
+    val p = "dir".run()               // start asynchronously
     val f = Future(blocking(p.exitValue())) // wrap in Future
     val res = try {
                 Await.result(f, duration.Duration(2, "sec"))

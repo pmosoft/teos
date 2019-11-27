@@ -102,7 +102,7 @@ object MakeBfBinFile extends Serializable {
        println(s"""[SEL] Header ${scheduleId}""");
     //---------------------------------------------------
     qry = MakeBfBinFileSql.selectResultNrBfScenHeader(scheduleId); println(qry);
-    val headerDF = spark.sql(qry).repartition(1); println(qry); headerDF.cache.createOrReplaceTempView("M_RESULT_NR_BF_SCEN_HEADER");
+    val headerDF = spark.sql(qry); println(qry); headerDF.cache.createOrReplaceTempView("M_RESULT_NR_BF_SCEN_HEADER");
 
     //---------------------------------------------------
        println(s"""[SEL] bldCount ${scheduleId}""");
@@ -127,12 +127,12 @@ object MakeBfBinFile extends Serializable {
        println(s"""[SEL] value ${scheduleId}""");
     //---------------------------------------------------
     val names = cdNm match {
-      case "LOS"         => ("RESULT_NR_BF_LOS"        , "LOS"     )
-      case "PATHLOSS"    => ("RESULT_NR_BF_PATHLOSS"   , "PATHLOSS")
-      case "BEST_SERVER" => ("RESULT_NR_BF_BESTSERVER" , "RU_SEQ"  )
-      case "PILOT_EC"    => ("RESULT_NR_BF_RSRP"       , "RSRP"    )
-      case "RSSI"        => ("RESULT_NR_BF_RSSI"       , "RSSI"    )
-      case "SINR"        => ("RESULT_NR_BF_SINR"       , "SINR"    )
+      case "LOS"         => ("RESULT_NR_BF_LOS"        , "LOS"       )
+      case "PATHLOSS"    => ("RESULT_NR_BF_PATHLOSS"   , "PATHLOSS"  )
+      case "BESTSERVER"  => ("RESULT_NR_BF_BESTSERVER" , "BESTSERVER")
+      case "RSRP"        => ("RESULT_NR_BF_RSRP"       , "RSRP"      )
+      case "RSSI"        => ("RESULT_NR_BF_RSSI"       , "RSSI"      )
+      case "SINR"        => ("RESULT_NR_BF_SINR"       , "SINR"      )
     };
     val tabNm = names._1; val colNm = names._2;
     qry = MakeBfBinFileSql.selectSectorResult(scheduleId, tabNm, colNm);println(qry); 
@@ -154,17 +154,17 @@ object MakeBfBinFile extends Serializable {
        println(s"""파일 Write Header ${scheduleId}""");
     //---------------------------------------------------------------------------------------------------------
 
-    //headerDF.foreach { row =>
-    //  dos.writeInt(ByteUtil.swap(row(0).asInstanceOf[Int]));                // BUILDING_INDEX int        4
-    //  dos.write(ByteUtil.toByte20(row(1).asInstanceOf[String]));            // TBD_KEY        char[20]  20
-    //  dos.write(row(2).asInstanceOf[Int]);                                  // BinXCnt        uchar      1
-    //  dos.write(row(3).asInstanceOf[Int]);                                  // BinYCnt        uchar      1
-    //  dos.write(row(4).asInstanceOf[Int]);                                  // FloorZ         uchar      1
-    //  dos.write(row(4).asInstanceOf[Int]);                                  // Padding        uchar      1
-    //  dos.writeFloat(ByteUtil.swap(row(5).asInstanceOf[Float]));            // startX         float      4
-    //  dos.writeFloat(ByteUtil.swap(row(6).asInstanceOf[Float]));            // startY         float      4
-    //  dos.writeLong(row(7).asInstanceOf[Long]);                             // start point    ulong      8
-    //}
+    headerDF.foreach { row =>
+      dos.writeInt(ByteUtil.swap(row(0).asInstanceOf[Int]));                // BUILDING_INDEX int        4
+      dos.write(ByteUtil.toByte20(row(1).asInstanceOf[String]));            // TBD_KEY        char[20]  20
+      dos.write(row(2).asInstanceOf[Int]);                                  // BinXCnt        uchar      1
+      dos.write(row(3).asInstanceOf[Int]);                                  // BinYCnt        uchar      1
+      dos.write(row(4).asInstanceOf[Int]);                                  // FloorZ         uchar      1
+      dos.write(row(4).asInstanceOf[Int]);                                  // Padding        uchar      1
+      dos.writeFloat(ByteUtil.swap(row(5).asInstanceOf[Float]));            // startX         float      4
+      dos.writeFloat(ByteUtil.swap(row(6).asInstanceOf[Float]));            // startY         float      4
+      dos.writeLong(row(7).asInstanceOf[Long]);                             // start point    ulong      8
+    }
     
     //---------------------------------------------------------------------------------------------------------
        println(s"""파일 Write binCount ${scheduleId}""");
