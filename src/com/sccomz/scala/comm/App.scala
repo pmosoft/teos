@@ -113,8 +113,7 @@ object App {
            if(ip=="192.168.0.6")    "jdbc:hive2://name.dmtech.biz:10000/default"
       else if(ip=="192.168.73.71")  "jdbc:hive2://name.dmtech.biz:10000/default"
       else if(ip=="150.23.21.44")   "jdbc:hive2://localhost:10000"
-      //else if(ip=="150.23.21.207")  "jdbc:hive2://localhost:10000"
-      else if(ip=="150.23.21.207")  "jdbc:hive2://150.23.13.151:10000/default"
+      else if(ip=="150.23.21.207")  "jdbc:hive2://localhost:10000"
       else                          "jdbc:hive2://185.15.16.151:10000";
   val dbUserHive       = "hive";
   val dbPwHive         = "";
