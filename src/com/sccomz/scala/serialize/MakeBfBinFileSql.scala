@@ -23,16 +23,16 @@ def selectResultNrBfScenHeader(scheduleId:String) = {
     // float  startX, startY;	// Building Border letf bottom
     // ULLong	startPointBin;	// start point of BIN data
 s"""
-SELECT BUILDING_INDEX -- 0
-     , TBD_KEY        -- 1
-     , NX             -- 2
-     , NY             -- 3
-     , FLOORZ         -- 4
-     , EXT_SX         -- 5
-     , EXT_SY         -- 7
-     , NX*NY*FLOORZ      AS BIN_CNT
-     , SUM(NX*NY*FLOORZ) OVER (ORDER BY BUILDING_INDEX) - NX*NY*FLOORZ      AS START_POINT_BIN
-     ,(SUM(NX*NY*FLOORZ) OVER (ORDER BY BUILDING_INDEX) - NX*NY*FLOORZ) * 4 AS START_POINT_4BIN
+SELECT BUILDING_INDEX                        -- 0
+     , TBD_KEY                               -- 1
+     , NX                                    -- 2
+     , NY                                    -- 3
+     , FLOORZ                                -- 4
+     , CAST(EXT_SX AS FLOAT)      AS EXT_SX  -- 5
+     , CAST(EXT_SY AS FLOAT)      AS EXT_SY  -- 6
+     , CAST(NX*NY*FLOORZ AS LONG) AS BIN_CNT -- 7
+     , CAST(SUM(NX*NY*FLOORZ) OVER (ORDER BY BUILDING_INDEX) - NX*NY*FLOORZ       AS INTEGER) AS START_POINT_BIN  -- 8
+     , CAST((SUM(NX*NY*FLOORZ) OVER (ORDER BY BUILDING_INDEX) - NX*NY*FLOORZ) * 4 AS INTEGER) AS START_POINT_4BIN -- 9
 FROM   RESULT_NR_BF_SCEN_HEADER
 WHERE  SCHEDULE_ID = ${scheduleId}
 ORDER BY BUILDING_INDEX

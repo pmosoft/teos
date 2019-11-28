@@ -154,7 +154,7 @@ object MakeBfBinFile extends Serializable {
        println(s"""파일 Write Header ${scheduleId}""");
     //---------------------------------------------------------------------------------------------------------
 
-    headerDF.foreach { row =>
+    headerDF.collect.foreach { row =>
       dos.writeInt(ByteUtil.swap(row(0).asInstanceOf[Int]));                // BUILDING_INDEX int        4
       dos.write(ByteUtil.toByte20(row(1).asInstanceOf[String]));            // TBD_KEY        char[20]  20
       dos.write(row(2).asInstanceOf[Int]);                                  // BinXCnt        uchar      1
@@ -181,14 +181,14 @@ object MakeBfBinFile extends Serializable {
     
     val bin = initialArray(sumBinCnt2 , initialValue)
     
-    vDf.foreachPartition { p =>
-      p.foreach { row =>
-        bin(row(5).asInstanceOf[Int]).value = cdNm match {
-          case "LOS" => ByteUtil.intToByteArray(row(5).asInstanceOf[Int])
-          case _     => ByteUtil.floatToByteArray(row(5).asInstanceOf[Float])
-        }
-      }
-    }
+//    vDf.foreachPartition { p =>
+//      p.foreach { row =>
+//        bin(row(9).asInstanceOf[Float]).value = cdNm match {
+//          case "LOS" => ByteUtil.intToByteArray(row(5).asInstanceOf[Float])
+//          case _     => ByteUtil.floatToByteArray(row(5).asInstanceOf[Float])
+//        }
+//      }
+//    }
     
     bin.foreach { e =>
        dos.write(e.value)
