@@ -2,8 +2,15 @@ package com.sccomz.java.job.spark.eng;
 
 import org.apache.spark.sql.SparkSession;
 
-public class Los {
-
+public class Los implements Runnable {
+	String scheduleId="";
+	String ruId = "";
+	
+	public Los(String scheduleId, String ruId) {
+		this.scheduleId=scheduleId;
+		this.ruId=ruId;
+	}
+	
 	public static void main(String[] args) {
 		
 		String scheduleId = args[0];
@@ -16,6 +23,20 @@ public class Los {
 	    executeSql(spark, scheduleId, ruId);
 		spark.close();
 		
+	} 
+	
+	public void run() {
+        try{
+    	    SparkSession spark = SparkSession
+  	    	      .builder()
+  	    	      .appName("Java Spark SQL basic example")
+  	    	      .config("spark.some.config.option", "some-value")
+  	    	      .getOrCreate();
+        	executeSql(spark, scheduleId, ruId);
+        	spark.close();
+        }catch(Exception err){
+            err.printStackTrace();
+        }
 	}
 	
 	private static void executeSql(SparkSession spark, String scheduleId, String ruId) {
@@ -33,14 +54,13 @@ public class Los {
 //			FileSystem fs = FileSystem.get(conf);
 //			fs.delete(new Path("/TEOS/warehouse/'"+ objNm +"/schedule_id="+ scheduleId +"'"), true);
 //			qry = "ALTER TABLE '"+ objNm +" DROP IF EXISTS PARTITION (schedule_id="+ scheduleId +"')";
-//			spark.sql(qry);
 			
 			//-----------------------------------------------------------------
 			System.out.println("insert partition table");
 			//-----------------------------------------------------------------
 			String qry2 = "SELECT DISTINCT RU_ID FROM SCENARIO_NR_RU WHERE SCENARIO_ID IN (SELECT SCENARIO_ID FROM SCHEDULE WHERE SCHEDULE_ID = '" + scheduleId + "')";
 			System.out.println(qry2);
-			spark.sql(qry2);
+			spark.sql(qry);
 			
 			String qry3 = "with AREA as\r\n" + 
 					"   (\r\n" + 
