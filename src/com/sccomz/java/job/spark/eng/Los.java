@@ -21,7 +21,7 @@ public class Los {
 	    executeSql(spark, scheduleId, ruId);
 		spark.close();
 		
-	} 
+	}
 	
 	private static void executeSql(SparkSession spark, String scheduleId, String ruId) {
 		String objNm = "RESULT_NR_2D_LOS";
@@ -31,20 +31,21 @@ public class Los {
 			//-----------------------------------------------------------------
 			String qry = "";
 			
-			//-----------------------------------------------------------------
-			System.out.println("partition 파일 삭제 및 drop table partition");
-			//-----------------------------------------------------------------
-			Configuration conf = new Configuration();
-			FileSystem fs = FileSystem.get(conf);
-			fs.delete(new Path("/TEOS/warehouse/'"+ objNm +"/schedule_id="+ scheduleId +"'"), true);
-			qry = "ALTER TABLE '"+ objNm +" DROP IF EXISTS PARTITION (schedule_id="+ scheduleId +"')";
+//			//-----------------------------------------------------------------
+//			System.out.println("partition 파일 삭제 및 drop table partition");
+//			//-----------------------------------------------------------------
+//			Configuration conf = new Configuration();
+//			FileSystem fs = FileSystem.get(conf);
+//			fs.delete(new Path("/TEOS/warehouse/'"+ objNm +"/schedule_id="+ scheduleId +"'"), true);
+//			qry = "ALTER TABLE '"+ objNm +" DROP IF EXISTS PARTITION (schedule_id="+ scheduleId +"')";
+//			spark.sql(qry);
 			
 			//-----------------------------------------------------------------
 			System.out.println("insert partition table");
 			//-----------------------------------------------------------------
 			String qry2 = "SELECT DISTINCT RU_ID FROM SCENARIO_NR_RU WHERE SCENARIO_ID IN (SELECT SCENARIO_ID FROM SCHEDULE WHERE SCHEDULE_ID = '" + scheduleId + "')";
 			System.out.println(qry2);
-			spark.sql(qry);
+			spark.sql(qry2);
 			
 			String qry3 = "with AREA as\r\n" + 
 					"   (\r\n" + 
@@ -75,7 +76,7 @@ public class Los {
 			System.out.println(qry3);
 			spark.sql(qry3).take(100);
 			
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
