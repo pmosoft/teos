@@ -1,10 +1,5 @@
 package com.sccomz.java.job.spark.eng;
 
-import java.io.IOException;
-
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
 import org.apache.spark.sql.SparkSession;
 
 public class Los {
