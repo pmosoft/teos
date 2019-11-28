@@ -7,18 +7,16 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.concurrent.*;
 
-import com.sccomz.java.comm.util.HiveDBManager;
 import com.sccomz.scala.comm.App;
 import com.sccomz.scala.serialize.MakeBinFileSql;
 
 public class ExecutorLOS {
 	
 	public static void main(String[] args) {
-		ExecutorLOS el = new ExecutorLOS();
-		el.runThreads("8463233", "123");
+		runThreads("8463233", "??");
 	}
 	
-	public void runThreads(String scheduleId, String ruId) {
+	public static void runThreads(String scheduleId, String ruId) {
 		//ExecutorService executor= Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()/2);
 		ExecutorService executor= Executors.newFixedThreadPool(100);
 		
@@ -34,9 +32,8 @@ public class ExecutorLOS {
 		ArrayList<String> ruInfo = new ArrayList<String>();
 
 		try {
-			//Class.forName(App.dbDriverHive());
-			//con = DriverManager.getConnection(App.dbUrlHive(), App.dbUserHive(), App.dbPwHive());
-			con = HiveDBManager.connectHive();
+			Class.forName(App.dbDriverHive());
+			con = DriverManager.getConnection(App.dbUrlHive(), App.dbUserHive(), App.dbPwHive());
 			stat = con.createStatement();
 			
 			String qry = MakeBinFileSql.selectRuIdInfo(scheduleId);
@@ -53,7 +50,7 @@ public class ExecutorLOS {
 		} catch (Exception err) {
 			err.printStackTrace();
 		}
-        executor.shutdown(); // once you are done with ExecutorService
+        executor.shutdown();	// once you are done with ExecutorService
 	}
 	
 }
