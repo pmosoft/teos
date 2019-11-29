@@ -87,20 +87,31 @@ def selectSectorResult(scheduleId:String,tabNm:String,colNm:String) = {
         //                      + ( rtHead.getX()*rtHead.getY()*iZ*4 ) //층
         //                      + ( rtHead.getX()*iY*4 )               //X
         //                      + ( iX*4 );                            //Y
+  
+//     , NX                                    -- 2
+//     , NY                                    -- 3
+//     , FLOORZ                                -- 4
+  
 s"""
-SELECT A.TBD_KEY
-     , A.RX_FLOORZ
-     , A.RX_TM_YPOS
-     , A.RX_TM_XPOS
-     , ${colNm} AS VALUE
-     , B.START_POINT_4BIN
-     + (A.RX_FLOORZ*A.RX_TM_YPOS*A.RX_TM_XPOS*4)
-     + (A.RX_TM_YPOS*A.RX_TM_XPOS*4)
-     + (A.RX_TM_XPOS*4) AS POS
+SELECT A.TBD_KEY                                  AS TBD_KEY          -- 1               
+     , A.RX_FLOORZ                                AS RX_FLOORZ        -- 2
+     , A.RX_TM_YPOS                               AS RX_TM_YPOS       -- 3
+     , A.RX_TM_XPOS                               AS RX_TM_XPOS       -- 4
+     , CAST(${colNm} AS INTEGER)                  AS VALUE            -- 5
+     , CAST(${colNm} AS FLOAT)                    AS VALUE2           -- 6
+     , CAST(
+       B.START_POINT_BIN                                                
+     + (B.NX*B.NY*A.RX_FLOORZ)
+     + (B.NX*A.RX_TM_YPOS)
+     + (A.RX_TM_XPOS)
+       AS INTEGER)                                AS POS              -- 7
 FROM   ${tabNm} A
      , M_RESULT_NR_BF_SCEN_HEADER B
 WHERE  A.SCHEDULE_ID = ${scheduleId}
 AND    A.TBD_KEY = B.TBD_KEY
+AND    A.RX_FLOORZ < B.FLOORZ
+AND    A.RX_TM_YPOS < B.NY
+AND    A.RX_TM_XPOS < B.NX
 ORDER BY RX_FLOORZ, RX_TM_YPOS, RX_TM_XPOS
 """
 }

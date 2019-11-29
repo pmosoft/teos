@@ -181,14 +181,14 @@ object MakeBfBinFile extends Serializable {
     
     val bin = initialArray(sumBinCnt2 , initialValue)
     
-//    vDf.foreachPartition { p =>
-//      p.foreach { row =>
-//        bin(row(9).asInstanceOf[Float]).value = cdNm match {
-//          case "LOS" => ByteUtil.intToByteArray(row(5).asInstanceOf[Float])
-//          case _     => ByteUtil.floatToByteArray(row(5).asInstanceOf[Float])
-//        }
-//      }
-//    }
+    vDf.foreachPartition { p =>
+      p.foreach { row =>
+        bin(row(7).asInstanceOf[Int]).value = cdNm match {
+          case "LOS" => ByteUtil.intToByteArray(row(5).asInstanceOf[Int])
+          case _     => ByteUtil.floatToByteArray(row(6).asInstanceOf[Float])
+        }
+      }
+    }
     
     bin.foreach { e =>
        dos.write(e.value)
