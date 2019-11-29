@@ -17,12 +17,16 @@ import org.apache.hadoop.fs.permission.FsPermission
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.internal.Logging
 import scala.collection._
+import scala.sys.process._
+import scala.concurrent._
+import ExecutionContext.Implicits.global
 
 import com.sccomz.java.comm.util.DateUtil
 import com.sccomz.java.comm.util.FileUtil
 import com.sccomz.scala.comm.App
 import com.sccomz.java.serialize.Byte4
 import com.sccomz.java.serialize.ByteUtil
+
 
 /*
 
@@ -136,11 +140,12 @@ object MakeBinFile extends Logging {
       var bin = initialArray(binXCnt, binYCnt, initialValue)
 
       p.foreach { row =>
-        
+
         //val i = row(0).asInstanceOf[Int] * binYCnt + row(1).asInstanceOf[Int]
-        val i = row(1).asInstanceOf[Int] * binYCnt + row(0).asInstanceOf[Int]
+        //val i = row(1).asInstanceOf[Int] * binYCnt + row(0).asInstanceOf[Int]
+        val i = row(1).asInstanceOf[Int] * binXCnt + row(0).asInstanceOf[Int] // y * xc + x
         //val i = (row(1).asInstanceOf[Int] * row(0).asInstanceOf[Int]) + row(0).asInstanceOf[Int]
-         
+
         bin(i).value = colNm match {
           case "LOS" => ByteUtil.intToByteArray(row(2).asInstanceOf[Int])
           case _     => ByteUtil.floatToByteArray(row(2).asInstanceOf[Float])
@@ -209,11 +214,11 @@ object MakeBinFile extends Logging {
 
       // bin 초기화
       var ruId   : Option[String] = None
-      var ruSize : Option[(Int, Int)] = None 
+      var ruSize : Option[(Int, Int)] = None
       var bin    : Option[Array[Byte4]] = None
       var ruPath : Option[String] = None
       println("p.foreach");
-      
+
       // bin 설정
       p.foreach { row =>
         // RU_ID, X_POINT, Y_POINT, VALUE
@@ -236,15 +241,15 @@ object MakeBinFile extends Logging {
             case "LOS" => ByteUtil.intToByteArray(row(5).asInstanceOf[Int])
             case _     => ByteUtil.floatToByteArray(row(5).asInstanceOf[Float])
           }
-        } catch {        
+        } catch {
           case e: Exception => e.printStackTrace;println("ru_id="+ru_id+" : y="+y_point+" : x="+x_point+" : ruSize="+ruSize.get._2);
-        }        
-        
+        }
+
         //bin.get(y_point * ruSize.get._2 + x_point).value = cdNm match {
         //  case "LOS" => ByteUtil.intToByteArray(row(5).asInstanceOf[Int])
         //  case _     => ByteUtil.floatToByteArray(row(5).asInstanceOf[Float])
         //}
-        
+
       }
 
       // ruId.get
@@ -254,5 +259,25 @@ object MakeBinFile extends Logging {
     }
 
   }
+
+
+  def extToLocal(): Unit = {
+
+    //df -h | grep run | sed 's/%//' | awk '{ result += $5 } END { print result }'
+    val df01 = "df -h | grep run | sed 's/%//' | awk '{ result += $5 } END { print result }'"
+    val p01 = "'df -h'".run(); val f01 = Future(blocking(p01.exitValue()))
+    val r01 = try { Await.result(f01, duration.Duration(60, "sec"))
+              } catch { case _: TimeoutException => println("TIMEOUT!"); p01.destroy(); p01.exitValue()  }
+              
+              
+    //val contents = Process("df -h | grep run").lineStream
+    val contents = Process("/root/cal_disk_use.sh").lineStream
+    
+              
+  }
+
+
+
+
 
 }
