@@ -31,7 +31,7 @@ MakeBfBinFile.executeResult("8463233");
 MakeBfBinFile.makeSectorResult("8463233", "LOS","SYS/5113566");
 
  * */
-object MakeBfBinFile extends Serializable {
+object MakeBfBinFile extends Logging {
 
   Class.forName(App.dbDriverOra);
   var con:Connection = DriverManager.getConnection(App.dbUrlOra,App.dbUserOra,App.dbPwOra);
@@ -181,14 +181,14 @@ object MakeBfBinFile extends Serializable {
     
     val bin = initialArray(sumBinCnt2 , initialValue)
     
-//    vDf.foreachPartition { p =>
-//      p.foreach { row =>
-//        bin(row(9).asInstanceOf[Float]).value = cdNm match {
-//          case "LOS" => ByteUtil.intToByteArray(row(5).asInstanceOf[Float])
-//          case _     => ByteUtil.floatToByteArray(row(5).asInstanceOf[Float])
-//        }
-//      }
-//    }
+    vDf.foreachPartition { p =>
+      p.foreach { row =>
+        bin(row(7).asInstanceOf[Int]).value = cdNm match {
+          case "LOS" => ByteUtil.intToByteArray(row(5).asInstanceOf[Int])
+          case _     => ByteUtil.floatToByteArray(row(6).asInstanceOf[Float])
+        }
+      }
+    }
     
     bin.foreach { e =>
        dos.write(e.value)
@@ -204,140 +204,135 @@ object MakeBfBinFile extends Serializable {
 
     println("makeRuResult 01")
 
+    var qry = "";
+    //---------------------------------------------------
+       logInfo(s"""[SEL] RU_VALUE ${scheduleId}""");
+    //---------------------------------------------------
     val names = cdNm match {
-      case "LOS" => ("RESULT_NR_BF_LOS_RU", "VALUE")
-      case "PATHLOSS" => ("RESULT_NR_BF_PATHLOSS_RU", "PATHLOSS")
+      case "LOS"         => ("RESULT_NR_BF_LOS_RU"         , "VALUE"   )
+      case "PATHLOSS"    => ("RESULT_NR_BF_PATHLOSS_RU"    , "PATHLOSS")
+      case "BEST_SERVER" => ("RESULT_NR_BF_BESTSERVER_RU"  , "RU_SEQ"  )
+      case "PILOT_EC"    => ("RESULT_NR_BF_RSRP_RU"        , "RSRP"    )
+      case "RSSI"        => ("RESULT_NR_BF_RSSI_RU"        , "RSSI"    )
+      case "SINR"        => ("RESULT_NR_BF_SINR_RU"        , "SINR"    )
+    };    
+
+    val tabNm = names._1; val colNm = names._2;
+    //spark.sql("DROP TABLE IF EXISTS ENG_RU");
+    import spark.implicits._
+    qry = MakeBfBinFileSql.selectResultNrBfRuHeader(scheduleId); logInfo(qry); val headerDF = spark.sql(qry).repartition($"RU_ID");
+    headerDF.cache.createOrReplaceTempView("M_RESULT_NR_BF_RU_HEADER");
+    
+    //---------------------------------------------------
+       println(s"""[SEL] resolution ${scheduleId}""");
+    //---------------------------------------------------
+    qry = MakeBfBinFileSql.selectBfResolution(scheduleId); println(qry); rs = stat.executeQuery(qry); rs.next();
+    val resolution : Int = rs.getInt("RESOLUTION");
+    
+    //---------------------------------------------------------------------------------------------------------
+       logInfo(s"""파일  write start ${scheduleId}""");
+    //---------------------------------------------------------------------------------------------------------
+    val initialValue = cdNm match {
+      case "PATHLOSS" => ByteUtil.floatMax()
+      case _          => ByteUtil.intZero()
     }
 
-    val tabNm = names._1
-    val colNm = names._2
+    headerDF.foreachPartition { p =>
 
-    // todo unnecessary statement?
-    spark.sql("DROP TABLE IF EXISTS ENG_RU")
+      // bin 초기화
+      var ruId   : Option[String] = None
+      var bin    : Option[Array[Byte4]] = None
+      var ruPath : Option[String] = None
 
-    val qry = MakeBinFileSql.selectRuResultAll(scheduleId, tabNm, colNm)
-    println(qry)
+      var bldCount : Int = 0
+      var sumBinCnt : Long = 0 
+      var sumBinCnt2 : Int = 0 
+      
+      // bin 설정
+      p.foreach { row =>
+        val ru_id   = row(0).asInstanceOf[String] // RU_ID
+        val ru_path = row(11).asInstanceOf[String] // RU_PATH
 
-    val tDF = spark.sql(qry)
-    tDF.cache.createOrReplaceTempView("ENG_RU")
-    //    tDF.count();
+        if (ruId.isEmpty) {
+          ruId   = Some(ru_id)
+          //bin    = Some(initialArray(ruSize.get._1, ruSize.get._2, initialValue))
+          ruPath = Some(ru_path)
+          
+          //---------------------------------------------------
+             println(s"""[SEL] bldCount ${scheduleId}""");
+          //---------------------------------------------------
+          qry = MakeBfBinFileSql.selectBfBldCount(ru_id); println(qry); var sqlDf = spark.sql(qry); var row = sqlDf.collect.last
+          bldCount = row(0).asInstanceOf[Int]
+          
+          //---------------------------------------------------
+             println(s"""[SEL] sumBinCnt ${scheduleId}""");
+          //---------------------------------------------------
+          qry = MakeBfBinFileSql.selectBfSumBinCnt(ru_id); println(qry); sqlDf = spark.sql(qry); row = sqlDf.collect.last
+          sumBinCnt  = row(0).asInstanceOf[Long]
+          sumBinCnt2 = row(1).asInstanceOf[Int]
+          
+        }        
 
-    println("makeRuResult 02")
-
-    //    val iCnt = ruInfo.size;
-
-    // todo use jdbc
-    def getRUBinCounts(scheduleId: String, ruId: (String, String)): (Int, Int) = {
-      println("makeRuResult 04 " + ruId._1)
-
-      val qry = MakeBinFileSql.select2dRuBinCnt(scheduleId, ruId._1)
-      println(qry)
-      val sqlDf = spark.sql(qry)
-
-      val row = sqlDf.collect.last
-      val x_bin_cnt = row(0).asInstanceOf[Int]
-      val y_bin_cnt = row(1).asInstanceOf[Int]
-
-      (x_bin_cnt, y_bin_cnt)
-    }
-
-    ruInfo.foreach { ruId =>
-      println(ruId._1 + " : " + ruId._2)
-
-      if (ruId._1 != "SECTOR_PATH") {
-        println("============================== 초기화 ==============================")
         //---------------------------------------------------------------------------------------------------------
-        // 초기화
+           println(s"""파일 Write start ${scheduleId}""");
         //---------------------------------------------------------------------------------------------------------
-        val binCounts = getRUBinCounts(scheduleId, ruId)
+        import org.apache.hadoop.fs.{ FileSystem, Path }
+        val fs = FileSystem.get(new Configuration())
+        var ruPathFileNm = s"/user/icpap/result/bd/${DateUtil.getDate("yyyyMMdd")}/${ru_path}/${cdNm}.bin"
+        val dos = fs.create(new Path(ruPathFileNm))
+            
+        
+        
+      }      
+    }   
+  
+        
+//      // bin 초기화
+//      var ruId   : Option[String] = None
+//      var ruSize : Option[(Int, Int)] = None 
+//      var bin    : Option[Array[Byte4]] = None
+//      var ruPath : Option[String] = None
+//      println("p.foreach");
+//
+//      // bin 설정
+//      p.foreach { row =>
+//        // RU_ID, X_POINT, Y_POINT, VALUE
+//        val ru_id   = row(0).asInstanceOf[String] // RU_ID
+//        val x_point = row(3).asInstanceOf[Int]    // X_POINT
+//        val y_point = row(4).asInstanceOf[Int]    // Y_POINT
+//        val ru_path = row(6).asInstanceOf[String] // RU_PATH
+//
+//        if (ruId.isEmpty) {
+//          ruId   = Some(ru_id)
+//          ruSize = Some((row(1).asInstanceOf[Int], row(2).asInstanceOf[Int])) // X_BIN_CNT, Y_BIN_CNT
+//          //bin    = Some(initialArray(ruSize.get._1, ruSize.get._2, initialValue))
+//          ruPath = Some(ru_path)
+//        }
+//
+//        println("bin set ru_id="+ru_id);
+//
+//        try {
+//          bin.get(y_point * ruSize.get._2 + x_point).value = cdNm match {
+//            case "LOS" => ByteUtil.intToByteArray(row(5).asInstanceOf[Int])
+//            case _     => ByteUtil.floatToByteArray(row(5).asInstanceOf[Float])
+//          }
+//        } catch {        
+//          case e: Exception => e.printStackTrace;println("ru_id="+ru_id+" : y="+y_point+" : x="+x_point+" : ruSize="+ruSize.get._2);
+//        }        
+//        
+//        //bin.get(y_point * ruSize.get._2 + x_point).value = cdNm match {
+//        //  case "LOS" => ByteUtil.intToByteArray(row(5).asInstanceOf[Int])
+//        //  case _     => ByteUtil.floatToByteArray(row(5).asInstanceOf[Float])
+//        //}
+//        
+//      }
+//
+//      // ruId.get
+//      var path = s"/user/icpap/result/${DateUtil.getDate("yyyyMMdd")}/${ruPath.get}/${cdNm}.bin"; println(path);
+//      //writeToHdfs(bin.get, path)
+//      println("partition end")
+//    }
 
-        val x_bin_cnt = binCounts._1
-        val y_bin_cnt = binCounts._2
-
-        val bin = Array.ofDim[Byte4](x_bin_cnt, y_bin_cnt)
-
-        if (cdNm == "LOS") {
-          for (y <- 0 until y_bin_cnt by 1) {
-            for (x <- 0 until x_bin_cnt by 1) {
-              bin(x)(y) = new Byte4(ByteUtil.intZero())
-            }
-          }
-        } else {
-          for (y <- 0 until y_bin_cnt by 1) {
-            for (x <- 0 until x_bin_cnt by 1) {
-              bin(x)(y) = new Byte4(ByteUtil.floatMax())
-            }
-          }
-        }
-
-        println("============================ RU별 Value 세팅 ============================")
-        //---------------------------------------------------------------------------------------------------------
-        // Value 세팅
-        //---------------------------------------------------------------------------------------------------------
-        println("makeRuResult 05 " + ruId._1)
-
-        //var qry2 = MakeBinFileSql4.selectRuResult(scheduleId, tabNm, colNm, ruId._1);
-        // todo add a column called RU_ID
-        val qry = MakeBinFileSql.selectRuResult2(ruId._1)
-        println(qry)
-
-        import spark.implicits._
-
-        // ru_id 에 의한 파티션
-        // 처음부터 파티션 돼 있는 것이 좋음
-        val sqlDf2 = spark.sql(qry).repartition($"RU_ID")
-
-        println("makeRuResult 06 " + ruId._1)
-
-        sqlDf2.foreachPartition { p =>
-          println("partition start")
-
-          // bin 초기화
-//          val bin
-
-          // bin 설정
-          p.foreach { row =>
-
-          }
-
-          // bin 출력
-          println("partition end")
-        }
-
-        sqlDf2.collect.foreach { row =>
-          val x_point = row(0).asInstanceOf[Int]
-          val y_point = row(1).asInstanceOf[Int]
-
-          bin(x_point)(y_point).value = cdNm match {
-            case "LOS" =>
-              ByteUtil.intToByteArray(row(2).asInstanceOf[Int])
-            case _ =>
-              ByteUtil.floatToByteArray(row(2).asInstanceOf[Float])
-
-          }
-        }
-
-        println("makeRuResult 07 " + ruId._1)
-
-        println("============================ RU별 파일 Write ============================")
-        //---------------------------------------------------------------------------------------------------------
-        // 파일 Write
-        //---------------------------------------------------------------------------------------------------------
-        val file = new File(App.resultPath, DateUtil.getDate("yyyyMMdd") + "/" + ruId._2 + "/" + cdNm + ".bin")
-        val fos = new FileOutputStream(file)
-        for (y <- 0 until y_bin_cnt by 1) {
-          for (x <- 0 until x_bin_cnt by 1) {
-            fos.write(bin(x)(y).value)
-          }
-        }
-
-        println("makeRuResult 08 " + ruId._1)
-
-        println("=========================== RU별 Bin 생성 완료 ===========================")
-        if (fos != null) fos.close()
-      }
-    }
   }
-
 
 }

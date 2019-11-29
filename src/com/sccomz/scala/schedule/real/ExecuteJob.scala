@@ -143,10 +143,10 @@ object ExecuteJob {
     //var scenarioId = "5104574";
 
     //var res = Process(s"sshpass -pteos ssh -o StrictHostKeyChecking=no postgres@teos-cluster-dn1 /gis01/bin/anal_los_job_dis.sh ${scenarioId}").lineStream;
-    var res1 = Process(s"sshpass -pcell&plan007 ssh -o StrictHostKeyChecking=no icpap@teos-cluster-dn1 /workspace/dn1_sshpath.sh").lineStream;
-    var res2 = Process(s"sshpass -pcell&plan007 ssh -o StrictHostKeyChecking=no icpap@teos-cluster-dn2 /workspace/dn2_sshpath.sh").lineStream;
-    var res3 = Process(s"sshpass -pcell&plan007 ssh -o StrictHostKeyChecking=no icpap@teos-cluster-dn3 /workspace/dn3_sshpath.sh").lineStream;
-    var res4 = Process(s"sshpass -pcell&plan007 ssh -o StrictHostKeyChecking=no icpap@teos-cluster-dn4 /workspace/dn4_sshpath.sh").lineStream;
+    var res1 = Process(s"sshpass -f /home/sshpasswd ssh -o StrictHostKeyChecking=no icpap@teos-cluster-dn1 /workspace/dn1_sshpass.sh").lineStream;
+    var res2 = Process(s"sshpass -f /home/sshpasswd ssh -o StrictHostKeyChecking=no icpap@teos-cluster-dn2 /workspace/dn2_sshpass.sh").lineStream;
+    var res3 = Process(s"sshpass -f /home/sshpasswd ssh -o StrictHostKeyChecking=no icpap@teos-cluster-dn3 /workspace/dn3_sshpass.sh").lineStream;
+    var res4 = Process(s"sshpass -f /home/sshpasswd ssh -o StrictHostKeyChecking=no icpap@teos-cluster-dn4 /workspace/dn4_sshpass.sh").lineStream;
     //var res = Process(s"sshpass -pteos ssh -o StrictHostKeyChecking=no postgres@teos-cluster-dn1 hadoop fs -df -h").lineStream;
 
     //var res = Process(s"ssh postgres@teos-cluster-dn1 /gis01/bin/anal_los_job_dis.sh ${scenarioId}").lineStream;

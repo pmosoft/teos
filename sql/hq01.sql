@@ -188,3 +188,25 @@ select *
  where  RSLT.ru_id = 1011760123
  ;
 
+
+
+SELECT A.TBD_KEY                                  AS TBD_KEY          -- 1               
+     , A.RX_FLOORZ                                AS RX_FLOORZ        -- 2
+     , A.RX_TM_YPOS                               AS RX_TM_YPOS       -- 3
+     , A.RX_TM_XPOS                               AS RX_TM_XPOS       -- 4
+     , CAST(LOS AS INTEGER)                  AS VALUE            -- 5
+     , CAST(LOS AS FLOAT)                    AS VALUE2           -- 6
+     , CAST(
+       B.START_POINT_BIN                                                
+     + (B.NX*B.NY*A.RX_FLOORZ)
+     + (B.NX*A.RX_TM_YPOS)
+     + (A.RX_TM_XPOS)
+       AS INTEGER)                                AS POS              -- 7
+FROM   RESULT_NR_BF_LOS A
+     , M_RESULT_NR_BF_SCEN_HEADER B
+WHERE  A.SCHEDULE_ID = 8460965
+AND    A.TBD_KEY = B.TBD_KEY
+ORDER BY RX_FLOORZ, RX_TM_YPOS, RX_TM_XPOS
+;
+
+
