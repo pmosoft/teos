@@ -246,7 +246,7 @@ object MakeBfBinFile extends Logging {
 
       var bldCount : Int = 0
       var sumBinCnt : Long = 0 
-      var sumBinCnt2 : Int = 0
+      var sumBinCnt2 : Int = 0 
       
       // bin 설정
       p.foreach { row =>

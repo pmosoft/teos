@@ -39,7 +39,7 @@ SELECT B.SCHEDULE_ID, A.ENB_ID, A.PCI, A.PCI_PORT, A.RU_ID,
  WHERE B.SCHEDULE_ID = 8460965
    AND A.SCENARIO_ID = B.SCENARIO_ID
 )
-SELECT A.RU_ID          
+SELECT A.RU_ID           
      , A.BUILDING_INDEX 
      , A.TBD_KEY        
      , A.NX             
