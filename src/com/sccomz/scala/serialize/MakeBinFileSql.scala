@@ -18,6 +18,15 @@ var stat:Statement=con.createStatement();
 def main(args: Array[String]): Unit = {
 }
 
+def selectRuIdInfo(scheduleId:String) = {
+s"""
+select a.ru_id
+from   scenario_nr_ru a, schedule b
+where  b.schedule_id = ${scheduleId}
+and    a.scenario_id = b.scenario_id
+"""
+}
+
 // X,Y Total Bin 갯수
 def selectBinCnt(scheduleId:String) = {
 s"""
