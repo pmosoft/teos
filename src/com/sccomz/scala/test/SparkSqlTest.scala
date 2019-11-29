@@ -21,6 +21,58 @@ def main(args: Array[String]): Unit = {
   //spark.stop();
 }
 
+def test12(spark: SparkSession) = {
+
+spark.sql(s"""
+WITH RU AS
+(
+SELECT B.SCHEDULE_ID, A.ENB_ID, A.PCI, A.PCI_PORT, A.RU_ID,
+       A.X_BIN_CNT, A.Y_BIN_CNT,
+       INT(A.SITE_STARTX) DIV A.RESOLUTION * A.RESOLUTION AS SITE_STARTX,
+       INT(A.SITE_STARTY) DIV A.RESOLUTION * A.RESOLUTION AS SITE_STARTY,
+       INT(A.SITE_ENDX) DIV A.RESOLUTION * A.RESOLUTION AS SITE_ENDX,
+       INT(A.SITE_ENDY) DIV A.RESOLUTION * A.RESOLUTION AS SITE_ENDY,
+       A.RESOLUTION,
+       CONCAT(B.USER_ID,'/',A.SCENARIO_ID) AS SECTOR_PATH,
+       CONCAT(B.USER_ID,'/',A.SCENARIO_ID,'/ENB_',A.ENB_ID,'/PCI_',A.PCI,'_PORT_',A.PCI_PORT,'_',A.RU_ID) AS RU_PATH
+  FROM SCENARIO_NR_RU A, SCHEDULE B
+ WHERE B.SCHEDULE_ID = 8460965
+   AND A.SCENARIO_ID = B.SCENARIO_ID
+)
+SELECT A.RU_ID          
+     , A.BUILDING_INDEX 
+     , A.TBD_KEY        
+     , A.NX             
+     , A.NY             
+     , A.FLOORZ         
+     , A.EXT_SX 
+     , A.EXT_SY 
+     , A.BIN_CNT
+     , A.START_POINT_BIN 
+     , A.START_POINT_4BIN
+     , B.RU_PATH                              --6  
+FROM 
+      (SELECT RU_ID                                 -- 0
+            , BUILDING_INDEX                        -- 1
+            , TBD_KEY                               -- 2
+            , NX                                    -- 3
+            , NY                                    -- 4
+            , FLOORZ                                -- 5
+            , CAST(EXT_SX AS FLOAT)      AS EXT_SX  -- 6
+            , CAST(EXT_SY AS FLOAT)      AS EXT_SY  -- 7
+            , CAST(NX*NY*FLOORZ AS LONG) AS BIN_CNT -- 8
+            , CAST(SUM(NX*NY*FLOORZ) OVER (PARTITION BY RU_ID,BUILDING_INDEX ORDER BY RU_ID,BUILDING_INDEX) - NX*NY*FLOORZ       AS INTEGER) AS START_POINT_BIN  -- 9
+            , CAST((SUM(NX*NY*FLOORZ) OVER (PARTITION BY RU_ID,BUILDING_INDEX ORDER BY RU_ID,BUILDING_INDEX) - NX*NY*FLOORZ) * 4 AS INTEGER) AS START_POINT_4BIN -- 10
+       FROM   RESULT_NR_BF_RU_HEADER
+       WHERE  SCHEDULE_ID = 8460965
+       ORDER BY RU_ID, BUILDING_INDEX) A, RU B
+ WHERE A.RU_ID       = B.RU_ID
+""").take(1000).foreach(println)
+;
+  
+}
+
+
 
 def test11(spark: SparkSession) = {
 
@@ -117,6 +169,32 @@ spark.sql(s"""
 SELECT DISTINCT TBD_KEY FROM RESULT_NR_BF_LOS WHERE SCHEDULE_ID = 8460965
 """).take(1000).foreach(println)
 ;
+
+
+spark.sql(s"""
+SELECT RU_ID                                 -- 0
+     , BUILDING_INDEX                        -- 0
+     , TBD_KEY                               -- 1
+     , NX                                    -- 2
+     , NY                                    -- 3
+     , FLOORZ                                -- 4
+     , CAST(EXT_SX AS FLOAT)      AS EXT_SX  -- 5
+     , CAST(EXT_SY AS FLOAT)      AS EXT_SY  -- 6
+     , CAST(NX*NY*FLOORZ AS LONG) AS BIN_CNT -- 7
+     , CAST(SUM(NX*NY*FLOORZ) OVER (PARTITION BY RU_ID,BUILDING_INDEX ORDER BY RU_ID,BUILDING_INDEX) - NX*NY*FLOORZ       AS INTEGER) AS START_POINT_BIN  -- 8
+     , CAST((SUM(NX*NY*FLOORZ) OVER (PARTITION BY RU_ID,BUILDING_INDEX ORDER BY RU_ID,BUILDING_INDEX) - NX*NY*FLOORZ) * 4 AS INTEGER) AS START_POINT_4BIN -- 9
+FROM   RESULT_NR_BF_RU_HEADER
+WHERE  SCHEDULE_ID = 8460965
+""").take(1000).foreach(println)
+;
+
+
+spark.sql(s"""
+SELECT DISTINCT SCHEDULE_ID
+FROM   RESULT_NR_BF_RU_HEADER
+""").take(1000).foreach(println)
+;
+
 
 
 
