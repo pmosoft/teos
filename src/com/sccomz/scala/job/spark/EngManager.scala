@@ -31,18 +31,18 @@ object EngManager {
   var stat:Statement=con.createStatement();
   var rs:ResultSet = null;
   var qry = "";
-  
+
   def execute(scheduleId:String) = {
 
     var jobWeight = 1;
     var queueNm = "lowQueue";
-    
+
     qry = "SELECT JOB_WEIGHT FROM SCHEDULE_EXT WHERE SCHEDULE_ID=${scheduleId}"; println(qry);
     rs = stat.executeQuery(qry); rs.next(); jobWeight = rs.getInt("JOB_WEIGHT");
     if(jobWeight==1) queueNm = "lQueue";
     if(jobWeight==2) queueNm = "mQueue";
-    if(jobWeight==3) queueNm = "hQueue";    
-    
+    if(jobWeight==3) queueNm = "hQueue";
+
     Los.execute(scheduleId,"");
     //PathLoss.execute(scheduleId);
     //RsrpPilot.execute(scheduleId);
