@@ -225,11 +225,6 @@ object ExtractLoadPostManager {
   }
 
   def executeExtractLoadOneTime(scheduleId:String,scenarioId:String): Unit = {
-    Class.forName(App.dbDriverPost);
-    var dbUrl = App.dbUrlPost;
-    var con = DriverManager.getConnection(dbUrl,App.dbUserPost,App.dbPwPost);
-    var stat:Statement=con.createStatement();
-    var rs:ResultSet = null;
 
     var tabNm = ""; var qry = "";
 
@@ -237,10 +232,10 @@ object ExtractLoadPostManager {
          tabNm = "SCENARIO_NR_RU_AVG_HEIGHT";
     //---------------------------------------
     qry = ExtractPostScenarioNrRuDemSql.selectScenarioNrRuDemCsv(scheduleId); println(qry);
-    rs = stat.executeQuery(qry);
+    rs1 = stat1.executeQuery(qry);
     var filePathNm = App.extJavaPath+"/"+tabNm+"_"+scheduleId+".dat"; println(filePathNm);
     var pw = new PrintWriter(new File(filePathNm),"UTF-8");
-    while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
+    while(rs1.next()) { pw.write(rs1.getString(1)+"\n") }; pw.close;
 
     LoadHdfsManager.postAvgToHdfs(scheduleId, scenarioId);
 
