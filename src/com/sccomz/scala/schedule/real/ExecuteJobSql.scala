@@ -31,6 +31,15 @@ WHERE  SCHEDULE_ID = ${scheduleId}
 """
 }
 
+def selectScheduleInfo(scheduleId:String) = {
+s"""
+SELECT SCENARIO_ID
+     , TYPE_CD
+FROM   SCHEDULE 
+WHERE  SCHEDULE_ID = ${scheduleId}
+"""
+}
+
 def updateScheduleStep(scheduleId:String, typeStepCd:String, processLog:String) = {
 s"""
 UPDATE SCHEDULE_STEP

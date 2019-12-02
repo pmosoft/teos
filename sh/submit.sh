@@ -11,9 +11,19 @@ spark2-shell --master yarn-client --jars /home/icpap/bin/teos1.jar,/home/icpap/l
 spark2-submit --master local[*] --driver-memory 8g --jars /home/icpap/bin/teos1.jar,/home/icpap/lib/ojdbc7.jar,/home/icpap/lib/postgresql4.jar,/home/icpap/lib/hiveJdbc11.jar --class com.sccomz.scala.schedule.real.ScheduleDaemon /home/icpap/bin/teos.jar
 
 #############################################
-# Schedule Job
+# ExecuteJob
 #############################################
-spark2-submit --master local[*] --driver-memory 8g --jars /home/icpap/bin/teos1.jar,/home/icpap/lib/ojdbc7.jar,/home/icpap/lib/postgresql4.jar,/home/icpap/lib/hiveJdbc11.jar --class com.sccomz.scala.schedule.real.ExecuteJob /home/icpap/bin/teos.jar 스케줄ID 시나리오ID
+
+# post shell bd
+spark2-submit --master local[*] --driver-memory 8g --jars /home/icpap/bin/teos1.jar,/home/icpap/lib/ojdbc7.jar,/home/icpap/lib/postgresql4.jar,/home/icpap/lib/hiveJdbc11.jar --class com.sccomz.scala.schedule.real.ExecuteJob /home/icpap/bin/teos1.jar 8460178
+
+# post shell eng
+spark2-submit --master local[*] --driver-memory 8g --jars /home/icpap/bin/teos1.jar,/home/icpap/lib/ojdbc7.jar,/home/icpap/lib/postgresql4.jar,/home/icpap/lib/hiveJdbc11.jar --class com.sccomz.scala.schedule.real.ExecuteJob /home/icpap/bin/teos1.jar 8463290
+
+# RU 6
+spark2-submit --master local[*] --driver-memory 8g --jars /home/icpap/bin/teos1.jar,/home/icpap/lib/ojdbc7.jar,/home/icpap/lib/postgresql4.jar,/home/icpap/lib/hiveJdbc11.jar --class com.sccomz.scala.schedule.real.ExecuteJob /home/icpap/bin/teos1.jar 8463246
+
+
 
 #############################################
 # Eng
