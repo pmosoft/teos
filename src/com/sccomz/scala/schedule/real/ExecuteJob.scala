@@ -56,12 +56,12 @@ object ExecuteJob {
   var qry = "";
 
   def main(args: Array[String]): Unit = {
-
     scheduleId = if (args.length < 2) "" else args(0);
     scenarioId = if (args.length < 2) "" else args(1);
     //---------------------------------------------------------------------------------------------
     println("ExecuteJob : scheduleId = " + scheduleId + " : scenarioId : " + scenarioId);
     //---------------------------------------------------------------------------------------------
+    executePostgreShell(scenarioId);
     execute(scheduleId,scenarioId);
   }
 
@@ -146,7 +146,12 @@ object ExecuteJob {
     var res1 = Process(s"sshpass -f /home/sshpasswd ssh -o StrictHostKeyChecking=no icpap@teos-cluster-dn1 /workspace/dn1_sshpass.sh").lineStream;
     var res2 = Process(s"sshpass -f /home/sshpasswd ssh -o StrictHostKeyChecking=no icpap@teos-cluster-dn2 /workspace/dn2_sshpass.sh").lineStream;
     var res3 = Process(s"sshpass -f /home/sshpasswd ssh -o StrictHostKeyChecking=no icpap@teos-cluster-dn3 /workspace/dn3_sshpass.sh").lineStream;
-    var res4 = Process(s"sshpass -f /home/sshpasswd ssh -o StrictHostKeyChecking=no icpap@teos-cluster-dn4 /workspace/dn4_sshpass.sh").lineStream;
+    var res4 = Process(s"sshpass -f /home/sshpasswd ssh -o StrictHostKeyChecking=no icpap@teos-cluster-dn4 /workspace/sh_dir/dn4_sshpass.sh").lineStream;
+    var result1 = res1.last; var result2 = res2.last; var result3 = res3.last; var result4 = res4.last;
+    println(result1); println(result2); println(result3); println(result4);
+    
+    var test = Process(s"sshpass -f /home/sshpasswd ssh -o StrictHostKeyChecking=no icpap@teos-cluster-dn4 /workspace/sh_dir/test_script.sh").lineStream;
+    
     //var res = Process(s"sshpass -pteos ssh -o StrictHostKeyChecking=no postgres@teos-cluster-dn1 hadoop fs -df -h").lineStream;
 
     //var res = Process(s"ssh postgres@teos-cluster-dn1 /gis01/bin/anal_los_job_dis.sh ${scenarioId}").lineStream;
