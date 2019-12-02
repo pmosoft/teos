@@ -19,10 +19,26 @@ import com.sccomz.scala.etl.extract.post.sql.ExtractPostLosBldResultSql
 import com.sccomz.scala.etl.extract.post.sql.ExtractPostScenarioNrRuDemSql
 import com.sccomz.scala.etl.load.LoadHdfsLosManager
 import com.sccomz.scala.etl.load.LoadHdfsManager
+import com.sccomz.scala.schedule.real.ExecuteJob
+
+
+import java.util.logging.Logger
+import org.apache.spark.internal.Logging
 
 /*
 import com.sccomz.scala.etl.extract.post.ExtractLoadPostManager
-ExtractLoadPostManager.monitorJobDis("8463235","5113766");
+ExtractLoadPostManager.deleteJobDisExt("8463246");
+
+
+
+import com.sccomz.scala.etl.extract.post.ExtractLoadPostManager
+ExtractLoadPostManager.deleteJobDisExt("8460178");
+
+
+import com.sccomz.scala.etl.extract.post.ExtractLoadPostManager
+ExtractLoadPostManager.deleteJobDisExt("8463290");
+
+ExtractLoadPostManager.monitorJobDis("8460178");
 
 
 ExtractLoadPostManager.executeExtractLoadAvg("8463233","5113566");
@@ -50,10 +66,11 @@ SELECT DISTINCT SCHEDULE_ID,RU_ID
 FROM RESULT_NR_2D_LOS_RU
 
  * */
-object ExtractLoadPostManager {
+object ExtractLoadPostManager extends Logging {
 
-  Class.forName(App.dbDriverPost);
-
+  var scenarioId = "";
+  var typeCd = "";
+  
   Class.forName(App.dbDriverPost);
   var con1:Connection = DriverManager.getConnection(App.dbUrlPost1,App.dbUserPost,App.dbPwPost);
   var stat1:Statement=con1.createStatement();
@@ -77,35 +94,51 @@ object ExtractLoadPostManager {
 
     //extractPostToHadoopCsv("8460062","1012242284","gis01");
 
-    monitorJobDis("8463235","5113766");
+    monitorJobDis("8463235",true);
 
+    //5113766
     println("ExtractLoadPostManager end");
   }
 
-  def monitorJobDis(scheduleId:String,scenarioId:String): Unit = {
+  def deleteJobDisExt(scheduleId:String): Unit = {
+    var qry = ExtractJobDisSql.deleteJobDisExt(scheduleId); println(qry); stat1.execute(qry)
+  }
+  
+  
+  def monitorJobDis(scheduleId:String,isRetry:Boolean): Unit = {
 
+    logInfo("monitorJobDis start scheduleId="+scheduleId)    
+    
     var qry = "";
 
-    var ruCnt = 0; var extCnt = 0; var extDoneCnt = -1;
+    if(isRetry) deleteJobDisExt(scheduleId)
+ 
+    scenarioId = ExecuteJob.selectScenarioId(scheduleId)
+    typeCd = ExecuteJob.selectTypeCd(scheduleId)
+ 
+    var ruCnt = 0; var post_done_cnt = 0; var extCnt = 0; var extDoneCnt = -1;
     var avgCnt = 1;
 
     var loofCnt = 0;
+    var isLoof = true;
     var exeLoofCnt = 0;
     var bdYn = "N";
 
     qry = ExtractJobDisSql.selectBdYn(scenarioId); println(qry);
     rs1 = stat1.executeQuery(qry); rs1.next();
     bdYn = rs1.getString("BD_YN");
-    var procStat = if(bdYn=="Y") 4 else 3;
+
     try {
-      while(ruCnt>extDoneCnt) {
+      while(isLoof) {
         loofCnt += 1;
-        qry = ExtractJobDisSql.selectRuCnt(scheduleId,procStat); println(qry);
+        qry = ExtractJobDisSql.selectRuCnt(scheduleId,typeCd,bdYn); println(qry);
         rs1 = stat1.executeQuery(qry); rs1.next();
         ruCnt  = rs1.getInt("RU_CNT");
         extDoneCnt = rs1.getInt("EXT_DONE_CNT");
         extCnt = rs1.getInt("EXT_CNT");
 
+        if(ruCnt > 0 && ruCnt==post_done_cnt && post_done_cnt==extDoneCnt) isLoof = false
+        
         println("extCnt="+extCnt);
 
         if(extCnt>0) {
@@ -113,19 +146,17 @@ object ExtractLoadPostManager {
           if(exeLoofCnt==1) {
             executeExtractLoadOneTime(scheduleId,scenarioId);
           }
-          executeExtractLoad(scheduleId,bdYn,procStat);
+          executeExtractLoad(scheduleId,typeCd,bdYn);
         }
         println("loofCnt="+loofCnt);
         Thread.sleep(1000*3);
 
       }
 
-      println("execute end");
+      logInfo("monitorJobDis end scheduleId="+scheduleId)    
 
     } catch {
-      case e : Exception => {
-        println("Exception="+e);
-      }
+      case ex: Throwable => {logInfo("ex="+ex);throw ex}
     } finally {
       con1.close();
       con2.close();
@@ -134,15 +165,18 @@ object ExtractLoadPostManager {
     }
   }
 
-  def executeExtractLoad(scheduleId:String,bdYn:String,procStat:Int): Unit = {
+  def executeExtractLoad(scheduleId:String,typeCd:String,bdYn:String): Unit = {
 
+   logInfo("executeExtractLoad start scheduleId="+scheduleId)    
+    
+    
     var qry = "";
     var ruId = ""; var clusterName = "";
 
-    qry = ExtractJobDisSql.selectExtRu(scheduleId,procStat); println(qry);
+    qry = ExtractJobDisSql.selectExtRu(scheduleId,typeCd,bdYn); println(qry);
     rs1 = stat1.executeQuery(qry);
 
-    var extList = mutable.Map[String,String]();
+    val extList = mutable.Map[String,String]();
 
     while(rs1.next()) {
     //if(rs.next()) {
@@ -154,17 +188,28 @@ object ExtractLoadPostManager {
 
     for(ext <- extList) {
         ruId  = ext._1; clusterName = ext._2;
+        println("ruId="+ruId);
+        
         insertJobDisExt(scheduleId,ruId,"4")
-        extractPostToHadoopCsv(scheduleId,ruId,clusterName,bdYn);
-        LoadHdfsLosManager.executeRealPostToHdfs(scheduleId, ruId, bdYn);
+        println("ruId1="+ruId);
+        extractPostToHadoopCsv(scheduleId,ruId,clusterName,typeCd,bdYn);
+        println("ruId2="+ruId);
+        LoadHdfsLosManager.executeRealPostToHdfs(scheduleId,ruId,typeCd,bdYn);
+        println("ruId3="+ruId);
         updateJobDisExt(scheduleId,ruId,"5")
+        println("ruId4="+ruId);
     }
 
-    LoadHdfsLosManager.sparkClose();
+   logInfo("executeExtractLoad end scheduleId="+scheduleId)    
+    
+    //LoadHdfsLosManager.sparkClose();
   }
 
-  def extractPostToHadoopCsv(scheduleId:String,ruId:String,clusterName:String,bdYn:String) : Unit = {
+  def extractPostToHadoopCsv(scheduleId:String,ruId:String,clusterName:String,typeCd:String,bdYn:String) : Unit = {
 
+    logInfo("extractPostToHadoopCsv start scheduleId="+scheduleId)    
+    
+    
     //var dbUrl = if(clusterName=="gis01") App.dbUrlPost else if(clusterName=="gis02") App.dbUrlPost2 else if(clusterName=="gis03") App.dbUrlPost3 else if(clusterName=="gis04") App.dbUrlPost4 else App.dbUrlPost;
     //var con = DriverManager.getConnection(dbUrl,App.dbUserPost,App.dbPwPost);
     var stat:Statement = null;
@@ -183,7 +228,7 @@ object ExtractLoadPostManager {
     var tabNm = ""; var qry = "";
     var filePathNm = "";
 
-    if(bdYn=="Y") {
+    if(typeCd=="SC051" && bdYn=="Y") {
       //---------------------------------------
            tabNm = "RESULT_NR_BF_LOS_RU"
       //---------------------------------------
@@ -222,10 +267,13 @@ object ExtractLoadPostManager {
     // while(rs.next()) { pw.write(rs.getString(1)+"\n") }; pw.close;
 
     }
+    
+    logInfo("extractPostToHadoopCsv end scheduleId="+scheduleId)    
   }
 
   def executeExtractLoadOneTime(scheduleId:String,scenarioId:String): Unit = {
-
+    logInfo("executeExtractLoadOneTime start scheduleId="+scheduleId)    
+    
     var tabNm = ""; var qry = "";
 
     //---------------------------------------
@@ -242,6 +290,8 @@ object ExtractLoadPostManager {
     //---------------------------------------
          tabNm = "BLD_LIST";
     //---------------------------------------
+         
+    logInfo("executeExtractLoadOneTime end scheduleId="+scheduleId)    
 
   }
 

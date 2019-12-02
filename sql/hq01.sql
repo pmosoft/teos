@@ -182,12 +182,10 @@ SELECT * FROM TEST03
 SELECT * FROM RESULT_NR_2D_LOS WHERE schedule_id = 8463233 LIMIT 1
 ;
 
-
 select *
-  from RESULT_NR_2D_LOS_RU RSLT
- where  RSLT.ru_id = 1011760123
- ;
-
+from RESULT_NR_2D_LOS_RU RSLT
+where  RSLT.ru_id = 1011760123
+;
 
 
 SELECT A.TBD_KEY                                  AS TBD_KEY          -- 1               

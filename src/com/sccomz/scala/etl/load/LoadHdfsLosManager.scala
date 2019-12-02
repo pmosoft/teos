@@ -24,6 +24,13 @@ import org.apache.spark.sql.types.StructType
 import com.sccomz.scala.comm.App
 import com.sccomz.scala.schema.SCENARIO
 import com.sccomz.java.comm.util.FileUtil
+import java.util.logging.Logging
+import java.util.logging.Logging
+import java.util.logging.Logging
+
+import java.util.logging.Logger
+import org.apache.spark.internal.Logging
+
 
 /*
 import com.sccomz.scala.etl.load.LoadHdfsLosManager
@@ -37,18 +44,19 @@ sql("ALTER TABLE I_LOS_ENG_RESULT ADD PARTITION (SCHEDULE_ID=8460062,RU_ID=10122
 LOAD DATA INPATH '/disk2/etl/LOS_ENG_RESULT_8460062_1012242284.dat' INTO TABLE I_LOS_ENG_RESULT PARTITION (SCHEDULE_ID=8460062, RU_ID='1012242284');
 
  * */
-object LoadHdfsLosManager {
+object LoadHdfsLosManager extends Logging {
   
   val spark = SparkSession.builder().master("local[*]").appName("LoadHdfsLosManager").config("spark.sql.warehouse.dir","/teos/warehouse").enableHiveSupport().getOrCreate()
 
   def main(args: Array[String]): Unit = {
     samToParquetPartition("RESULT_NR_2D_LOS_RU","8460062","1012242284")
-    
   }
 
-  def executeRealPostToHdfs(scheduleId:String,ruId:String,bdYn:String) = {
+  def executeRealPostToHdfs(scheduleId:String,ruId:String,typeCd:String,bdYn:String) = {
     //samToParquetPartition("RESULT_NR_2D_TREE_RU",scheduleId,ruId);
-    if(bdYn=="Y") {
+
+    
+     if(typeCd=="SC051" && bdYn=="Y") {
       samToParquetPartition("RESULT_NR_BF_LOS_RU",scheduleId,ruId);
       //samToParquetPartition("RESULT_NR_BF_TREE_RU",scheduleId,ruId);
     } else {
