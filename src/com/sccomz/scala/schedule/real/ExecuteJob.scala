@@ -244,9 +244,10 @@ object ExecuteJob {
     ExtractLoadPostManager.monitorJobDis(scheduleId,true);
   }
 
-
   def executeSparkEngJob(scheduleId:String): Unit = {
-    EngManager.execute(scheduleId);
+    //EngManager.execute(scheduleId);
+    val process = Process(s"""spark2-submit --jars /home/icpap/lib/ojdbc7.jar,/home/icpap/lib/postgresql4.jar,/home/icpap/lib/hiveJdbc11.jar --class com.sccomz.scala.schedule.real.ExecuteJob /home/icpap/bin/teos.jar ${scheduleId} ${scenarioId}""").lineStream;
+    
   }
 
   def executeSparkMakeBinFile(scheduleId:String): Unit = {

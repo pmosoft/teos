@@ -29,6 +29,8 @@ spark2-submit --master local[*] --driver-memory 8g --jars /home/icpap/bin/teos1.
 # Eng
 #############################################
 spark2-submit --master yarn --class com.sccomz.scala.job.spark.eng.Los2 /home/icpap/bin/teos1.jar 8463233 5113566
+
+spark2-submit --master yarn --class com.sccomz.scala.job.spark.eng.Los2 /home/icpap/bin/teos1.jar 8463233 5113566
 spark2-submit --master yarn --class com.sccomz.scala.job.spark.eng.Los3 /home/icpap/bin/teos1.jar 8463233 5113566
 spark2-submit --master yarn --class com.sccomz.scala.job.spark.eng.Los2 /home/icpap/bin/teos.jar 8463233
 
