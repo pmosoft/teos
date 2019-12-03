@@ -257,6 +257,16 @@ object MakeBinFile extends Logging {
       writeToHdfs(bin.get, path)
       println("partition end")
     }
+    
+    var res1 = "sshpass -f /home/sshpasswd ssh -o StrictHostKeyChecking=no icpap@teos-cluster-dn1 /workspace/dn1_sshpass.sh";
+    var res2 = "sshpass -f /home/sshpasswd ssh -o StrictHostKeyChecking=no icpap@teos-cluster-dn2 /workspace/dn2_sshpass.sh";
+    var res3 = "sshpass -f /home/sshpasswd ssh -o StrictHostKeyChecking=no icpap@teos-cluster-dn3 /workspace/dn3_sshpass.sh";
+    var res4 = "sshpass -f /home/sshpasswd ssh -o StrictHostKeyChecking=no icpap@teos-cluster-dn4 /workspace/dn4_sshpass.sh";
+    var result1 = res1.last; var result2 = res2.last; var result3 = res3.last; var result4 = res4.last;
+    println(result1); println(result2); println(result3); println(result4);
+    
+    var hd = "hadoop fs -get /user/icpap/result /sshpass/";
+    println(hd);
 
   }
 
