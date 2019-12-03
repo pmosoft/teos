@@ -49,7 +49,7 @@ ExecuteJob.executePostgreShell("8460064");
 ExecuteJob.executeEtlOracleToHdfs("8460064");
 ExecuteJob.execute("8460064");
 
-ExecuteJob.executeEtlOracleToHdfs("8463235","SC051");
+ExecuteJob.executeEtlOracleToHdfs("8463235","SC051"); 
 
 ExecuteJob.executeEtlOracleToHdfs("8460966","SC001");
 ExecuteJob.executeEtlOracleToHdfs("8460968","SC001");
