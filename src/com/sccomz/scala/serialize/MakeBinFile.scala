@@ -122,7 +122,7 @@ object MakeBinFile extends Logging {
     }
 
     val tabNm = names._1;  val colNm = names._2
-
+    
     qry = MakeBinFileSql.selectSectorResult(scheduleId, tabNm, colNm); logInfo(qry)
     val vDf = spark.sql(qry).repartition(1); //sqlDf.show();
 
@@ -134,13 +134,13 @@ object MakeBinFile extends Logging {
         case _          => ByteUtil.intZero()
     }
 
+    // 테이블을 못불러옴.. order by
     vDf.foreachPartition { p =>
       println("partition start")
 
       var bin = initialArray(binXCnt, binYCnt, initialValue)
 
       p.foreach { row =>
-
         //val i = row(0).asInstanceOf[Int] * binYCnt + row(1).asInstanceOf[Int]
         //val i = row(1).asInstanceOf[Int] * binYCnt + row(0).asInstanceOf[Int]
         val i = row(1).asInstanceOf[Int] * binXCnt + row(0).asInstanceOf[Int] // y * xc + x
