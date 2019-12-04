@@ -134,7 +134,6 @@ object MakeBinFile extends Logging {
         case _          => ByteUtil.intZero()
     }
 
-    // 테이블을 못불러옴.. order by
     vDf.foreachPartition { p =>
       println("partition start")
 
